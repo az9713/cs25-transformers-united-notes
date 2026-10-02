@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><title>Numerical laboratory · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout no-toc"><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><h1>Numerical laboratory: causal attention</h1>
+<p>A next-token predictor must not use future input positions when computing the current prediction. A causal attention mask permits keys at the query's position and earlier. This finite experiment makes the consequence visible: changing the third value cannot change the first two attention outputs when the causal mask is enabled.</p>
+<p>The three queries are all 1. The keys are 0, log(3) and log(2), so their unmasked softmax weights are 1/6, 3/6 and 2/6. The first two values are 0 and 6; you choose the third. The query and key width is one, so scaling by the square root of that width leaves these logits unchanged. Values and outputs are dimensionless teaching quantities.</p>
+<p><label for="query-position">Query position</label> <select id="query-position"><option value="0">1</option><option value="1" selected>2</option><option value="2">3</option></select></p>
+<p><label for="future-value">Value at position 3</label> <input id="future-value" type="number" min="-1000000" max="1000000" step="any" value="12" required></p>
+<p><label><input id="causal-mask" type="checkbox" style="width:auto" checked> Apply causal mask</label></p>
+<p id="attention-output" role="status" aria-live="polite"></p>
+<h2 id="check">Check the calculation</h2>
+<p>At query position 2, the permitted exponentials are 1 and 3. Their weights are 1/4 and 3/4; the output is 0/4 + 18/4 = 4.5. Replace the third value with 1200: that output stays 4.5 with the mask enabled. Disable the mask and the output becomes (0 + 18 + 2400)/6 = 403. At query position 3, all three keys are permitted, so both mask settings agree.</p>
+<p>These queries and keys are fixed. The experiment checks the masking operation, not model training, linguistic competence or factual reliability. An entire causal model must also keep every other information path consistent with its causal assumptions.</p>
+<p>Original finite checks: <a href="numerical_lab.py">cumulative Python laboratory</a> and <a href="chapter01.py">overview implementation</a>. The interactive operation follows the overview chapter's model. Chapter acceptance and course completion remain separate editorial and validation decisions.</p>
+<script defer src="assets/lab.js"></script>
+</article></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

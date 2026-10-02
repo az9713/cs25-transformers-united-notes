@@ -1,0 +1,112 @@
+{
+  "course": "CS25",
+  "checked_at_utc": "2026-10-02T23:44:41.170615+00:00",
+  "scope": "Reader mechanics only; human screen-reader audit not performed",
+  "static": {
+    "status": "passed",
+    "html_files": 6,
+    "local_links_checked": 51,
+    "timestamps_checked": 20,
+    "chapter_pages_with_dollar_math": 1,
+    "failures": [],
+    "warnings": []
+  },
+  "browser": {
+    "status": "passed",
+    "findings": [
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "index.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "index.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 317,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-01-overview-of-transformers.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 317,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-01-overview-of-transformers.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "numerical-lab.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "numerical-lab.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "references.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "references.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "source-map.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "source-map.html",
+        "viewport": 390
+      }
+    ],
+    "failures": [],
+    "clipboard": "Fallback branch checked with captured text; manual OS clipboard verification not performed",
+    "network": "HTTP and HTTPS requests blocked during browser checks"
+  }
+}

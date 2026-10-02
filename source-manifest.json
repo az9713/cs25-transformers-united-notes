@@ -1,0 +1,397 @@
+{
+  "course": "CS25",
+  "term": "Spring 2026",
+  "slug": "cs25-transformers-united-notes",
+  "playlist": "PLoROMvodv4rPZxxeUFvQHCkZJsaEBdDZj",
+  "format": "HTML",
+  "publication": "local only",
+  "status": "9/9 sources acquired and audited; chapter 1 reviewed and locally validated; remaining 8 chapters in development; course completion gates pending",
+  "lectures": [
+    {
+      "id": "bHSDPgZYie0",
+      "title": "Stanford CS25: Transformers United V6 I Overview of Transformers",
+      "duration": 4606,
+      "url": "https://www.youtube.com/watch?v=bHSDPgZYie0",
+      "chapter_order": 1,
+      "chapter_status": "reviewed and locally validated",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 70464469,
+        "sha256": "a95e2f824335668708a1b26d1d3725b9e9500c8f69173b4df86655ba6aa85d36",
+        "duration_seconds": 4605.821,
+        "duration_difference_from_playlist_seconds": -0.1790000000000873,
+        "downloaded_language": "en-US",
+        "format_id": "251-17",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 1,
+        "drive_id": "153Gu4BIfpnn6jj6WmXlsyD7kv702zcrB",
+        "url": "https://drive.google.com/uc?export=download&id=153Gu4BIfpnn6jj6WmXlsyD7kv702zcrB",
+        "bytes": 49725290,
+        "pages": 156,
+        "sha256": "049ad3c219fa60aa7465dd32a51a4090aa1bff5bb9d73f46ecd40d2283c40a70",
+        "status": "acquired and extracted"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "a95e2f824335668708a1b26d1d3725b9e9500c8f69173b4df86655ba6aa85d36",
+        "audio_duration": 4605.8026875,
+        "segment_count": 174,
+        "last_segment_end": 4601.1,
+        "endpoint_fraction": 0.9989789646194002,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "61544c8eb1197676873b7d611fd28524958222b28ba3c013331cdf4e8bb7ca96",
+      "transcript_json_sha256": "c305af401370b3b6f63185f07cb5d611a2327a820cb76169f5da79b2313a08bb"
+    },
+    {
+      "id": "GBd7iuJkW08",
+      "title": "Stanford CS25: Transformers United V6 I From Representation Learning to World Modeling",
+      "duration": 4263,
+      "url": "https://www.youtube.com/watch?v=GBd7iuJkW08",
+      "chapter_order": 2,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 56948460,
+        "sha256": "54e00ec72bb2dff5b2d5610a7515045291bf06a182d71d4e41babde4675c5c46",
+        "duration_seconds": 4262.881,
+        "duration_difference_from_playlist_seconds": -0.11899999999968713,
+        "downloaded_language": "en-US",
+        "format_id": "251-17",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 2,
+        "drive_id": "1bF5Yfzf-FG5iNIAgsXn2DwVD3l3ymvZW",
+        "url": "https://drive.google.com/uc?export=download&id=1bF5Yfzf-FG5iNIAgsXn2DwVD3l3ymvZW",
+        "bytes": 9640056,
+        "pages": 55,
+        "sha256": "5259e63fab1e586cd232e61120562410c7672bf5eb51633041ffdae678a168d1",
+        "status": "acquired and extracted"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "54e00ec72bb2dff5b2d5610a7515045291bf06a182d71d4e41babde4675c5c46",
+        "audio_duration": 4262.8693125,
+        "segment_count": 150,
+        "last_segment_end": 4258.35,
+        "endpoint_fraction": 0.998939842587539,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "d94c7b6ad12580e53511e6b31527eeaf8a559d069629837faa7d164f3ae5fc7d",
+      "transcript_json_sha256": "fb372a417be9b8f44f9a7f2faa9186ac94d470a0983ac11d2a85965a9db3f98e"
+    },
+    {
+      "id": "OyimE74UMF8",
+      "title": "Stanford CS25: Transformers United V6 I On the Tradeoffs of State Space Models and Transformers",
+      "duration": 4628,
+      "url": "https://www.youtube.com/watch?v=OyimE74UMF8",
+      "chapter_order": 3,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 63757507,
+        "sha256": "1e741a4d698a607acba7a2b25db0f85473952ff47b0747fb3967acbb787e3a1f",
+        "duration_seconds": 4627.461,
+        "duration_difference_from_playlist_seconds": -0.5389999999997599,
+        "downloaded_language": "en-US",
+        "format_id": "251-19",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 3,
+        "status": "unavailable",
+        "reason": "No slide link on official schedule"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "1e741a4d698a607acba7a2b25db0f85473952ff47b0747fb3967acbb787e3a1f",
+        "audio_duration": 4627.4346875,
+        "segment_count": 167,
+        "last_segment_end": 4617.62,
+        "endpoint_fraction": 0.9978790219283888,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "310dc90d3b5fe71d52b4e10f32ed727814a3a1ce35b09afa5cc1d44a76d03080",
+      "transcript_json_sha256": "10dc422a5dff61b72aa2ec27be1becf02719cca2a6cb677f9d124c020b751e50"
+    },
+    {
+      "id": "I5BKi32IEa8",
+      "title": "Stanford CS25: Transformers United V6 I The Ultra-Scale Talk: Scaling Training to Thousands of GPUs",
+      "duration": 3708,
+      "url": "https://www.youtube.com/watch?v=I5BKi32IEa8",
+      "chapter_order": 4,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 56480243,
+        "sha256": "efa6203b45d2fffaf5f7b224768bc96fed7d14f292a15d5308804f84e07d890a",
+        "duration_seconds": 3707.861,
+        "duration_difference_from_playlist_seconds": -0.1390000000001237,
+        "downloaded_language": "en-US",
+        "format_id": "251-19",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 4,
+        "drive_id": "1dxdC76Rk_o6UEd5AqhHjp0rapsxYOR6j",
+        "url": "https://drive.google.com/uc?export=download&id=1dxdC76Rk_o6UEd5AqhHjp0rapsxYOR6j",
+        "bytes": 8965278,
+        "pages": 106,
+        "sha256": "caf117f5030d60b9a33e95124761bbc512257615501dc9b3e8ed823d18aa214b",
+        "status": "acquired and extracted"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "efa6203b45d2fffaf5f7b224768bc96fed7d14f292a15d5308804f84e07d890a",
+        "audio_duration": 3707.84,
+        "segment_count": 132,
+        "last_segment_end": 3703.09,
+        "endpoint_fraction": 0.9987189306981963,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "7cfb5fbf6dc3bbbc80850bf3ef73fcd51052a40a3e03118b74cfa2fd673c74a4",
+      "transcript_json_sha256": "7022d7e325e1770425f5eabe5d00ae256d368883ebec984299371909f2043988"
+    },
+    {
+      "id": "e_H_tkpCAK4",
+      "title": "Stanford CS25: Transformers United V6 I From Next-Token Prediction to Next-Generation Intelligence",
+      "duration": 3477,
+      "url": "https://www.youtube.com/watch?v=e_H_tkpCAK4",
+      "chapter_order": 5,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 49530723,
+        "sha256": "e1be7a407856d9640ad8dc13936a4b7ac08fb01c4c8e3f3b60257d5d8b71526f",
+        "duration_seconds": 3476.281,
+        "duration_difference_from_playlist_seconds": -0.7190000000000509,
+        "downloaded_language": "en-US",
+        "format_id": "251-18",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 5,
+        "status": "unavailable",
+        "reason": "Official link duplicates lecture 4 slide file; not accepted as lecture 5 source"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "e1be7a407856d9640ad8dc13936a4b7ac08fb01c4c8e3f3b60257d5d8b71526f",
+        "audio_duration": 3476.271,
+        "segment_count": 140,
+        "last_segment_end": 3468.5,
+        "endpoint_fraction": 0.9977645586319362,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "2aac786679a25a45755e2c4535a29abfa56e92c0066e1804dbebcffe480c2289",
+      "transcript_json_sha256": "7c8d598cdb3205cbfa39f2b4234d803e77d758dc7c719dff8114b8b991feadd1"
+    },
+    {
+      "id": "dJtHauhRasc",
+      "title": "Stanford CS25: Transformers United V6 I Distinct Modes of Generalization from Parameters and Context",
+      "duration": 4350,
+      "url": "https://www.youtube.com/watch?v=dJtHauhRasc",
+      "chapter_order": 6,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 67858850,
+        "sha256": "7ea8b1191ad5f1eca1b4c596a08c7225339393303f50e28b40eb2ace278e8d89",
+        "duration_seconds": 4349.961,
+        "duration_difference_from_playlist_seconds": -0.03899999999975989,
+        "downloaded_language": "en-US",
+        "format_id": "251-20",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 6,
+        "drive_id": "1-YIOa5Yal4RCjAsV-0tnW_NNDGbY1GTo",
+        "url": "https://drive.google.com/uc?export=download&id=1-YIOa5Yal4RCjAsV-0tnW_NNDGbY1GTo",
+        "bytes": 8786135,
+        "pages": 50,
+        "sha256": "08d41acf44ae95fd6d36b6acf4cb159709952635a77905f47e9fd46d46c45341",
+        "status": "acquired and extracted"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "7ea8b1191ad5f1eca1b4c596a08c7225339393303f50e28b40eb2ace278e8d89",
+        "audio_duration": 4349.9450625,
+        "segment_count": 145,
+        "last_segment_end": 4344.69,
+        "endpoint_fraction": 0.9987919243980107,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "e4126ca0042d87b39448036ef98eb411be9ac0eaacec3d5a517da175d44941ba",
+      "transcript_json_sha256": "03ad730d0a0d585f6183dc9538545bcdc2a60844d0def3cdd5d6922053075122"
+    },
+    {
+      "id": "jFdH7n6BAl0",
+      "title": "Stanford CS25: Transformers United V6 I Advancing Science and Medicine with Collaborative AI Agents",
+      "duration": 3993,
+      "url": "https://www.youtube.com/watch?v=jFdH7n6BAl0",
+      "chapter_order": 7,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 54179072,
+        "sha256": "14ffb69a309d0cf47662b3376fed8498d0e9e7d45a366b5cba7aa72c5a39a550",
+        "duration_seconds": 3992.121,
+        "duration_difference_from_playlist_seconds": -0.8789999999999054,
+        "downloaded_language": "en-US",
+        "format_id": "251-20",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 7,
+        "status": "unavailable",
+        "reason": "No slide link on official schedule"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "14ffb69a309d0cf47662b3376fed8498d0e9e7d45a366b5cba7aa72c5a39a550",
+        "audio_duration": 3992.1066875,
+        "segment_count": 144,
+        "last_segment_end": 3985.71,
+        "endpoint_fraction": 0.9983976661946362,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "25417f021c01423a0b218677448a9c29168a133b78453796b0ebb9936ad47073",
+      "transcript_json_sha256": "4a8163f3ffd0e03006a2859b8df6eeba4d5ef8008fe551726cf2abd536ce5948"
+    },
+    {
+      "id": "NDdc39KYqDU",
+      "title": "Stanford CS25: Transformers United V6 I From Language Models to Native Multimodal Intelligence",
+      "duration": 3880,
+      "url": "https://www.youtube.com/watch?v=NDdc39KYqDU",
+      "chapter_order": 8,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 49576942,
+        "sha256": "29b613a1fc6188b82561265a7528199e079a491dda5a55fb4e4113d2983768c9",
+        "duration_seconds": 3879.061,
+        "duration_difference_from_playlist_seconds": -0.9389999999998508,
+        "downloaded_language": "en-US",
+        "format_id": "251-20",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 8,
+        "drive_id": "10Doblrt3Le_FpbVQoMP0DbuCIO3rtWPW",
+        "url": "https://drive.google.com/uc?export=download&id=10Doblrt3Le_FpbVQoMP0DbuCIO3rtWPW",
+        "bytes": 53071233,
+        "pages": 56,
+        "sha256": "5d9ffaa824d34cac89bcc71823e706fd5a8fe8839f1bb991f7a87c39d2563d6a",
+        "status": "acquired and extracted"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "29b613a1fc6188b82561265a7528199e079a491dda5a55fb4e4113d2983768c9",
+        "audio_duration": 3879.04,
+        "segment_count": 142,
+        "last_segment_end": 3869.2,
+        "endpoint_fraction": 0.9974632898861574,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "3d6b77e4076f7d496012c4af2d405b85287e35f1c7783762817961d4071f3801",
+      "transcript_json_sha256": "496489773067c9517ce8ec9847da5ebdd41b4f210679df5570bb2a74907a49aa"
+    },
+    {
+      "id": "ZUdIsRZhWXI",
+      "title": "Stanford CS25: Transformers United V6 I Serving Transformers: Lessons from the Trenches",
+      "duration": 4951,
+      "url": "https://www.youtube.com/watch?v=ZUdIsRZhWXI",
+      "chapter_order": 9,
+      "chapter_status": "not drafted",
+      "transcript_status": "local machine transcription complete; not publisher captions",
+      "audio_source": {
+        "status": "acquired",
+        "original_language": "en",
+        "bytes": 78948390,
+        "sha256": "13c79307ee98238c6867d5cfb2b2803b4aabb3c2a9c448573c8bd36586a220ab",
+        "duration_seconds": 4950.681,
+        "duration_difference_from_playlist_seconds": -0.31900000000041473,
+        "downloaded_language": "en-US",
+        "format_id": "251-19",
+        "format_note": "English (US) original (default), medium",
+        "original_track_verified": true
+      },
+      "official_slides": {
+        "lecture": 9,
+        "drive_id": "1mwRSslwZUCph1Au-9tY3ZJPrjXTnbAxm",
+        "url": "https://drive.google.com/uc?export=download&id=1mwRSslwZUCph1Au-9tY3ZJPrjXTnbAxm",
+        "bytes": 5129700,
+        "pages": 73,
+        "sha256": "f25a8f2fcae9d6b38d0f070e325eda1f63b9c14f5cd0fb175a5a25b065c7e74b",
+        "status": "acquired and extracted"
+      },
+      "transcript_provenance": {
+        "provenance": "local machine transcription; not publisher captions",
+        "model": "Systran/faster-whisper-small.en",
+        "language": "en",
+        "audio_sha256": "13c79307ee98238c6867d5cfb2b2803b4aabb3c2a9c448573c8bd36586a220ab",
+        "audio_duration": 4950.656,
+        "segment_count": 201,
+        "last_segment_end": 4940.11,
+        "endpoint_fraction": 0.9978697772578018,
+        "audio_hash_matches": true
+      },
+      "transcript_sha256": "89d71c1c14ff931c4d153ee83446e5b12958e8dbbff7f39be561764add8bf124",
+      "transcript_json_sha256": "e529b68339c46ceec38c3f5f61fd03d9664794dec085a8b8edc6d4f80a771837"
+    }
+  ],
+  "source_acquisition_updated_utc": "2026-10-02T22:30:05.625218+00:00",
+  "source_acquisition_summary": {
+    "audio_acquired": 9,
+    "recordings_expected": 9,
+    "slide_decks_acquired": 6,
+    "slide_pages_acquired": 496,
+    "slide_limitations": "Lectures 3 and 7 have no slide link on the official schedule; lecture 5 repeats lecture 4 link and is not accepted as lecture 5 evidence.",
+    "raw_sources_in_repository": false,
+    "transcripts_acquired": 9
+  },
+  "course_title": "Transformers United V6"
+}

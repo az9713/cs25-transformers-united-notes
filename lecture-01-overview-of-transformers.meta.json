@@ -1,0 +1,1274 @@
+{
+  "video_id": "bHSDPgZYie0",
+  "title": "Overview of Transformers",
+  "chapter_order": 1,
+  "recording_lecture_number": 1,
+  "recording_title": "Stanford CS25: Transformers United V6 I Overview of Transformers",
+  "speaker": "Steven Y. Feng and Karan Singh",
+  "date": null,
+  "date_boundary": "Spring 2026 course; exact recording day not asserted",
+  "status": "Independently reviewed and locally validated chapter; course completion gates pending",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "audio_sha256": "a95e2f824335668708a1b26d1d3725b9e9500c8f69173b4df86655ba6aa85d36",
+  "audio_duration_seconds": 4605.821,
+  "transcription_audio_duration_seconds": 4605.8026875,
+  "playlist_duration_seconds": 4606,
+  "transcript_sha256": "c305af401370b3b6f63185f07cb5d611a2327a820cb76169f5da79b2313a08bb",
+  "transcript_text_sha256": "61544c8eb1197676873b7d611fd28524958222b28ba3c013331cdf4e8bb7ca96",
+  "transcript_segment_count": 174,
+  "transcript_first_start_seconds": 4.94,
+  "transcript_last_end_seconds": 4601.1,
+  "slides": {
+    "lecture": 1,
+    "drive_id": "153Gu4BIfpnn6jj6WmXlsyD7kv702zcrB",
+    "url": "https://drive.google.com/uc?export=download&id=153Gu4BIfpnn6jj6WmXlsyD7kv702zcrB",
+    "bytes": 49725290,
+    "pages": 156,
+    "sha256": "049ad3c219fa60aa7465dd32a51a4090aa1bff5bb9d73f46ecd40d2283c40a70",
+    "status": "acquired and extracted",
+    "pages_rendered_and_inspected": [
+      22,
+      30,
+      53,
+      70,
+      78,
+      110,
+      112,
+      114,
+      115,
+      116,
+      117,
+      118
+    ],
+    "video_boundary": "Only listed slide stills inspected. Page 110 blank. No external video frames viewed."
+  },
+  "sections": [
+    {
+      "section": "training",
+      "title": "1. Turn a training example into a prediction problem 6:52",
+      "start": 412.98,
+      "end": 615.55,
+      "segments": [
+        16,
+        23
+      ],
+      "lecture_material": "Engineered features, supervised learning and learned representations; self-supervised prediction from text or masked images.",
+      "research_extension": null,
+      "teaching_construction": "Original bilingual maintenance case, conditional-probability factorization, natural-log loss/perplexity calculation and objective-versus-action distinction.",
+      "evidence_class": "definition: Token, chain rule, causal prediction and loss; engineering check: Original likelihood/perplexity and maintenance objective gap",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Token, chain rule, causal prediction and loss"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original likelihood/perplexity and maintenance objective gap"
+        }
+      ]
+    },
+    {
+      "section": "representations",
+      "title": "2. Represent a token, then represent its context 10:15",
+      "start": 615.55,
+      "end": 741.9,
+      "segments": [
+        24,
+        28
+      ],
+      "lecture_material": "Token embeddings, context-dependent representations, recurrent networks and gated memory in LSTMs.",
+      "research_extension": null,
+      "teaching_construction": "First-use dimensions, explicit recurrent update and repeated-Jacobian arithmetic; limits of gated memory guarantees.",
+      "evidence_class": "definition: Embedding, recurrent state and gates; engineering check: Original repeated-derivative arithmetic",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Embedding, recurrent state and gates"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original repeated-derivative arithmetic"
+        }
+      ]
+    },
+    {
+      "section": "attention",
+      "title": "3. Derive attention as permitted, normalized information routing 12:23",
+      "start": 743.66,
+      "end": 799.66,
+      "segments": [
+        29,
+        30
+      ],
+      "lecture_material": "Self-attention learns query, key and value projections; the library analogy illustrates soft matching and accessing information.",
+      "research_extension": "Vaswani et al., PDF pp. 4\u20135: scaled dot-product attention and multi-head projections.",
+      "teaching_construction": "Original masked normalization proof, variance assumptions, softmax derivative, three-token fixture, leakage/wrong-denominator and equal-value counterexamples.",
+      "evidence_class": "theorem: Finite masked probability normalization, variance under independence, softmax derivative; engineering check: Causal routing, forbidden denominator and equal-value ambiguity",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Finite masked probability normalization, variance under independence, softmax derivative"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Causal routing, forbidden denominator and equal-value ambiguity"
+        }
+      ]
+    },
+    {
+      "section": "order",
+      "title": "4. Add order and multiple routes without changing the dimensions 13:21",
+      "start": 801.62,
+      "end": 852.29,
+      "segments": [
+        31,
+        32
+      ],
+      "lecture_material": "Content-only attention lacks ordering; positional encodings or embeddings supply positions, and multiple attention heads enrich representations.",
+      "research_extension": "Vaswani et al., PDF pp. 4\u20136: multiple heads and positional encodings; permutation proof is original.",
+      "teaching_construction": "Original permutation-equivariance proof and fixed-mask qualification, head-shape arithmetic and procedure-order counterexample.",
+      "evidence_class": "theorem: Content-only unmasked permutation equivariance; definition: Position and multi-head dimensions",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Content-only unmasked permutation equivariance"
+        },
+        {
+          "class": "definition",
+          "claim": "Position and multi-head dimensions"
+        }
+      ]
+    },
+    {
+      "section": "block",
+      "title": "5. A transformer block is more than an attention average 14:12",
+      "start": 852.29,
+      "end": 876.78,
+      "segments": [
+        33,
+        33
+      ],
+      "lecture_material": "A full transformer architecture combines the components introduced in the overview. The speaker explicitly does not explain every block in detail.",
+      "research_extension": "Vaswani et al., PDF pp. 3\u20136: encoder/decoder architecture, feedforward layers, residuals and normalization; detailed formulas supplement the brief recording overview.",
+      "teaching_construction": "Original FFN dimensional explanation, residual cancellation counterexample and population-variance layer-normalization fixture; block-order distinctions.",
+      "evidence_class": "definition: Encoder/decoder, FFN, residual and layer normalization; engineering check: Zero residual Jacobian and population-variance fixture",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Encoder/decoder, FFN, residual and layer normalization"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Zero residual Jacobian and population-variance fixture"
+        }
+      ]
+    },
+    {
+      "section": "cost",
+      "title": "6. Count the resource before extrapolating the capability 14:36",
+      "start": 876.78,
+      "end": 1042.22,
+      "segments": [
+        34,
+        39
+      ],
+      "lecture_material": "Transformers allow parallel sequence processing, access previous context and scale to large models; the speakers discuss compute costs, next-token pretraining, capabilities and few/zero-shot adaptation.",
+      "research_extension": "Dao et al., FlashAttention, PDF p. 1: exact attention through memory-aware tiling; quadratic pairwise arithmetic is distinguished from materialized memory.",
+      "teaching_construction": "Original storage and arithmetic accounting, causal-triangle counts and cache/training/decoding distinctions; no transferred speedup claim.",
+      "evidence_class": "definition: Resource-specific asymptotic arithmetic/storage; empirical result: FlashAttention original exact method, no transferred speedup",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Resource-specific asymptotic arithmetic/storage"
+        },
+        {
+          "class": "empirical result",
+          "claim": "FlashAttention original exact method, no transferred speedup"
+        }
+      ]
+    },
+    {
+      "section": "small-data",
+      "title": "7. Small-data learning makes the evaluation target visible 17:22",
+      "start": 1042.22,
+      "end": 1519.02,
+      "segments": [
+        40,
+        57
+      ],
+      "lecture_material": "Pretraining data matters; Baby Scale studies individual children\u2019s language input and reports different scaling behavior across grammar and semantic/world-knowledge tasks.",
+      "research_extension": "Feng, Tan and Frank, Baby Scale, PDF pp. 1, 3, 5: controlled child-input study and task-dependent scaling findings.",
+      "teaching_construction": "Original held-out evaluation design for grammar versus correct maintenance procedure and separation of observational correlation from mechanism.",
+      "evidence_class": "empirical result: Bounded Baby Scale setting; engineering check: Held-out design for the running case",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Bounded Baby Scale setting"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Held-out design for the running case"
+        }
+      ]
+    },
+    {
+      "section": "bilingual",
+      "title": "8. Match exposure before attributing bilingual interference 25:19",
+      "start": 1519.98,
+      "end": 1755.7,
+      "segments": [
+        58,
+        66
+      ],
+      "lecture_material": "Controlled bilingual exposure experiments compare monolingual and bilingual training, mixing schedules and evaluations of language learning.",
+      "research_extension": "Zeng, Feng and Frank, PDF pp. 3\u20134, 6: word budgets, tokenizer conditions and Table 1 metric-specific differences; English sentence-switching PPL 5.26 versus random baseline 2.69.",
+      "teaching_construction": "Original word-budget exposure accounting and matched-comparison design for the bilingual maintenance case.",
+      "evidence_class": "empirical result: Specific budget, tokenizer and metric comparisons; engineering check: Original exposure accounting",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Specific budget, tokenizer and metric comparisons"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original exposure accounting"
+        }
+      ]
+    },
+    {
+      "section": "retrieval",
+      "title": "9. Allocate internal learning and external access separately 29:15",
+      "start": 1755.7,
+      "end": 1919.31,
+      "segments": [
+        67,
+        72
+      ],
+      "lecture_material": "Retrieval supplies an external datastore at inference; the study asks how pretraining exposure and retrieval-store size interact under data budgets.",
+      "research_extension": "Singh et al., retained April v1 pp. 4\u20135 and August v2 pp. 1, 4, 6: datastore accounting and metric/model-regime-dependent conclusions; no universal retrieval benefit.",
+      "teaching_construction": "Original convex allocation toy with explicit positive-domain assumptions, derivative, unique minimum and lower-bound constraint; failure modes of conflicting retrieved revisions.",
+      "evidence_class": "empirical result: Dated v1/v2, metric-dependent result; theorem: Original constrained convex allocation toy under stated assumptions",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Dated v1/v2, metric-dependent result"
+        },
+        {
+          "class": "theorem",
+          "claim": "Original constrained convex allocation toy under stated assumptions"
+        }
+      ]
+    },
+    {
+      "section": "curriculum",
+      "title": "10. Separate data scheduling from model growth 31:59",
+      "start": 1919.31,
+      "end": 2242.8,
+      "segments": [
+        73,
+        84
+      ],
+      "lecture_material": "A data curriculum is combined with progressive layer growth; the speakers explain staged training and synthesize their pretraining studies.",
+      "research_extension": "Singh, Band and Adeli, v1 PDF pp. 1, 3\u20134: staged layer growth, new-layer initialization/warmup and subsequent joint optimization.",
+      "teaching_construction": "Original stage-loss notation, layer-token arithmetic and four-condition experiment separating curriculum from growth.",
+      "evidence_class": "empirical result: Progressive layer-scaling mechanism; engineering check: Original matched-control design and layer-token arithmetic",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Progressive layer-scaling mechanism"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original matched-control design and layer-token arithmetic"
+        }
+      ]
+    },
+    {
+      "section": "reasoning",
+      "title": "11. More inference computation changes the procedure, not necessarily the weights 37:24",
+      "start": 2244.18,
+      "end": 2417.3,
+      "segments": [
+        85,
+        90
+      ],
+      "lecture_material": "Post-training and reasoning procedures include intermediate reasoning, tree search, program-aided solutions and decomposition into subproblems.",
+      "research_extension": "Wei et al., p. 1; Yao et al., p. 3; Gao et al., p. 1: CoT exemplars, search over thoughts and delegation of generated programs to an interpreter.",
+      "teaching_construction": "Original search-size arithmetic, procedure verification example and distinction between executable calculation and correct problem specification.",
+      "evidence_class": "definition: CoT, ToT, PAL and process versus outcome feedback; engineering check: Original search-size and executable-answer distinctions",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "CoT, ToT, PAL and process versus outcome feedback"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original search-size and executable-answer distinctions"
+        }
+      ]
+    },
+    {
+      "section": "preference",
+      "title": "12. Preference training changes a policy under stated feedback 40:18",
+      "start": 2418.7,
+      "end": 2589.55,
+      "segments": [
+        91,
+        97
+      ],
+      "lecture_material": "The overview distinguishes human/AI preference feedback, direct preference optimization, group-relative optimization and process versus outcome feedback.",
+      "research_extension": "Ouyang et al., pp. 1\u20132; Rafailov et al., pp. 3\u20134; Lee et al., p. 1; Shao et al., pp. 13\u201314; Lightman et al., p. 1: distinct feedback pipelines, DPO reference-policy objective, GRPO baseline and bounded process/outcome comparison.",
+      "teaching_construction": "Original logistic derivative, numerical preference margin, group-normalization and zero-variance checks; lockout objective-mismatch example.",
+      "evidence_class": "theorem: Bradley-Terry logistic derivative and DPO normalizer cancellation under source assumptions; engineering check: Original margin, group-zero variance and objective mismatch",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Bradley-Terry logistic derivative and DPO normalizer cancellation under source assumptions"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original margin, group-zero variance and objective mismatch"
+        }
+      ]
+    },
+    {
+      "section": "agent",
+      "title": "13. An agent closes a feedback loop around the model 43:12",
+      "start": 2592.5,
+      "end": 2721.41,
+      "segments": [
+        98,
+        101
+      ],
+      "lecture_material": "Agents combine a model with observations and actions; refinement and reflective feedback can improve later attempts.",
+      "research_extension": "Shinn et al., Reflexion, PDF p. 1: episodic linguistic feedback without parameter updates.",
+      "teaching_construction": "Original observe/propose/validate/act workflow and proposed/permitted/attempted/confirmed state distinction.",
+      "evidence_class": "definition: Observe/propose/act loop and episodic reflection; engineering check: Action state and authorization boundaries",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Observe/propose/act loop and episodic reflection"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Action state and authorization boundaries"
+        }
+      ]
+    },
+    {
+      "section": "vision",
+      "title": "14. Change the tokenization and objective to handle images 45:21",
+      "start": 2721.41,
+      "end": 2911.41,
+      "segments": [
+        102,
+        108
+      ],
+      "lecture_material": "Images are represented through patch tokens; the speakers compare vision transformers with CNN locality/inductive priors and introduce CLIP image/text alignment through paired examples.",
+      "research_extension": "Dosovitskiy et al., p. 3; He et al., p. 3; Radford et al., p. 4: patch projection and positions, visible-only MAE encoder and symmetric paired contrastive objective.",
+      "teaching_construction": "Original patch-count and two-pair contrastive-loss calculations; wrong-pair temperature and cracked-seal reconstruction counterexamples.",
+      "evidence_class": "definition: ViT, MAE, paired contrastive learning; engineering check: Original patch count and two-pair loss",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "ViT, MAE, paired contrastive learning"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original patch count and two-pair loss"
+        }
+      ]
+    },
+    {
+      "section": "neuroscience",
+      "title": "15. A scientific prior changes what is hidden and what can be inferred 48:31",
+      "start": 2911.41,
+      "end": 3119.04,
+      "segments": [
+        109,
+        116
+      ],
+      "lecture_material": "BrainInterNet uses predefined brain networks, masked reconstruction and cross-attention to study resting-state fMRI predictability and network relationships.",
+      "research_extension": "Singh et al., BrainInterNet, PDF pp. 1, 3\u20134: network-guided masking and predictive cross-attention study; no physiological causal or prospective clinical certificate.",
+      "teaching_construction": "Original conditional squared-error decomposition and independent-noise fixture; separation of predictability, physiological causality and clinical certification.",
+      "evidence_class": "empirical result: BrainInterNet network-guided predictive study; theorem: Conditional squared-error decomposition for finite second moment",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "BrainInterNet network-guided predictive study"
+        },
+        {
+          "class": "theorem",
+          "claim": "Conditional squared-error decomposition for finite second moment"
+        }
+      ]
+    },
+    {
+      "section": "deployment",
+      "title": "16. Smaller models and additional training repay different limitations 51:59",
+      "start": 3119.04,
+      "end": 3305.44,
+      "segments": [
+        117,
+        123
+      ],
+      "lecture_material": "The speakers raise questions about small models, scaling returns, retention of earlier abilities and generalization beyond training examples.",
+      "research_extension": null,
+      "teaching_construction": "Original evaluation design distinguishing capacity, exposure, context, retention and reliable procedure selection.",
+      "evidence_class": "engineering check: Capacity, exposure, context and held-out generalization design; speaker judgment: Overview research/deployment questions",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Capacity, exposure, context and held-out generalization design"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Overview research/deployment questions"
+        }
+      ]
+    },
+    {
+      "section": "truth",
+      "title": "17. Define the reference before labeling hallucination 55:05",
+      "start": 3305.44,
+      "end": 3838.78,
+      "segments": [
+        124,
+        144
+      ],
+      "lecture_material": "Hallucination is discussed through a reference world, a visible view and a conflict policy; knowledge, prediction and planning/reward errors are distinguished.",
+      "research_extension": "Liu et al., retained February 2026 v2, PDF pp. 3\u20134: reference/view/conflict-policy framing and three truth statuses.",
+      "teaching_construction": "Original reference-status formalization with distinct notation, true/false/unknown maintenance examples and independent action-precondition gate.",
+      "evidence_class": "definition: Reference/view/policy and three-valued evidence status; engineering check: Original finite evidence and action gate",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Reference/view/policy and three-valued evidence status"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original finite evidence and action gate"
+        }
+      ]
+    },
+    {
+      "section": "memory",
+      "title": "18. Distinguish stored evidence, context adaptation, and parameter change 1:03:58",
+      "start": 3838.78,
+      "end": 4086.58,
+      "segments": [
+        145,
+        153
+      ],
+      "lecture_material": "Persistent memory, continual learning and model editing are introduced, including changing a fact and handling related knowledge.",
+      "research_extension": "Meng et al., PDF pp. 1, 4: model-specific factual interventions and editing, with no architecture-independent success guarantee.",
+      "teaching_construction": "Original revision-aware memory schema and distinction among external store, current context and weight updates.",
+      "evidence_class": "definition: External store, context, parameters and continual learning; empirical result: Model-specific ROME interventions, no general guarantee",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "External store, context, parameters and continual learning"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Model-specific ROME interventions, no general guarantee"
+        }
+      ]
+    },
+    {
+      "section": "alignment",
+      "title": "19. Interpret a computation and align a decision under different tests 1:08:07",
+      "start": 4087.79,
+      "end": 4337.74,
+      "segments": [
+        154,
+        163
+      ],
+      "lecture_material": "The lecture discusses interpretability, faithfulness, objective mismatch, constitutional feedback and oversight as alignment research questions.",
+      "research_extension": "Bai et al., PDF p. 1: principle-guided critique/revision and AI feedback; feedback procedure is not a universal safety proof.",
+      "teaching_construction": "Original safety-objective and explanation-faithfulness examples; evaluation/oversight boundaries.",
+      "evidence_class": "definition: Feedback procedures, principles, oversight and interpretability; engineering check: Original lockout objective mismatch",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Feedback procedures, principles, oversight and interpretability"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original lockout objective mismatch"
+        }
+      ]
+    },
+    {
+      "section": "alternatives",
+      "title": "20. Change the representation target or the sequence state 1:12:18",
+      "start": 4338.9,
+      "end": 4601.1,
+      "segments": [
+        164,
+        174
+      ],
+      "lecture_material": "JEPA predicts representations rather than directly reconstructing every observation; state-space models are introduced as another route for sequence modeling.",
+      "research_extension": "Assran et al., PDF p. 3; Gu and Dao, PDF pp. 3\u20134: representation prediction and asymmetric target training; fixed state-space equations versus selective input-dependent dynamics.",
+      "teaching_construction": "Original latent-target objective and collapse caution, fixed-matrix state-space derivation and order-sensitive scalar recurrence.",
+      "evidence_class": "definition: Latent-target prediction, state-space recurrence and selective dynamics; engineering check: Original order-sensitive finite state fixture",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Latent-target prediction, state-space recurrence and selective dynamics"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original order-sensitive finite state fixture"
+        }
+      ]
+    },
+    {
+      "section": "lab",
+      "title": "21. An executable check of information and decision boundaries",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": "Original material; no lecture interval claimed",
+      "research_extension": null,
+      "teaching_construction": "Original executable finite fixtures, shared float-representability validation and exact displayed stdout; no lecture interval.",
+      "evidence_class": "engineering check: Original stdlib implementation and exact stdout",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Original stdlib implementation and exact stdout"
+        }
+      ]
+    },
+    {
+      "section": "exercises",
+      "title": "22. Six exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": "Original material; no lecture interval claimed",
+      "research_extension": null,
+      "teaching_construction": "Six original fully worked exercises combining computation, proof, experimental design, diagnosis and interpretation; no lecture interval.",
+      "evidence_class": "engineering check: Six original full solutions",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Six original full solutions"
+        }
+      ]
+    },
+    {
+      "section": "references",
+      "title": "23. Primary sources and limits",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": "Original material; no lecture interval claimed",
+      "research_extension": "The 25 cited retained primary PDFs support the specific claims and checked pages recorded in references and primary_source_audit.",
+      "teaching_construction": "Original claim-level bibliography and source/version limits; no lecture interval.",
+      "evidence_class": "definition: Claim-bearing primary source identification",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Claim-bearing primary source identification"
+        }
+      ]
+    }
+  ],
+  "omitted_material": [
+    {
+      "segments": [
+        1,
+        15
+      ],
+      "start": 4.94,
+      "end": 410.8,
+      "reason": "Course administration, sponsors and speaker biographies"
+    },
+    {
+      "segments": [
+        174,
+        174
+      ],
+      "scope": "Administrative preview at the end only; substantive JEPA/SSM content remains represented in alternatives",
+      "reason": "Next-speaker preview and course logistics omitted"
+    }
+  ],
+  "coverage_check": "Segments 1\u201315 omitted as administration; 16\u2013174 allocated once in substantive sections. Administrative ending within segment 174 locally omitted. Original sections have null intervals.",
+  "primary_source_audit": [
+    {
+      "id": "1706.03762",
+      "url": "https://arxiv.org/pdf/1706.03762",
+      "bytes": 2215244,
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "status": "saved",
+      "page_count": 15,
+      "pages_checked": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "supports": "Encoder/decoder, QKV scaling, multiple heads, FFN, position and normalization; original post-normalization layout.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2603.29522",
+      "url": "https://arxiv.org/pdf/2603.29522",
+      "bytes": 1295478,
+      "sha256": "adba4d10b5616ab1d4e703d9c2e107be239e3105b9fecc33cb54d0e5acb4cd59",
+      "status": "saved",
+      "page_count": 26,
+      "pages_checked": [
+        1,
+        3,
+        5
+      ],
+      "supports": "Controlled small-data scaling study; grammar differences and bounded task-specific results.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2603.29552",
+      "url": "https://arxiv.org/pdf/2603.29552",
+      "bytes": 6138088,
+      "sha256": "6e0b8970c3d4a79253cb91d22f675e23bf9dccdf1bbb16fc3ed386c79bc5ddf6",
+      "status": "saved",
+      "page_count": 23,
+      "pages_checked": [
+        1,
+        3,
+        4,
+        6
+      ],
+      "supports": "Word-budget and tokenizer conditions; Table 1 metric-specific comparison, including English PPL 5.26 versus 2.69.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2604.00715v1",
+      "url": "https://arxiv.org/pdf/2604.00715v1",
+      "bytes": 8090392,
+      "sha256": "b5bd05412a3920c115c788b16c5351a5fc592a2dacb05410654cb4d6c41898f7",
+      "status": "saved",
+      "page_count": 21,
+      "pages_checked": [
+        1,
+        4,
+        5
+      ],
+      "supports": "April 2026 retrieval/pretraining tradeoff under answer-likelihood metrics; indexed data is a resource.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2604.00715v2",
+      "url": "https://arxiv.org/pdf/2604.00715v2",
+      "bytes": 8392218,
+      "sha256": "730c07b352167c24cb7a0371957c1e4a1611a298923a3aacd89065cc099721cb",
+      "status": "saved",
+      "page_count": 21,
+      "pages_checked": [
+        1,
+        4,
+        6
+      ],
+      "supports": "August 2026 revision distinguishes likelihood/calibration/decision metrics and model-size-dependent directions. Page 6 claim-bearing conclusion read.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2506.11389v1",
+      "url": "https://arxiv.org/pdf/2506.11389v1",
+      "bytes": 1242432,
+      "sha256": "c37ca6f0fc69b94a74cf3e11d9dc8d06d3d1bbc3a9b34f220fa4eedf62f37de5",
+      "status": "saved",
+      "page_count": 15,
+      "pages_checked": [
+        1,
+        3,
+        4
+      ],
+      "supports": "Progressively introduced random layers, warmup with old layers frozen, then joint optimization; curriculum mechanism.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2305.18290",
+      "url": "https://arxiv.org/pdf/2305.18290",
+      "bytes": 1299212,
+      "sha256": "92cb3a2b71362acda98a789b03d88688fd33cf5fcf13f81d2b1de30ee7d3b67a",
+      "status": "saved",
+      "page_count": 27,
+      "pages_checked": [
+        3,
+        4
+      ],
+      "supports": "Reference-policy likelihood ratio and prompt-normalizer cancellation in the DPO derivation.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2402.03300",
+      "url": "https://arxiv.org/pdf/2402.03300",
+      "bytes": 1844642,
+      "sha256": "6cc20b3c5b8d25b8b53868fc4ec1792c144f07d67bdf7395138efd4422197e7b",
+      "status": "saved",
+      "page_count": 30,
+      "pages_checked": [
+        13,
+        14
+      ],
+      "supports": "Group-relative reward baseline and outcome/process supervision; GRPO is not simply the policy ranking itself.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2203.02155",
+      "url": "https://arxiv.org/pdf/2203.02155",
+      "bytes": 1797405,
+      "sha256": "c1984bb50a5b90fddb895fdc3a0f72e5bc977148c9f63ef6040cbe7a3e1f0d98",
+      "status": "saved",
+      "page_count": 68,
+      "pages_checked": [
+        1,
+        2
+      ],
+      "supports": "Demonstrations, ranked outputs, reward fitting and policy optimization are different stages.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2201.11903",
+      "url": "https://arxiv.org/pdf/2201.11903",
+      "bytes": 891773,
+      "sha256": "7d9f878c23b460e4566aa4ec9201b1abfb3b8faefb2b1356e411cb90fef72a12",
+      "status": "saved",
+      "page_count": 43,
+      "pages_checked": [
+        1
+      ],
+      "supports": "Chain-of-thought prompting supplies intermediate reasoning examples; no universal reasoning guarantee.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2305.10601",
+      "url": "https://arxiv.org/pdf/2305.10601",
+      "bytes": 799685,
+      "sha256": "79c5237e3f63953a73f2b0d6894327702ee1f7e981450c251bb1b5cb4f8d7b8f",
+      "status": "saved",
+      "page_count": 14,
+      "pages_checked": [
+        3
+      ],
+      "supports": "Tree-of-thought proposal, evaluation and search operations are distinct from one linear trace.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2211.10435",
+      "url": "https://arxiv.org/pdf/2211.10435",
+      "bytes": 1180832,
+      "sha256": "388628b05575ce71a9e8c0dd3a371addcb293f3b4fe31f61d58f7ec99560597b",
+      "status": "saved",
+      "page_count": 34,
+      "pages_checked": [
+        1
+      ],
+      "supports": "Program-aided reasoning delegates an executable calculation to an interpreter.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2303.11366",
+      "url": "https://arxiv.org/pdf/2303.11366",
+      "bytes": 591097,
+      "sha256": "6059b6f89fea9959bd3dab553fbb97756a3dfb1b15e3cbab2fbf3ab6664333bd",
+      "status": "saved",
+      "page_count": 19,
+      "pages_checked": [
+        1
+      ],
+      "supports": "Linguistic episodic reflection without weight updates.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2010.11929",
+      "url": "https://arxiv.org/pdf/2010.11929",
+      "bytes": 3743814,
+      "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "status": "saved",
+      "page_count": 22,
+      "pages_checked": [
+        3
+      ],
+      "supports": "Patch projection, positions, transformer encoder and optional classification token.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": [
+        3
+      ]
+    },
+    {
+      "id": "2103.00020",
+      "url": "https://arxiv.org/pdf/2103.00020",
+      "bytes": 6813639,
+      "sha256": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5",
+      "status": "saved",
+      "page_count": 48,
+      "pages_checked": [
+        4
+      ],
+      "supports": "Symmetric paired image/text contrastive objective.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2603.00786",
+      "url": "https://arxiv.org/pdf/2603.00786",
+      "bytes": 4159099,
+      "sha256": "25596b7ddbd093cf9ac69c2af49264124690e237c13ca144826240affaa1154b",
+      "status": "saved",
+      "page_count": 10,
+      "pages_checked": [
+        1,
+        3,
+        4
+      ],
+      "supports": "Network-guided fMRI masking and cross-attention reconstruction; predictive study, not a physiological causal or clinical certificate.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": [
+        3
+      ]
+    },
+    {
+      "id": "2202.05262",
+      "url": "https://arxiv.org/pdf/2202.05262",
+      "bytes": 8262403,
+      "sha256": "d7c17f896cca512fb258261421b073baa6f4e6e44b6bb7ada5c90185f423054a",
+      "status": "saved",
+      "page_count": 35,
+      "pages_checked": [
+        1,
+        4
+      ],
+      "supports": "Model-specific factual interventions and editing; portability and side-effect limits.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2312.00752",
+      "url": "https://arxiv.org/pdf/2312.00752",
+      "bytes": 1168615,
+      "sha256": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e",
+      "status": "saved",
+      "page_count": 36,
+      "pages_checked": [
+        3,
+        4
+      ],
+      "supports": "Fixed linear state-space equations versus input-dependent selective dynamics.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": [
+        3
+      ]
+    },
+    {
+      "id": "2212.08073",
+      "url": "https://arxiv.org/pdf/2212.08073",
+      "bytes": 2088111,
+      "sha256": "9a456a07ad346e3372f9867d346f69f5b0f68b4c65f060aca0b8a13fa9d98e83",
+      "status": "saved",
+      "page_count": 34,
+      "pages_checked": [
+        1
+      ],
+      "supports": "Principle-guided critique/revision and AI preference feedback.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2305.20050",
+      "url": "https://arxiv.org/pdf/2305.20050",
+      "bytes": 4384742,
+      "sha256": "fbd170e2042c32950c3fe97d3a558d89e8a8dffaadc942e774ccb4b751abc123",
+      "status": "saved",
+      "page_count": 29,
+      "pages_checked": [
+        1
+      ],
+      "supports": "Process versus outcome supervision comparison in the reported mathematical setting.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2301.08243",
+      "url": "https://arxiv.org/pdf/2301.08243",
+      "bytes": 3571832,
+      "sha256": "eddbdc093eb4d48662bcf4fbd1c6735ccd606205cc9070977ce317d68aff3941",
+      "status": "saved",
+      "page_count": 17,
+      "pages_checked": [
+        3
+      ],
+      "supports": "Predicting target latent representations; transformer encoders and asymmetric target training.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": [
+        3
+      ]
+    },
+    {
+      "id": "2512.21577v2",
+      "url": "https://arxiv.org/pdf/2512.21577v2",
+      "bytes": 8472741,
+      "sha256": "99067c3d96f6a9a997df103563c2d08b30a6105bf81eec97a570ce49964b04df",
+      "status": "saved",
+      "page_count": 15,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "supports": "Reference/view/policy; true, false and unknown; absence of established falsehood differs from established action preconditions.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2205.14135",
+      "url": "https://arxiv.org/pdf/2205.14135",
+      "bytes": 2630825,
+      "sha256": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4",
+      "status": "saved",
+      "page_count": 34,
+      "pages_checked": [
+        1
+      ],
+      "supports": "Exact attention through memory-aware tiling; no claim that dense pairwise arithmetic becomes linear.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2111.06377",
+      "url": "https://arxiv.org/pdf/2111.06377",
+      "bytes": 7445748,
+      "sha256": "1b490443925c72a2b7c770f90dd797e248729ae34a57e1abfe9ed36751c4cc5b",
+      "status": "saved",
+      "page_count": 14,
+      "pages_checked": [
+        3
+      ],
+      "supports": "Visible-only encoder and masked-token reconstruction decoder.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    },
+    {
+      "id": "2309.00267",
+      "url": "https://arxiv.org/pdf/2309.00267",
+      "bytes": 2531894,
+      "sha256": "2fe7b8b57b81bfc7f5b8086f152ed3861ae839c2000fc2ab2dfed559f121164a",
+      "status": "saved",
+      "page_count": 28,
+      "pages_checked": [
+        1
+      ],
+      "supports": "AI feedback versus human feedback study; revised source and no universal label-equivalence claim.",
+      "reading_status": "Claim-bearing portions read; no full-paper certification",
+      "cited_in_chapter": true,
+      "pages_rendered_and_inspected": []
+    }
+  ],
+  "source_version_boundaries": [
+    "2604.00715v1 April and v2 August have different titles and metric emphasis. v1 uses per-token gold-answer PPL; v2 uses character-normalized gold-answer NLL, Brier score and decision error. Neither establishes universal retrieval benefit.",
+    "A four-pretraining-tokens-per-parameter crossover shown in the lecture is excluded from generalized textbook claims.",
+    "Bilingual sentence-switching English PPL differs (5.26 versus 2.69), even when grammar and word-similarity metrics are closer. Budget units are words, not tokenizer units.",
+    "GRPO reward source and group baseline are separate; the chapter does not call it self-ranking.",
+    "BrainInterNet attention and reconstructability are model/data predictive objects; clinical diagnosis and physiological causality are not established by them.",
+    "Paper reading entries identify checked claims and pages, not entire-paper comprehension or inspection of unseen plots."
+  ],
+  "author_allocation": "Inherited GPT-6-based Codex child agent; no unsupported historical author/editor model attestation",
+  "prose_word_count_without_math_code_svg": 10278,
+  "exercise_count": 6,
+  "original_code": {
+    "filename": "chapter01.py",
+    "sha256": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
+    "dependencies": "Python 3 standard library only",
+    "embedded_byte_identity": true,
+    "checks": "Masked future-value invariance, unmasked permutation, finite normalized rows, stable softmax, token NLL, constrained convex allocation, stable preference loss, action gate; shared finite float-conversion boundary, huge-integer rejection, attention arithmetic overflow rejection and allocation endpoint-rounding rejection",
+    "stdout": "causal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\n"
+  },
+  "quality_passes": [
+    {
+      "pass": "1-2",
+      "result": "Actual source files inspected; all 174 transcript segments read sequentially; matching slide text read; full substantive coverage mapped"
+    },
+    {
+      "pass": "3-6",
+      "result": "Self-contained manuscript with first-use notation, explicit mathematical hinges, original fixtures and six complete solutions"
+    },
+    {
+      "pass": "6a",
+      "result": "12 specified official slide pages and four primary PDF page-3 diagrams rendered and inspected; no unviewed visual attestation"
+    },
+    {
+      "pass": "6c",
+      "result": "Claim-bearing portions of 25 retained public PDFs read; 26th Hiera source excluded; source drift recorded locally"
+    },
+    {
+      "pass": "6b",
+      "result": "Accepted by independent editor after bounded repairs; zero remaining blocking findings"
+    },
+    {
+      "pass": "7-8",
+      "result": "Independent prose and pedagogical parity review passed against CS230 chapter 9 and CS231N chapter 14"
+    },
+    {
+      "pass": "9",
+      "result": "Root reader, code, source, offline math/rendering, privacy and preservation validation passed; current scope and hashes recorded in validation-summary.json. Human screen-reader audit not performed."
+    }
+  ],
+  "gate6b": {
+    "status": "accepted",
+    "round": 1,
+    "blocking_findings": 0,
+    "review_date": "2026-10-02",
+    "reviewer": "Separate inherited Codex agent",
+    "accepted_authored_body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
+    "reviewed_metadata_sha256": "1965a1e351be88cecffc56d973c3b8cc450998a4dffd16d5aecd768e3427e9e5",
+    "scope": "Full manuscript, all six solutions, code, source claim pages and provenance; independent prose and parity checks passed. Course completion is separate."
+  },
+  "publication": "Not published",
+  "permission_errors_current_author_task": {
+    "permission_rejections": 0,
+    "AbsolutePathBuf_errors": 0
+  },
+  "references": [
+    {
+      "id": "1706.03762",
+      "title": "Attention Is All You Need",
+      "url": "https://arxiv.org/pdf/1706.03762v7",
+      "version": "1706.03762v7",
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "supports": "PDF pp. 3, 4, 5, 6: Encoder/decoder, QKV scaling, multiple heads, FFN, position and normalization; original post-normalization layout."
+    },
+    {
+      "id": "2603.29522",
+      "title": "Baby Scale: Investigating Models Trained on Individual Children\u2019s Language Input",
+      "url": "https://arxiv.org/pdf/2603.29522v1",
+      "version": "2603.29522v1",
+      "sha256": "adba4d10b5616ab1d4e703d9c2e107be239e3105b9fecc33cb54d0e5acb4cd59",
+      "supports": "PDF pp. 1, 3, 5: Controlled small-data scaling study; grammar differences and bounded task-specific results."
+    },
+    {
+      "id": "2603.29552",
+      "title": "Bringing Up a Bilingual BabyLM: Investigating Multilingual Language Acquisition Using Small-Scale Models",
+      "url": "https://arxiv.org/pdf/2603.29552v2",
+      "version": "2603.29552v2",
+      "sha256": "6e0b8970c3d4a79253cb91d22f675e23bf9dccdf1bbb16fc3ed386c79bc5ddf6",
+      "supports": "PDF pp. 1, 3, 4, 6: Word-budget and tokenizer conditions; Table 1 metric-specific comparison, including English PPL 5.26 versus 2.69."
+    },
+    {
+      "id": "2604.00715v1",
+      "title": "To Memorize or to Retrieve: Scaling Laws for RAG-Considerate Pretraining",
+      "url": "https://arxiv.org/pdf/2604.00715v1",
+      "version": "2604.00715v1",
+      "sha256": "b5bd05412a3920c115c788b16c5351a5fc592a2dacb05410654cb4d6c41898f7",
+      "supports": "PDF pp. 1, 4, 5: April 2026 retrieval/pretraining tradeoff under answer-likelihood metrics; indexed data is a resource."
+    },
+    {
+      "id": "2604.00715v2",
+      "title": "To Memorize or to Retrieve: Scaling the Interaction Between Pretraining and Retrieval",
+      "url": "https://arxiv.org/pdf/2604.00715v2",
+      "version": "2604.00715v2",
+      "sha256": "730c07b352167c24cb7a0371957c1e4a1611a298923a3aacd89065cc099721cb",
+      "supports": "PDF pp. 1, 4, 6: August 2026 revision distinguishes likelihood/calibration/decision metrics and model-size-dependent directions. Page 6 claim-bearing conclusion read."
+    },
+    {
+      "id": "2506.11389v1",
+      "title": "Curriculum-Guided Layer Scaling for Language Model Pretraining",
+      "url": "https://arxiv.org/pdf/2506.11389v1",
+      "version": "2506.11389v1",
+      "sha256": "c37ca6f0fc69b94a74cf3e11d9dc8d06d3d1bbc3a9b34f220fa4eedf62f37de5",
+      "supports": "PDF pp. 1, 3, 4: Progressively introduced random layers, warmup with old layers frozen, then joint optimization; curriculum mechanism."
+    },
+    {
+      "id": "2305.18290",
+      "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+      "url": "https://arxiv.org/pdf/2305.18290v3",
+      "version": "2305.18290v3",
+      "sha256": "92cb3a2b71362acda98a789b03d88688fd33cf5fcf13f81d2b1de30ee7d3b67a",
+      "supports": "PDF pp. 3, 4: Reference-policy likelihood ratio and prompt-normalizer cancellation in the DPO derivation."
+    },
+    {
+      "id": "2402.03300",
+      "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+      "url": "https://arxiv.org/pdf/2402.03300v3",
+      "version": "2402.03300v3",
+      "sha256": "6cc20b3c5b8d25b8b53868fc4ec1792c144f07d67bdf7395138efd4422197e7b",
+      "supports": "PDF pp. 13, 14: Group-relative reward baseline and outcome/process supervision; GRPO is not simply the policy ranking itself."
+    },
+    {
+      "id": "2203.02155",
+      "title": "Training language models to follow instructions with human feedback",
+      "url": "https://arxiv.org/pdf/2203.02155v1",
+      "version": "2203.02155v1",
+      "sha256": "c1984bb50a5b90fddb895fdc3a0f72e5bc977148c9f63ef6040cbe7a3e1f0d98",
+      "supports": "PDF pp. 1, 2: Demonstrations, ranked outputs, reward fitting and policy optimization are different stages."
+    },
+    {
+      "id": "2201.11903",
+      "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+      "url": "https://arxiv.org/pdf/2201.11903v6",
+      "version": "2201.11903v6",
+      "sha256": "7d9f878c23b460e4566aa4ec9201b1abfb3b8faefb2b1356e411cb90fef72a12",
+      "supports": "PDF pp. 1: Chain-of-thought prompting supplies intermediate reasoning examples; no universal reasoning guarantee."
+    },
+    {
+      "id": "2305.10601",
+      "title": "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
+      "url": "https://arxiv.org/pdf/2305.10601v2",
+      "version": "2305.10601v2",
+      "sha256": "79c5237e3f63953a73f2b0d6894327702ee1f7e981450c251bb1b5cb4f8d7b8f",
+      "supports": "PDF pp. 3: Tree-of-thought proposal, evaluation and search operations are distinct from one linear trace."
+    },
+    {
+      "id": "2211.10435",
+      "title": "PAL: Program-aided Language Models",
+      "url": "https://arxiv.org/pdf/2211.10435v2",
+      "version": "2211.10435v2",
+      "sha256": "388628b05575ce71a9e8c0dd3a371addcb293f3b4fe31f61d58f7ec99560597b",
+      "supports": "PDF pp. 1: Program-aided reasoning delegates an executable calculation to an interpreter."
+    },
+    {
+      "id": "2303.11366",
+      "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+      "url": "https://arxiv.org/pdf/2303.11366v4",
+      "version": "2303.11366v4",
+      "sha256": "6059b6f89fea9959bd3dab553fbb97756a3dfb1b15e3cbab2fbf3ab6664333bd",
+      "supports": "PDF pp. 1: Linguistic episodic reflection without weight updates."
+    },
+    {
+      "id": "2010.11929",
+      "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+      "url": "https://arxiv.org/pdf/2010.11929v2",
+      "version": "2010.11929v2",
+      "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "supports": "PDF pp. 3: Patch projection, positions, transformer encoder and optional classification token."
+    },
+    {
+      "id": "2103.00020",
+      "title": "Learning Transferable Visual Models From Natural Language Supervision",
+      "url": "https://arxiv.org/pdf/2103.00020v1",
+      "version": "2103.00020v1",
+      "sha256": "6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5",
+      "supports": "PDF pp. 4: Symmetric paired image/text contrastive objective."
+    },
+    {
+      "id": "2603.00786",
+      "title": "Interpretable Cross-Network Attention for Resting-State fMRI Representation Learning",
+      "url": "https://arxiv.org/pdf/2603.00786v1",
+      "version": "2603.00786v1",
+      "sha256": "25596b7ddbd093cf9ac69c2af49264124690e237c13ca144826240affaa1154b",
+      "supports": "PDF pp. 1, 3, 4: Network-guided fMRI masking and cross-attention reconstruction; predictive study, not a physiological causal or clinical certificate."
+    },
+    {
+      "id": "2202.05262",
+      "title": "Locating and Editing Factual Associations in GPT",
+      "url": "https://arxiv.org/pdf/2202.05262v5",
+      "version": "2202.05262v5",
+      "sha256": "d7c17f896cca512fb258261421b073baa6f4e6e44b6bb7ada5c90185f423054a",
+      "supports": "PDF pp. 1, 4: Model-specific factual interventions and editing; portability and side-effect limits."
+    },
+    {
+      "id": "2312.00752",
+      "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+      "url": "https://arxiv.org/pdf/2312.00752v2",
+      "version": "2312.00752v2",
+      "sha256": "adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e",
+      "supports": "PDF pp. 3, 4: Fixed linear state-space equations versus input-dependent selective dynamics."
+    },
+    {
+      "id": "2212.08073",
+      "title": "Constitutional AI: Harmlessness from AI Feedback",
+      "url": "https://arxiv.org/pdf/2212.08073v1",
+      "version": "2212.08073v1",
+      "sha256": "9a456a07ad346e3372f9867d346f69f5b0f68b4c65f060aca0b8a13fa9d98e83",
+      "supports": "PDF pp. 1: Principle-guided critique/revision and AI preference feedback."
+    },
+    {
+      "id": "2305.20050",
+      "title": "Let\u2019s Verify Step by Step",
+      "url": "https://arxiv.org/pdf/2305.20050v1",
+      "version": "2305.20050v1",
+      "sha256": "fbd170e2042c32950c3fe97d3a558d89e8a8dffaadc942e774ccb4b751abc123",
+      "supports": "PDF pp. 1: Process versus outcome supervision comparison in the reported mathematical setting."
+    },
+    {
+      "id": "2301.08243",
+      "title": "Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture",
+      "url": "https://arxiv.org/pdf/2301.08243v3",
+      "version": "2301.08243v3",
+      "sha256": "eddbdc093eb4d48662bcf4fbd1c6735ccd606205cc9070977ce317d68aff3941",
+      "supports": "PDF pp. 3: Predicting target latent representations; transformer encoders and asymmetric target training."
+    },
+    {
+      "id": "2512.21577v2",
+      "title": "A Unified Definition of Hallucination: It\u2019s The World Model, Stupid!",
+      "url": "https://arxiv.org/pdf/2512.21577v2",
+      "version": "2512.21577v2",
+      "sha256": "99067c3d96f6a9a997df103563c2d08b30a6105bf81eec97a570ce49964b04df",
+      "supports": "PDF pp. 1, 2, 3, 4: Reference/view/policy; true, false and unknown; absence of established falsehood differs from established action preconditions."
+    },
+    {
+      "id": "2205.14135",
+      "title": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+      "url": "https://arxiv.org/pdf/2205.14135v2",
+      "version": "2205.14135v2",
+      "sha256": "ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4",
+      "supports": "PDF pp. 1: Exact attention through memory-aware tiling; no claim that dense pairwise arithmetic becomes linear."
+    },
+    {
+      "id": "2111.06377",
+      "title": "Masked Autoencoders Are Scalable Vision Learners",
+      "url": "https://arxiv.org/pdf/2111.06377v3",
+      "version": "2111.06377v3",
+      "sha256": "1b490443925c72a2b7c770f90dd797e248729ae34a57e1abfe9ed36751c4cc5b",
+      "supports": "PDF pp. 3: Visible-only encoder and masked-token reconstruction decoder."
+    },
+    {
+      "id": "2309.00267",
+      "title": "RLAIF vs. RLHF: Scaling Reinforcement Learning from Human Feedback with AI Feedback",
+      "url": "https://arxiv.org/pdf/2309.00267v3",
+      "version": "2309.00267v3",
+      "sha256": "2fe7b8b57b81bfc7f5b8086f152ed3861ae839c2000fc2ab2dfed559f121164a",
+      "supports": "PDF pp. 1: AI feedback versus human feedback study; revised source and no universal label-equivalence claim."
+    }
+  ]
+}

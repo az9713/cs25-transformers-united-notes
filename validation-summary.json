@@ -1,0 +1,216 @@
+{
+  "course": "CS25",
+  "checked_at_utc": "2026-10-02T23:44:41.170615+00:00",
+  "scope": "Actual current files, source identities, embedded programs, reader mechanics, privacy and preservation; editorial acceptance is separate",
+  "status": "passed",
+  "course_complete": false,
+  "chapters": [
+    {
+      "file": "lecture-01-overview-of-transformers.html",
+      "html_sha256": "88e67c07c7b3ea5c498055ddc9636aec9ab91fdb57052870aa6be22af514937e",
+      "authored_body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
+      "metadata_sha256": "8b6a7d93d8a812535d8237c1974464201115619ed660f9923a10aa8ccd6e6ac4",
+      "programs": [
+        {
+          "code_sha256": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "causal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    }
+  ],
+  "sources": [
+    {
+      "chapter": 1,
+      "video_id": "bHSDPgZYie0",
+      "hashes_match": true
+    },
+    {
+      "chapter": 2,
+      "video_id": "GBd7iuJkW08",
+      "hashes_match": true
+    },
+    {
+      "chapter": 3,
+      "video_id": "OyimE74UMF8",
+      "hashes_match": true
+    },
+    {
+      "chapter": 4,
+      "video_id": "I5BKi32IEa8",
+      "hashes_match": true
+    },
+    {
+      "chapter": 5,
+      "video_id": "e_H_tkpCAK4",
+      "hashes_match": true
+    },
+    {
+      "chapter": 6,
+      "video_id": "dJtHauhRasc",
+      "hashes_match": true
+    },
+    {
+      "chapter": 7,
+      "video_id": "jFdH7n6BAl0",
+      "hashes_match": true
+    },
+    {
+      "chapter": 8,
+      "video_id": "NDdc39KYqDU",
+      "hashes_match": true
+    },
+    {
+      "chapter": 9,
+      "video_id": "ZUdIsRZhWXI",
+      "hashes_match": true
+    }
+  ],
+  "static": {
+    "status": "passed",
+    "html_files": 6,
+    "local_links_checked": 51,
+    "timestamps_checked": 20,
+    "chapter_pages_with_dollar_math": 1,
+    "failures": [],
+    "warnings": []
+  },
+  "browser": {
+    "status": "passed",
+    "findings": [
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "index.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "index.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 317,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-01-overview-of-transformers.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 317,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-01-overview-of-transformers.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "numerical-lab.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "numerical-lab.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "references.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "references.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "source-map.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 0,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "source-map.html",
+        "viewport": 390
+      }
+    ],
+    "failures": [],
+    "clipboard": "Fallback branch checked with captured text; manual OS clipboard verification not performed",
+    "network": "HTTP and HTTPS requests blocked during browser checks"
+  },
+  "cumulative_lab": {
+    "status": "passed",
+    "js_python_parity_cases": 24,
+    "native_controls_and_invalid_input": "passed",
+    "code_sha256": "882f902c724ed91bea6eef762d3192ed3d9e19305a36d3d193dfd36c766479cf",
+    "stdout": "causal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\n"
+  },
+  "privacy": {
+    "status": "passed",
+    "files_checked": 23
+  },
+  "artifacts_sha256": {
+    ".gitattributes": "c3f9fe541cd8d6ca6ae2a5a0ec1e340681dd2208264c8dcaa107415cc7972f6e",
+    ".gitignore": "dea959feab84d9e515447340b5668c754a40eb8ce3406a4fc3b4c24149cb1e5d",
+    "README.md": "4ae392d20eb912281601cdae24630dcda86dfc0415becf9bc3f296dfdba16c71",
+    "assets/book.css": "3a626f4bac6ee017ff33edf20ee09cb6121fe94bfffe4b3b602f8cdff017d3de",
+    "assets/book.js": "7a7c3ba2766e09ceae27bd5f960fa43c33289c647d800de4d1b3777533aaaad7",
+    "assets/lab.js": "fd913ee2019f35da5a8900fbfb8c642299ea6ec7f38646e9f8ea3278f44fa543",
+    "assets/mathjax-LICENSE": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "assets/mathjax-tex-svg.js": "d4295dc33744836935c1399feece5159577b34c5c8ffb9f1c6324cd82e03a882",
+    "assets/preview-mobile.png": "b6e8128378cd1d7a0a35375e28a6c7c91d938affdedf968b571c756dc0b8b18e",
+    "assets/preview.png": "9d4076ff757c84c67acad99c2faa4a153614e52e71efdb47d6eee1c6f1c14c94",
+    "book-overview.html": "72b481c7f481a4ef50957fa96c78d18f2b0333f53e71379b9e895870cc258ff7",
+    "chapter01.py": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
+    "index.html": "683d7c290720cc945e3b69ee8f712576205cbbacad6e18f14081d7d4a0f6c975",
+    "lecture-01-overview-of-transformers.html": "88e67c07c7b3ea5c498055ddc9636aec9ab91fdb57052870aa6be22af514937e",
+    "lecture-01-overview-of-transformers.meta.json": "8b6a7d93d8a812535d8237c1974464201115619ed660f9923a10aa8ccd6e6ac4",
+    "numerical-lab.html": "5603306c91d176030c54094b9cec395bd060e66befcd20eab0844c4bec56e3aa",
+    "numerical_lab.py": "882f902c724ed91bea6eef762d3192ed3d9e19305a36d3d193dfd36c766479cf",
+    "references.html": "9db949cd52de3362b3cd01c103c9e472dfa16a5512509d5d6b23601d8460d43f",
+    "source-manifest.json": "8168017ddc104546b7f99487e07c63910c0d78679f9e5df26aa9b625e62411e6",
+    "source-map.html": "0b8a1c7aa517d858cbdedf179d871fb0457a9b7fe8b7f4bcd90aa783353b0e2f",
+    "source-map.json": "1b68c8188468977e47cdb4874e0ffd0eb09a2a7e0d0976acf2f1c5f5b320d49d"
+  },
+  "human_screen_reader_audit": "not performed",
+  "publication": "not published",
+  "failures": []
+}
