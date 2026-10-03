@@ -2688,6 +2688,1113 @@
       "duration": 3708
     },
     {
+      "section": "case",
+      "title": "A scientific assistant with a fixed learning budget",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Scientific continuation case; exposure and computation ledgers; prerequisites.",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Scientific continuation case; exposure and computation ledgers; prerequisites.",
+          "origin": "Original teaching construction"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "recipe",
+      "title": "1. Four levers in a training recipe",
+      "start": 76.66,
+      "end": 210.03,
+      "segments": [
+        3,
+        7
+      ],
+      "lecture_material": "Data, architecture, algorithms and collaboration; named projects and distinction among pretraining/CPT/SFT/RL.",
+      "teaching_construction": "Token/LLM and training-operation first-use definitions; model objective boundary.",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Data, architecture, algorithms and collaboration; named projects and distinction among pretraining/CPT/SFT/RL.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Token/LLM and training-operation first-use definitions; model objective boundary.",
+          "origin": "Original teaching construction"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "learners",
+      "title": "2. Four learners, three interventions",
+      "start": 210.03,
+      "end": 394.06,
+      "segments": [
+        8,
+        14
+      ],
+      "lecture_material": "Pascal/Volta/Ampere/Hopper learning-strategy analogy.",
+      "teaching_construction": "Separate interventions and consequential experimental comparisons.",
+      "research_extension": null,
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Pascal/Volta/Ampere/Hopper learning-strategy analogy.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Separate interventions and consequential experimental comparisons.",
+          "origin": "Original teaching construction"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "stock",
+      "title": "3. A finite stock is a motivation, not a deadline",
+      "start": 394.06,
+      "end": 461.65,
+      "segments": [
+        15,
+        17
+      ],
+      "lecture_material": "Human-text resource constraint and reported exhaustion forecast.",
+      "teaching_construction": "Unique stock versus effective stock versus processed tokens; fixed local budget.",
+      "research_extension": "Historical Epoch public-human-text forecast is conditional; exact lecture95% wording not independently established.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Human-text resource constraint and reported exhaustion forecast.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Unique stock versus effective stock versus processed tokens; fixed local budget.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Historical Epoch public-human-text forecast is conditional; exact lecture95% wording not independently established.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "blend",
+      "title": "4. Source weights and repeated exposure",
+      "start": 463.22,
+      "end": 571.44,
+      "segments": [
+        18,
+        22
+      ],
+      "lecture_material": "Quality classifiers, epoch analysis and source blending.",
+      "teaching_construction": "Expected epoch identity, source/sampling domains and(.75,3,1) fixture.",
+      "research_extension": "Two-Phase quality/epoch blend construction is empirical recipe selection.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Quality classifiers, epoch analysis and source blending.",
+          "origin": "Recording"
+        },
+        {
+          "class": "theorem",
+          "claim": "Expected epoch identity under the specified token mixture and source sizes.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Expected epochs(.75,3,1), natural weights(.8,.1,.1) and repeat/budget arithmetic.",
+          "origin": "Original fixture"
+        },
+        {
+          "class": "definition",
+          "claim": "Two-Phase quality/epoch blend construction is tested recipe selection.",
+          "origin": "Pinned Two-Phase v1"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "curriculum",
+      "title": "5. Two phases can preserve the total mixture",
+      "start": 571.44,
+      "end": 710.83,
+      "segments": [
+        23,
+        28
+      ],
+      "lecture_material": "Diversity early, selected quality late; random-order and natural-distribution comparisons.",
+      "teaching_construction": "Two-phase conservation identity and same-exposure numerical case.",
+      "research_extension": "Two-Phase baseline and curated-diversity conventions.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Diversity early/selected quality late and baseline comparison conventions.",
+          "origin": "Recording and pinned Two-Phase v1"
+        },
+        {
+          "class": "theorem",
+          "claim": "Two-phase aggregate weight and exposure conservation identity.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Phase exposures(480,60,60)+(120,240,40) preserve earlier aggregate.",
+          "origin": "Original fixture"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "order-proof",
+      "title": "6. Why identical data can lead to different endpoints",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Exact finite scalar order difference and same strongly convex minimizer limit;0.5/0.375check.",
+      "research_extension": null,
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Two equal-rate scalar updates differ by eta-squared times target difference; shared strongly convex optimum is(a+b)/2.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Endpoints.5/.375 and difference.125 for supplied targets/rate/state.",
+          "origin": "Original fixture"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "two-phase-results",
+      "title": "7. Isolating selection from order in the reported results",
+      "start": 711.09,
+      "end": 761.84,
+      "segments": [
+        29,
+        30
+      ],
+      "lecture_material": "Reported17% total and3.4% order gains; repeat/phase-duration discussion.",
+      "teaching_construction": "Percentage points versus relative change;7.69/1.74-point calculations and horizon implications.",
+      "research_extension": "Two-Phase Table4 and epoch/phase-duration reported outcomes; overall aggregates individual tasks.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Reported17% total and3.4% order gains; repeat/phase-duration discussion.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Percentage points versus relative change;7.69/1.74-point calculations and horizon implications.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Two-Phase Table4 and epoch/phase-duration reported outcomes; overall aggregates individual tasks.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "early-reasoning",
+      "title": "8. Introduce reasoning examples before SFT?",
+      "start": 762.64,
+      "end": 917.14,
+      "segments": [
+        31,
+        37
+      ],
+      "lecture_material": "SHQ/LDQ/LMQ and introducing reasoning traces before SFT.",
+      "teaching_construction": "Training-operation composition and confounding boundaries.",
+      "research_extension": "Front-Loading8B/1T/80:20 setup, corpus composition and stage protocols.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "SHQ/LDQ/LMQ, reasoning traces and early exposure proposal.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Front-Loading8B/1T/80:20 protocols, corpus composition, model operations and confounded experimental labels.",
+          "origin": "Pinned Front-Loading v1 and original teaching"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "evaluation",
+      "title": "9. Measure the advantage within each training stage",
+      "start": 918.9,
+      "end": 1045.22,
+      "segments": [
+        38,
+        42
+      ],
+      "lecture_material": "Base and SFT comparisons, general reasoning/math/code evaluations.",
+      "teaching_construction": "Within-stage8.35/9.30-point arithmetic; changed-suite inference limit;Pass@1 definition.",
+      "research_extension": "Front-Loading Tables1/2 reported aggregates and distinct evaluation protocols.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Base and SFT comparisons, general reasoning/math/code evaluations.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Within-stage8.35/9.30-point arithmetic; changed-suite inference limit;Pass@1 definition.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Front-Loading Tables1/2 reported aggregates and distinct evaluation protocols.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "latent",
+      "title": "10. A benefit can become visible after a later intervention",
+      "start": 1045.22,
+      "end": 1134.1,
+      "segments": [
+        43,
+        46
+      ],
+      "lecture_material": "Latent benefit of narrow reasoning data after SFT.",
+      "teaching_construction": "Aggregate equality does not imply functional identity or reveal mechanism;4.25-point arithmetic.",
+      "research_extension": "Front-Loading Tables1/4 LDQ/LMQ scores.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Latent benefit of narrow reasoning data after SFT.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Aggregate equality does not imply functional identity or reveal mechanism;4.25-point arithmetic.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Front-Loading Tables1/4 LDQ/LMQ scores.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "catchup",
+      "title": "11. What the catch-up and RL comparisons establish",
+      "start": 1134.1,
+      "end": 1340.43,
+      "segments": [
+        47,
+        54
+      ],
+      "lecture_material": "SFT catch-up attempt, fixed-data-budget assertion and RL comparison.",
+      "teaching_construction": "Bounded catch-up conclusion; table-local metric arithmetic and conflict audit.",
+      "research_extension": "Front-Loading Tables3/4 and appendix aggregate discrepancies; unsupported12% and39.32number retained as attributed.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "SFT catch-up attempt, fixed-data-budget assertion and RL comparison.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Bounded catch-up conclusion; table-local metric arithmetic and conflict audit.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Front-Loading Tables3/4 and appendix aggregate discrepancies; unsupported12% and39.32number retained as attributed.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "quality",
+      "title": "12. Quality labels, long traces and domain limits",
+      "start": 1340.66,
+      "end": 1505.26,
+      "segments": [
+        55,
+        61
+      ],
+      "lecture_material": "Q&A on reasoning traces, dataset quality, STEM/code/math and domain scope.",
+      "teaching_construction": "Separate length, step validity, teacher/domain and provenance axes.",
+      "research_extension": "Front-Loading long-trace filter also changes domain composition.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Q&A on reasoning traces, dataset quality, STEM/code/math and domain scope.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Separate length, step validity, teacher/domain and provenance axes.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Front-Loading long-trace filter also changes domain composition.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "recipe-search",
+      "title": "13. Recipe search spends a second budget",
+      "start": 1505.3,
+      "end": 1673.42,
+      "segments": [
+        62,
+        67
+      ],
+      "lecture_material": "Epoch ablations/manual blend decisions and reported reverse-order failure.",
+      "teaching_construction": "Development-compute ledger, validation selection and reverse-ablation attribution limit.",
+      "research_extension": null,
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Epoch ablations/manual blend decisions and reported reverse-order failure.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Development-compute ledger, validation selection and reverse-ablation attribution limit.",
+          "origin": "Original teaching construction"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "active-learning",
+      "title": "14. Generated thoughts change the training interaction",
+      "start": 1674.16,
+      "end": 1888.88,
+      "segments": [
+        68,
+        77
+      ],
+      "lecture_material": "Leo/Bolt analogy and reward-guided intermediate exploration.",
+      "teaching_construction": "NTP continuous-loss definition and sampled-action distinction.",
+      "research_extension": null,
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Leo/Bolt analogy and reward-guided intermediate exploration.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "NTP continuous-loss definition and sampled-action distinction.",
+          "origin": "Original teaching construction"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "causal-thought",
+      "title": "15. Separate the prefix, the thought and the held-out token",
+      "start": 1890.13,
+      "end": 1998.86,
+      "segments": [
+        78,
+        81
+      ],
+      "lecture_material": "Photosynthesis example, prefix/thought/observed next-token interaction.",
+      "teaching_construction": "Original Joule-heating case; vocabulary/policy/scorer roles and fixed-state conditional-independence boundary.",
+      "research_extension": "RLP \u00a7\u00a72.1\u20132.2/Algorithm1 causal generation followed by observed-token scoring.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Photosynthesis example, prefix/thought/observed next-token interaction.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Original Joule-heating case; vocabulary/policy/scorer roles and fixed-state conditional-independence boundary.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP \u00a7\u00a72.1\u20132.2/Algorithm1 causal generation followed by observed-token scoring.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "reward",
+      "title": "16. A log-evidence reward and its numerical meaning",
+      "start": 2000.53,
+      "end": 2149.55,
+      "segments": [
+        82,
+        87
+      ],
+      "lecture_material": "Continuous likelihood improvement versus no-think comparator.",
+      "teaching_construction": "Positive-log-gain iff higher observed probability; three-probability reward fixture; truth/MI distinction.",
+      "research_extension": "RLP observed-token log-likelihood-ratio reward.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Observed-token log-likelihood ratio versus no-think comparator.",
+          "origin": "Recording and pinned RLP v2"
+        },
+        {
+          "class": "theorem",
+          "claim": "Strictly positive log reward iff higher observed-token probability.",
+          "origin": "Original elementary proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Three-probability log3/0/minuslog2 fixture.",
+          "origin": "Original fixture"
+        },
+        {
+          "class": "definition",
+          "claim": "Observed likelihood is distinct from logical validity and true mutual information.",
+          "origin": "Original scope"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "ce-proof",
+      "title": "17. Expected reward equals a cross-entropy difference",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "CE identity derivation and KL/Bayes ceiling under fixed-state prefix-only sampling; binary expected-reward check.",
+      "research_extension": "RLP Proposition1 and proof: expected reward is a CE difference.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "CE difference, KL/Bayes expected-loss ceiling and zero true conditional MI under fixed-model prefix-only thought sampling.",
+          "origin": "Original derivation; CE identity also pinned RLP Proposition1"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Binary expected gain.130812nats and negative second-token sample.",
+          "origin": "Original fixture"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "marginal-proof",
+      "title": "18. Sampled thoughts and the marginalized predictor",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Finite-thought Jensen proof, equality conditions and0.202733/0.559616check; no monotonic optimizer guarantee.",
+      "research_extension": "RLP Proposition2 and appendix8.3 marginalized-predictor relation.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Finite positive-support marginalized predictor/Jensen inequality and equality condition.",
+          "origin": "Original derivation; pinned RLP Proposition2"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Expected sampled reward.202733 and marginal gain.559616.",
+          "origin": "Original fixture"
+        },
+        {
+          "class": "definition",
+          "claim": "More general expectations need integrability; bound alone supplies no monotonic optimizer guarantee.",
+          "origin": "Original mathematical scope"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "ema",
+      "title": "19. A moving no-think comparator",
+      "start": 2149.55,
+      "end": 2187.49,
+      "segments": [
+        88,
+        89
+      ],
+      "lecture_material": "EMA comparator and proposed reward-hacking/stability motivation.",
+      "teaching_construction": "Parameter-space versus probability-space average;2.002 and693-step numerical checks.",
+      "research_extension": "RLP EMA parameter update, initialization and decay.999.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "EMA comparator and proposed reward-hacking/stability motivation.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Parameter-space versus probability-space average;2.002 and693-step numerical checks.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP EMA parameter update, initialization and decay.999.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "policy-hinge",
+      "title": "20. Which gradient is actually applied?",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Fixed-scorer score-function derivation, zero expected score and full-shared-objective versus semigradient distinction.",
+      "research_extension": "RLP \u00a72.4/Algorithm1 detached reward, gradients on thought tokens, no standard NTP term.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Fixed-scorer score-function derivation, zero expected score and full-shared-objective versus semigradient distinction.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP \u00a72.4/Algorithm1 detached reward, gradients on thought tokens, no standard NTP term.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "group-proof",
+      "title": "21. Inclusive group centering and its correction",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Iid frozen on-policy correction proof and explicit limits; harmful-positive and all-equal examples.",
+      "research_extension": "RLP equation7 G/(G-1)-corrected inclusive mean advantage.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Corrected inclusive group mean formula and relative-advantage meaning.",
+          "origin": "Pinned RLP equation7 and original teaching"
+        },
+        {
+          "class": "theorem",
+          "claim": "Correction removes shrinkage for iid on-policy frozen-reward unnormalized sequence estimator; other modifications outside proof.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Three-reward advantage vector, harmful-positive and all-equal examples.",
+          "origin": "Original fixtures"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "baseline-cancellation",
+      "title": "22. The common EMA term cancels",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Common-baseline cancellation through corrected advantages and detached clipping; empirical-mechanism nonidentification.",
+      "research_extension": "RLP equation7 baseline term and TableS6 reported EMA outcomes remain unresolved mechanistically.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Common-baseline cancellation through corrected advantages and detached clipping; empirical-mechanism nonidentification.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP equation7 baseline term and TableS6 reported EMA outcomes remain unresolved mechanistically.",
+          "origin": "Pinned primary research"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Source-algorithm audit finds common baseline cancels; TableS6 supplies no checked reconciliation.",
+          "origin": "Original proof/source audit"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "clipping",
+      "title": "23. Per-token clipping is a surrogate objective",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Signed2.4/\u22121.6 scalar checks and hard-trust-region/unbiasedness limits.",
+      "research_extension": "RLP equation8 token importance ratios, signed minimum and per-thought length mean.",
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Signed2.4/\u22121.6 scalar checks and hard-trust-region/unbiasedness limits.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP equation8 token importance ratios, signed minimum and per-thought length mean.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "qwen",
+      "title": "24. The Qwen experiment and post-training persistence",
+      "start": 2187.49,
+      "end": 2322.45,
+      "segments": [
+        90,
+        95
+      ],
+      "lecture_material": "Qwen RLP/CPT/base and post-training persistence comparisons.",
+      "teaching_construction": "Table-local5.71/5.18/3.17-point and18.83/16.79/8.06% calculations; absolute gap shrinks.",
+      "research_extension": "RLP Table1 Qwen3-1.7B setup and outcomes.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Qwen RLP/CPT/base and post-training persistence comparisons.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Table-local5.71/5.18/3.17-point and18.83/16.79/8.06% calculations; absolute gap shrinks.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table1 Qwen3-1.7B setup and outcomes.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "compute",
+      "title": "25. Input tokens, generated tokens, FLOPs and time",
+      "start": 2324.85,
+      "end": 2414.83,
+      "segments": [
+        96,
+        99
+      ],
+      "lecture_material": "Token-matched versus FLOP-matched comparisons and roughly35-fold input ratio.",
+      "teaching_construction": "Original partial dense compute ledger, exact counts, equivalent work and units/runtime distinction; comparison conflict audit.",
+      "research_extension": "RLP Table4 plus appendix22/25 FLOP accounting, mislabeled baseline and separate32K timing protocol.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Reported roughly35-fold input-token comparison.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP input/FLOP accounting and separate32K SFT/RLP timing setup.",
+          "origin": "Pinned RLP v2 appendix22/25"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Table4 matched43.36/38.04 results and TableS7 measured5.54/12.47sec steps.",
+          "origin": "Pinned RLP v2"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original partial dense count ledger,35.29ratio,5.32-point/13.99%gain,2.25timing ratio and appendix mislabeled6B audit.",
+          "origin": "Original computation/source audit"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "nano",
+      "title": "26. A larger hybrid model and mixed outcomes",
+      "start": 2419.44,
+      "end": 2541.39,
+      "segments": [
+        100,
+        104
+      ],
+      "lecture_material": "Hybrid Nemotron-Nano experiment and persistence.",
+      "teaching_construction": "Observed-token199.75Bdifference,43.24% table arithmetic and retained task regressions.",
+      "research_extension": "RLP Table2 Nano12B checkpoint and pre/post-training outcomes;35%summary discrepancy.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Hybrid Nemotron-Nano experiment and persistence.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Observed-token199.75Bdifference,43.24% table arithmetic and retained task regressions.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table2 Nano12B checkpoint and pre/post-training outcomes;35%summary discrepancy.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "related",
+      "title": "27. Four ways to learn from intermediate reasoning",
+      "start": 2541.39,
+      "end": 2719.6,
+      "segments": [
+        105,
+        112
+      ],
+      "lecture_material": "Quiet-STaR/RPT/RLPT comparison and token-matched RLP result.",
+      "teaching_construction": "Prediction/verification/filter/causality distinctions and1.66-point arithmetic.",
+      "research_extension": "Pinned Quiet-STaR/RPT/RLPT mechanisms and RLP Table3 specific reproduction comparison.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Quiet-STaR/RPT/RLPT comparison and token-matched RLP result.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Prediction/verification/filter/causality distinctions and1.66-point arithmetic.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Pinned Quiet-STaR/RPT/RLPT mechanisms and RLP Table3 specific reproduction comparison.",
+          "origin": "Pinned primary research"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table3 token-matched RPT/RLP41.69/43.35 comparison; original1.66-point/3.98%arithmetic separately graded engineering check.",
+          "origin": "Pinned RLP v2"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "synthesis-results",
+      "title": "28. Corpus robustness and the limits of a combined story",
+      "start": 2721.87,
+      "end": 2926.45,
+      "segments": [
+        113,
+        120
+      ],
+      "lecture_material": "Corpus results, learner synthesis and rough combined60% story.",
+      "teaching_construction": "Factorial-interaction requirement;7.24\u20139.17-point arithmetic and nonmonotonic hyperparameter interpretation.",
+      "research_extension": "RLP Table4 six corpus results and TableS1 sampled-recipe hyperparameters.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Learner synthesis and rough combined60%claim.",
+          "origin": "Recording"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table4 six corpus results and TableS1 nonmonotonic rollout/length/regularization outcomes.",
+          "origin": "Pinned RLP v2"
+        },
+        {
+          "class": "definition",
+          "claim": "Chosen16rollouts/max2048/zeroKL recipe is an experimental convention.",
+          "origin": "Pinned RLP v2"
+        },
+        {
+          "class": "engineering check",
+          "claim": "7.24\u20139.17-point arithmetic and factorial/interactions needed for combined claim.",
+          "origin": "Original audit/design"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "grpo",
+      "title": "29. Group-relative optimization does not require binary rewards",
+      "start": 2929.17,
+      "end": 3020.85,
+      "segments": [
+        121,
+        123
+      ],
+      "lecture_material": "Group-relative method relationship and log-gain versus zero/one analogy.",
+      "teaching_construction": "Different normalizations and zero-standard-deviation boundary.",
+      "research_extension": "DeepSeekMath \u00a7\u00a74.1.2\u20134.1.3 learned outcome/process rewards and original GRPO standard-deviation normalization.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Group-relative method relationship and log-gain versus zero/one analogy.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Different normalizations and zero-standard-deviation boundary.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "DeepSeekMath \u00a7\u00a74.1.2\u20134.1.3 learned outcome/process rewards and original GRPO standard-deviation normalization.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "open-questions",
+      "title": "30. Multimodal, alignment and quality questions remain distinct",
+      "start": 3020.85,
+      "end": 3333.07,
+      "segments": [
+        124,
+        134
+      ],
+      "lecture_material": "Untested multimodal extension; alignment/hallucination expertise boundary; educational/domain-quality rubric discussion.",
+      "teaching_construction": "Quality target must fit scientific reader; no truth/alignment cure inferred.",
+      "research_extension": "FineWeb v1 educational rubric0\u20135 and school-content focus; EssentialWeb name recording-only.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Untested multimodal extension; alignment/hallucination expertise boundary; educational/domain-quality rubric discussion.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Quality target must fit scientific reader; no truth/alignment cure inferred.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "FineWeb v1 educational rubric0\u20135 and school-content focus; EssentialWeb name recording-only.",
+          "origin": "Pinned primary research"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "sampling",
+      "title": "31. Eligible everywhere does not mean trained everywhere",
+      "start": 3335.44,
+      "end": 3468.5,
+      "segments": [
+        135,
+        139
+      ],
+      "lecture_material": "One uniform selected target per document, no entropy filter; unpublished4Tcheckpoint discussion.",
+      "teaching_construction": "Conditional document-uniform versus token-uniform expected reward identity;0.5/0.8fixture.",
+      "research_extension": "RLP \u00a73 one-target-per-document protocol; no undocumented loader weighting claimed.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Uniformly selected single target per document; no entropy filter.",
+          "origin": "Recording and pinned RLP \u00a73"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Additional4Tcheckpoint result is attributed unpublished report without retained table.",
+          "origin": "Recording"
+        },
+        {
+          "class": "theorem",
+          "claim": "Document-uniform versus token-uniform expected reward identities under stated sampling assumptions.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Two-document0.5/0.8exposure-measure fixture; no actual loader weighting attestation.",
+          "origin": "Original fixture"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "program",
+      "title": "32. Executable: two ledgers and a frozen thought scorer",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Original finite stdlib program, explicit representability contract,24 invalid checks and exact output.",
+      "research_extension": null,
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Original finite stdlib program, explicit representability contract,24 invalid checks and exact output.",
+          "origin": "Original teaching construction"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "exercises",
+      "title": "33. Exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Six mixed complete solutions: exposure constraint, optimization proof, CE/Jensen/MI, iid enumeration, signed clipping/compute and factorial audit.",
+      "research_extension": null,
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Exercise2 order identity/minimizer; Exercise3 CE/Jensen/MI/KL; Exercise4 iid corrected-estimator enumeration.",
+          "origin": "Original teaching"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Exercise1 exposure/cap arithmetic; Exercise5 signed surrogate and partial compute counts; Exercise6 factorial/metric/source-conflict audit.",
+          "origin": "Original teaching"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
+      "section": "takeaways",
+      "title": "34. What to carry into the next training decision",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Original scientific-assistant synthesis and reproducible training-decision criteria.",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Original scientific-assistant synthesis and reproducible training-decision criteria.",
+          "origin": "Original teaching construction"
+        }
+      ],
+      "chapter": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "video_id": "e_H_tkpCAK4",
+      "duration": 3477
+    },
+    {
       "section": "modes",
       "title": "1. Separate parameter learning from contextual access 0:04",
       "start": 4.66,
@@ -3409,6 +4516,2781 @@
       "chapter": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
       "video_id": "dJtHauhRasc",
       "duration": 4350
+    },
+    {
+      "section": "mission",
+      "title": "1. Define the collaborator's job 1:02",
+      "start": 62.59,
+      "end": 145.07,
+      "segments": [
+        2,
+        4
+      ],
+      "lecture_material": "Collaborative science/medicine mission and co-scientist agenda.",
+      "research_extension": null,
+      "teaching_construction": "Fictional organoid decision; hypothesis/proposal distinction.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Collaborative research aspiration",
+          "origin": "recording 2\u20134"
+        },
+        {
+          "class": "definition",
+          "claim": "Hypothesis, proposal and distinct acceptance tests",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Fibrosis/antifibrotic terminology",
+          "origin": "nci-fibrosis; official definition and original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Collaborative research aspiration; definition: Hypothesis, proposal and distinct acceptance tests; definition: Fibrosis/antifibrotic terminology",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "origins",
+      "title": "2. A hypothesis becomes consequential when it leaves the text interface 2:25",
+      "start": 145.07,
+      "end": 435.04,
+      "segments": [
+        5,
+        15
+      ],
+      "lecture_material": "Med-PaLM origins, genetic hypothesis collaboration and reported mouse validation.",
+      "research_extension": "Tu et al. 2026 original journal abstract only; no full-PDF inspection.",
+      "teaching_construction": "Intervention, phenotype and species boundaries.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Project origins",
+          "origin": "recording 5\u201315"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Abstract-reported hearing-loss candidate knock-in validation in mice",
+          "origin": "genetic-abstract; abstract only"
+        },
+        {
+          "class": "definition",
+          "claim": "Knock-in intervention and model-specific inference",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Phenotype as an observable or measurable biological trait",
+          "origin": "nhgri-phenotype; official glossary"
+        }
+      ],
+      "evidence_class": "speaker judgment: Project origins; empirical result: Abstract-reported hearing-loss candidate knock-in validation in mice; definition: Knock-in intervention and model-specific inference; definition: Phenotype as an observable or measurable biological trait",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "slow",
+      "title": "3. Spending more time requires a reason to expect new information 7:15",
+      "start": 435.04,
+      "end": 547.81,
+      "segments": [
+        16,
+        19
+      ],
+      "lecture_material": "System-1/System-2 analogy and deliberately slow scientific reasoning.",
+      "research_extension": null,
+      "teaching_construction": "Uncertainty-operation-stopping task record and unchanged-premise counterexample.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Cognitive analogy",
+          "origin": "recording 16\u201319"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Evidence-seeking versus repeated defense task design",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Cognitive analogy; engineering check: Evidence-seeking versus repeated defense task design",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "generality",
+      "title": "4. Breadth of interface and reliability of outcome are separate axes 9:07",
+      "start": 547.81,
+      "end": 1054.99,
+      "segments": [
+        20,
+        38
+      ],
+      "lecture_material": "Conceptual task/generality plot, AlphaFold contrast, Deep Blue and language interface.",
+      "research_extension": "IBM original history corrects the spoken match date to May1997.",
+      "teaching_construction": "Task-specific evaluation axes; predictions versus measured structures.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Generality plot and natural-language interface motivation",
+          "origin": "recording 20\u201338; no unseen plot inspection"
+        },
+        {
+          "class": "empirical result",
+          "claim": "May1997 Deep Blue match date",
+          "origin": "ibm; opening/match section"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Separate retrieval, interpretation and identifiable experiment outcomes",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Generality plot and natural-language interface motivation; empirical result: May1997 Deep Blue match date; engineering check: Separate retrieval, interpretation and identifiable experiment outcomes",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "selfplay",
+      "title": "5. What can scientific debate inherit from self-play? 17:34",
+      "start": 1054.99,
+      "end": 1361.36,
+      "segments": [
+        39,
+        49
+      ],
+      "lecture_material": "Self-play/search lineage motivates scientific debate and multi-agent systems.",
+      "research_extension": "AlphaZero v1 pp.1\u20133: rules, random initialization, external outcomes and weight updates.",
+      "teaching_construction": "Closed game reward versus unresolved biological outcome.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Original AlphaGo versus AlphaZero training lineage and outcome-driven learning",
+          "origin": "alphazero; pp.1\u20133"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Reported within24h AlphaZero performance, correcting spoken duration",
+          "origin": "alphazero; p.1"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Scientific-debate transfer motivation",
+          "origin": "recording 39\u201349"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Rhetorical win without a measured biological label",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Original AlphaGo versus AlphaZero training lineage and outcome-driven learning; empirical result: Reported within24h AlphaZero performance, correcting spoken duration; speaker judgment: Scientific-debate transfer motivation; engineering check: Rhetorical win without a measured biological label",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "goal",
+      "title": "6. Convert a research wish into an explicit contract 22:41",
+      "start": 1361.36,
+      "end": 1526.19,
+      "segments": [
+        50,
+        55
+      ],
+      "lecture_material": "Human goal, constraints, rubric, seeds, context and reports.",
+      "research_extension": "Co-scientist v1 pp.7\u20138,13 interface.",
+      "teaching_construction": "Hard constraints versus compensable preferences; claim-source record.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Human-controlled research-goal interface",
+          "origin": "coscientist; pp.7\u20138,13"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Organoid goal contract and unresolved source handling",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Human-controlled research-goal interface; engineering check: Organoid goal contract and unresolved source handling",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "agents",
+      "title": "7. Specialized roles organize a search; they do not create independent scientists 25:26",
+      "start": 1526.19,
+      "end": 1738.16,
+      "segments": [
+        56,
+        63
+      ],
+      "lecture_material": "Asynchronous generation/reflection/ranking/evolution and specialized strategies.",
+      "research_extension": "Co-scientist v1 pp.7\u201313 six-role architecture; evolution retains previous hypotheses.",
+      "teaching_construction": "Version-bound stale-review counterexample.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Six roles and evolution adding new hypotheses",
+          "origin": "coscientist; pp.7\u201313"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Hypothesis/goal/source version binding",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Six roles and evolution adding new hypotheses; engineering check: Hypothesis/goal/source version binding",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "ranking",
+      "title": "8. Derive Elo's meaning before interpreting its score 28:58",
+      "start": 1738.16,
+      "end": 1844.85,
+      "segments": [
+        64,
+        67
+      ],
+      "lecture_material": "Pairwise scientific debate and Elo prioritization.",
+      "research_extension": "Co-scientist v1 pp.11\u201312 initial1200; no inspected K/scale disclosure.",
+      "teaching_construction": "Explicit original scale400/step32 model, update arithmetic, conservation and cyclic impossibility.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Source initialization and comparison-based prioritization",
+          "origin": "coscientist; pp.11\u201312"
+        },
+        {
+          "class": "definition",
+          "claim": "Stipulated Elo convention; not verified implementation constants",
+          "origin": "original teaching"
+        },
+        {
+          "class": "theorem",
+          "claim": "Paired sum conservation and scalar cycle contradiction",
+          "origin": "original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Two-win arithmetic and preference/truth counterexample",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Source initialization and comparison-based prioritization; definition: Stipulated Elo convention; not verified implementation constants; theorem: Paired sum conservation and scalar cycle contradiction; engineering check: Two-win arithmetic and preference/truth counterexample",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "memory",
+      "title": "9. Memory can improve the next prompt while leaving the model unchanged 30:44",
+      "start": 1844.85,
+      "end": 1994.86,
+      "segments": [
+        68,
+        73
+      ],
+      "lecture_material": "Attention bottleneck, debate summaries and humility.",
+      "research_extension": "Co-scientist v1 pp.9\u201312 prompt feedback without fine-tuning/RL/backprop.",
+      "teaching_construction": "Fixed parameters versus changing context; correlated-error derivation.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Prompt-context feedback with fixed weights",
+          "origin": "coscientist; pp.9\u201312"
+        },
+        {
+          "class": "theorem",
+          "claim": "Equicorrelated mean variance and PSD domain",
+          "origin": "original proof under stated equal-variance model"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Ten-review .82 variance and effective1.219512 count",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Prompt-context feedback with fixed weights; theorem: Equicorrelated mean variance and PSD domain; engineering check: Ten-review .82 variance and effective1.219512 count",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "reports",
+      "title": "10. Compress reports without discarding the disagreement 33:14",
+      "start": 1994.86,
+      "end": 2081.73,
+      "segments": [
+        74,
+        76
+      ],
+      "lecture_material": "Stopping, clustered reports and dated multimodal/tool descriptions.",
+      "research_extension": "Co-scientist v1 pp.11\u201313 proximity/meta-review and imagined simulation.",
+      "teaching_construction": "Disagreement-preserving attention compression and actual-operation labels.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Proximity/meta-review and LLM-imagined simulation",
+          "origin": "coscientist; pp.11\u201313"
+        },
+        {
+          "class": "product claim",
+          "claim": "Speaker-described multimodal/tool system capabilities at talk date",
+          "origin": "recording 74\u201376"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Report preserves denominator objection and evidence boundary",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Proximity/meta-review and LLM-imagined simulation; product claim: Speaker-described multimodal/tool system capabilities at talk date; engineering check: Report preserves denominator objection and evidence boundary",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "budget",
+      "title": "11. Test-time compute and the value of an experiment answer different questions 34:41",
+      "start": 2081.73,
+      "end": 2408.29,
+      "segments": [
+        77,
+        88
+      ],
+      "lecture_material": "Q&A compute saturation, expert incentives, experimental bottleneck and model-family cost tradeoffs.",
+      "research_extension": "Co-scientist v1 pp.14\u201318 GPQA and temporal-bucket evaluations.",
+      "teaching_construction": "Bayesian odds, conditional independence, sample information value and toy action policy.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Problem-dependent saturation and expert allocation",
+          "origin": "recording 77\u201388"
+        },
+        {
+          "class": "product claim",
+          "claim": "Dated same-family Flash/Pro cost and reasoning choices",
+          "origin": "recording 87\u201388; no matched performance verification"
+        },
+        {
+          "class": "empirical result",
+          "claim": "203-goal temporal-bucket auto-evaluation and78.4% question-matched GPQA top-rated accuracy",
+          "origin": "coscientist; pp.14\u201318"
+        },
+        {
+          "class": "theorem",
+          "claim": "Bayesian binary posterior and nonnegative gross sample-information value",
+          "origin": "original conditional proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "8/17,64/73 and .4/.1 utility fixtures",
+          "origin": "original teaching; not biological estimates"
+        }
+      ],
+      "evidence_class": "speaker judgment: Problem-dependent saturation and expert allocation; product claim: Dated same-family Flash/Pro cost and reasoning choices; empirical result: 203-goal temporal-bucket auto-evaluation and78.4% question-matched GPQA top-rated accuracy; theorem: Bayesian binary posterior and nonnegative gross sample-information value; engineering check: 8/17,64/73 and .4/.1 utility fixtures",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "amr",
+      "title": "12. Recapitulating an unknown result is evidence with a provenance problem 40:08",
+      "start": 2408.29,
+      "end": 2638.86,
+      "segments": [
+        89,
+        96
+      ],
+      "lecture_material": "Thanksgiving2024 unpublished AMR recapitulation and two-day anecdote.",
+      "research_extension": "Co-scientist v1 pp.26\u201327 cf-PICI broad-host-range case.",
+      "teaching_construction": "Date-specific unpublished status and retrospective leakage controls.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Paper-reported expert-recognized AMR hypothesis case",
+          "origin": "coscientist; pp.26\u201327"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Timing and private-correspondence reassurance",
+          "origin": "recording 89\u201396"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Frozen information-boundary contamination design",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Phage/capsid terminology",
+          "origin": "niams-phage; original image description, text only"
+        }
+      ],
+      "evidence_class": "empirical result: Paper-reported expert-recognized AMR hypothesis case; speaker judgment: Timing and private-correspondence reassurance; engineering check: Frozen information-boundary contamination design; definition: Phage/capsid terminology",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "validation",
+      "title": "13. The validation ladder has several independently testable rungs 43:58",
+      "start": 2638.86,
+      "end": 2719.78,
+      "segments": [
+        97,
+        99
+      ],
+      "lecture_material": "AML, organoid and protein-design collaboration overview.",
+      "research_extension": "Co-scientist v1 pp.19\u201321 prescreened expert review and experimental selection.",
+      "teaching_construction": "Evidence ladder, selection conditioning, multiplicity derivation.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Expert prescreened selection in reported workflow",
+          "origin": "coscientist; pp.19\u201321"
+        },
+        {
+          "class": "definition",
+          "claim": "Preference, simulation, cellular and clinical endpoints",
+          "origin": "original teaching"
+        },
+        {
+          "class": "theorem",
+          "claim": "Independent false-any formula and general union bound",
+          "origin": "original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "100 null-test .994079 illustration",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "empirical result: Expert prescreened selection in reported workflow; definition: Preference, simulation, cellular and clinical endpoints; theorem: Independent false-any formula and general union bound; engineering check: 100 null-test .994079 illustration",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "aml",
+      "title": "14. Interpret a dose-response curve at the level actually measured 45:19",
+      "start": 2719.78,
+      "end": 2833.06,
+      "segments": [
+        100,
+        103
+      ],
+      "lecture_material": "AML dose-response, KIRA6 and narrower pathway novelty.",
+      "research_extension": "Co-scientist v1 pp.23\u201324 measured viability values and actual curves.",
+      "teaching_construction": "Original Hill model, midpoint-versus-absolute-half derivation and stable evaluation.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "KG-1/MOLM-13/HL-60 IC50s13/517/817nM and scoped known-pathway novelty",
+          "origin": "coscientist; pp.23\u201324"
+        },
+        {
+          "class": "definition",
+          "claim": "Original Hill curve and units",
+          "origin": "original teaching; not source fitting convention"
+        },
+        {
+          "class": "theorem",
+          "claim": "Dynamic-range midpoint and unattainable absolute-half conditions",
+          "origin": "original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": ".6 midpoint and12.909944 absolute-half fixture",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "empirical result: KG-1/MOLM-13/HL-60 IC50s13/517/817nM and scoped known-pathway novelty; definition: Original Hill curve and units; theorem: Dynamic-range midpoint and unattainable absolute-half conditions; engineering check: .6 midpoint and12.909944 absolute-half fixture",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "liver",
+      "title": "15. Resolve the denominator before claiming an antifibrotic mechanism 47:13",
+      "start": 2833.06,
+      "end": 2945.54,
+      "segments": [
+        104,
+        107
+      ],
+      "lecture_material": "Hepatic organoid antifibrotic candidates and domain complementarity.",
+      "research_extension": "Co-scientist v1 p.25 selected targets and model-specific antifibrotic/cellular-toxicity scope.",
+      "teaching_construction": "Marker factorization and nonidentifiability; viable-cell counterexample.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Three selected targets; compounds on two show activity without observed toxicity in tested organoids",
+          "origin": "coscientist; p.25"
+        },
+        {
+          "class": "theorem",
+          "claim": "Nonidentifiability of N and q from M=Nq",
+          "origin": "original counterexample"
+        },
+        {
+          "class": "engineering check",
+          "claim": "50-total-marker two-mechanism fixture and extra denominator",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Epigenetic gene regulation without DNA-sequence change",
+          "origin": "nhgri-epigenetics; official glossary"
+        }
+      ],
+      "evidence_class": "empirical result: Three selected targets; compounds on two show activity without observed toxicity in tested organoids; theorem: Nonidentifiability of N and q from M=Nq; engineering check: 50-total-marker two-mechanism fixture and extra denominator; definition: Epigenetic gene regulation without DNA-sequence change",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "structures",
+      "title": "16. Structural novelty can prioritize an anomaly without predicting its answer 49:05",
+      "start": 2945.54,
+      "end": 3031.54,
+      "segments": [
+        108,
+        110
+      ],
+      "lecture_material": "Structural Novelty Index and NRC7 eleven-member assembly.",
+      "research_extension": "Sept1,2026 author poster, later update; May preprint unavailable.",
+      "teaching_construction": "Anomalous assumed geometry versus externally measured assembly.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Maytalk structural-discovery report",
+          "origin": "recording 108\u2013110"
+        },
+        {
+          "class": "definition",
+          "claim": "Poster anomaly-prioritization workflow and NRC helper-family hexamer baseline",
+          "origin": "protein-poster; single page"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Poster electron microscopy supports named NRC7 eleven-subunit rings",
+          "origin": "protein-poster; later Sept2026 single-page visual"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Novelty priority distinct from a predicted correct structure or function",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Maytalk structural-discovery report; definition: Poster anomaly-prioritization workflow and NRC helper-family hexamer baseline; empirical result: Poster electron microscopy supports named NRC7 eleven-subunit rings; engineering check: Novelty priority distinct from a predicted correct structure or function",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "oct4",
+      "title": "17. A design loop needs an external definition of success 50:32",
+      "start": 3032.56,
+      "end": 3116.94,
+      "segments": [
+        111,
+        113
+      ],
+      "lecture_material": "OCT4 iterative variant design and speaker-reported laboratory feedback.",
+      "research_extension": "NCBI official POU5F1 identity/RefSeq summary through public Datasets API.",
+      "teaching_construction": "Intermediate structural score versus functional/organism endpoints.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "OCT4/POU5F1 transcription-factor identity",
+          "origin": "ncbi; gene5460 RefSeq summary"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Unpublished variant success",
+          "origin": "recording 111\u2013113; not independently validated"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Separate design-loop endpoints",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Transcription factor as a protein controlling gene activity",
+          "origin": "ncbi; inspected gene5460 record"
+        }
+      ],
+      "evidence_class": "definition: OCT4/POU5F1 transcription-factor identity; speaker judgment: Unpublished variant success; engineering check: Separate design-loop endpoints; definition: Transcription factor as a protein controlling gene activity",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "senescence",
+      "title": "18. An assay-defined cellular state is not an organism-level outcome 51:58",
+      "start": 3118.13,
+      "end": 3230.72,
+      "segments": [
+        114,
+        117
+      ],
+      "lecture_material": "Unpublished secreted-factor and Klotho comparisons.",
+      "research_extension": "NCI official cellular-state terminology.",
+      "teaching_construction": "Cell composition/readout counterexample and organism-level boundary.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unpublished senescence-factor results",
+          "origin": "recording 114\u2013117; not independently validated"
+        },
+        {
+          "class": "definition",
+          "claim": "Cell-division arrest distinguished from death",
+          "origin": "nci; definition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Marker change does not uniquely identify state change or rejuvenation",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Unpublished senescence-factor results; definition: Cell-division arrest distinguished from death; engineering check: Marker change does not uniquely identify state change or rejuvenation",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "ace",
+      "title": "19. A pathway narrative must preserve its causal gaps 53:50",
+      "start": 3230.72,
+      "end": 3399.28,
+      "segments": [
+        118,
+        123
+      ],
+      "lecture_material": "ACE/bradykinin/B2R pathway and chase-assay report.",
+      "research_extension": "No inspected original validates the specific speaker-described mechanism or clinical extension.",
+      "teaching_construction": "Edge-specific claim graph; causal-link and medication inference boundary.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unpublished pathway/chase-assay and disease-risk extension",
+          "origin": "recording 118\u2013123; unresolved"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Plausible-edge composition does not certify the causal chain",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Unpublished pathway/chase-assay and disease-risk extension; engineering check: Plausible-edge composition does not certify the causal chain",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "inverse",
+      "title": "20. Inverse comorbidity motivates a question, not a protective intervention 56:39",
+      "start": 3399.28,
+      "end": 3595.49,
+      "segments": [
+        124,
+        130
+      ],
+      "lecture_material": "Inverse-comorbidity/DHX9/SRRM4 exploratory expression and screening, explicitly unvalidated.",
+      "research_extension": "No inspected primary validation of the named target pair.",
+      "teaching_construction": "Competing-risk, ascertainment and expression-versus-dependency alternatives.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unvalidated exploratory gene-pair direction",
+          "origin": "recording 124\u2013130"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Association does not select among causal/confounding explanations",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Unvalidated exploratory gene-pair direction; engineering check: Association does not select among causal/confounding explanations",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "leakage",
+      "title": "21. \u201cFuture prediction\u201d requires a frozen information boundary 59:55",
+      "start": 3595.49,
+      "end": 3654.48,
+      "segments": [
+        131,
+        132
+      ],
+      "lecture_material": "Q&A training cutoff/leakage and unquantified trial-prediction success.",
+      "research_extension": null,
+      "teaching_construction": "Prospective frozen model/corpus/tool/proposal selection design.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Reasonable clinical-trial prediction success, unquantified",
+          "origin": "recording 131\u2013132"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Training cutoff alone does not freeze retrieval or human selection",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Reasonable clinical-trial prediction success, unquantified; engineering check: Training cutoff alone does not freeze retrieval or human selection",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "exchange",
+      "title": "22. Scientific data need claims, methods and negative results that travel together 1:00:54",
+      "start": 3654.83,
+      "end": 3774.66,
+      "segments": [
+        133,
+        136
+      ],
+      "lecture_material": "Q&A scientific papers/peer review and scientific-data exchange proposal.",
+      "research_extension": null,
+      "teaching_construction": "Claim/method/observation/version/negative-result record; historical policy uncertainty.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Data-exchange proposal and dated policy concern",
+          "origin": "recording 133\u2013136; current arXiv policy not asserted"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Reusable evidence fields and duplicate/selection controls",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Data-exchange proposal and dated policy concern; engineering check: Reusable evidence fields and duplicate/selection controls",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "attention",
+      "title": "23. Preserve useful dissent when a report becomes conservative 1:02:54",
+      "start": 3774.66,
+      "end": 3895.86,
+      "segments": [
+        137,
+        140
+      ],
+      "lecture_material": "Q&A conservative reports, reframing and proof subproblems.",
+      "research_extension": null,
+      "teaching_construction": "Recommendation/exploratory archive and assumption-compatible composition.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Report attention and subproblem strategy",
+          "origin": "recording 137\u2013140"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Preserve low-ranked dissent and missing connecting premises",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Report attention and subproblem strategy; engineering check: Preserve low-ranked dissent and missing connecting premises",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "safety",
+      "title": "24. Monitor goals, trajectories and outcomes at their own levels 1:04:59",
+      "start": 3899.28,
+      "end": 3985.71,
+      "segments": [
+        141,
+        143
+      ],
+      "lecture_material": "Q&A layered goal/trajectory/base-model safeguards and illustrative10% threshold.",
+      "research_extension": "Co-scientist v1 pp.17,28 adversarial tests and limitations.",
+      "teaching_construction": "Severity-weighted expected harm and separate authority preconditions.",
+      "claim_provenance": [
+        {
+          "class": "product claim",
+          "claim": "Speaker-described system safeguards and threshold example",
+          "origin": "recording 141\u2013143; no universal safety certification"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Preliminary paper adversarial-topic evaluation",
+          "origin": "coscientist; p.17"
+        },
+        {
+          "class": "definition",
+          "claim": "Source acknowledges remaining safety/evaluation limits",
+          "origin": "coscientist; p.28"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Low flagged fraction can retain one severe event",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "product claim: Speaker-described system safeguards and threshold example; empirical result: Preliminary paper adversarial-topic evaluation; definition: Source acknowledges remaining safety/evaluation limits; engineering check: Low flagged fraction can retain one severe event",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "lab",
+      "title": "25. Numerical laboratory: preference, evidence and measurement",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original lab",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Exact original stdlib preference/evidence/measurement fixtures and numerical boundaries",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "engineering check: Exact original stdlib preference/evidence/measurement fixtures and numerical boundaries",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "exercises",
+      "title": "26. Six exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original exercises",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Elo conservation/cycle contradiction, Bayes conditional model, sample-information value, nonidentifiability, multiplicity and covariance proofs",
+          "origin": "original teaching"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Finite arithmetic, research-design transfer and biological inference limits",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "theorem: Elo conservation/cycle contradiction, Bayes conditional model, sample-information value, nonidentifiability, multiplicity and covariance proofs; engineering check: Finite arithmetic, research-design transfer and biological inference limits",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "references",
+      "title": "27. Original references and inspection boundaries",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original references",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Version-pinned bibliography and actual inspection scope",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Version-pinned bibliography and actual inspection scope",
+      "chapter": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "video_id": "jFdH7n6BAl0",
+      "duration": 3993
+    },
+    {
+      "section": "motivation",
+      "title": "1. Language is a powerful interface with a limited view 0:04",
+      "start": 4.78,
+      "end": 259.28,
+      "segments": [
+        1,
+        9
+      ],
+      "lecture_material": "Source framing and digital/physical multimodal motivation",
+      "teaching_construction": "Original maintenance case, perception/generation/action distinction",
+      "research_extension": null,
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Multimodal/native design descriptions"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Motivation and public-personal-view boundary"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "tokens",
+      "title": "2. A token is a sequence position, not necessarily a word ID 4:19",
+      "start": 259.54,
+      "end": 441.26,
+      "segments": [
+        10,
+        16
+      ],
+      "lecture_material": "Text/image/audio/video tokenization; dense tokens need not be discrete",
+      "teaching_construction": "Spatial-padding and independent-frame counts; explicit score-matrix memory bound",
+      "research_extension": null,
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Sequence positions versus discrete vocabulary indices"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Padded patch and independent-frame cardinalities"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "BF16 per-head score sizes, not total memory or kernel allocations"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "objectives",
+      "title": "3. Separate multimodal inputs from multimodal outputs 7:21",
+      "start": 441.3,
+      "end": 546.85,
+      "segments": [
+        17,
+        20
+      ],
+      "lecture_material": "Multimodal inputs versus multimodal outputs",
+      "teaching_construction": "Binary text-target gradient through a visual feature",
+      "research_extension": null,
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Conditioning and target-modality distinction"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Cross-entropy derivative through image feature"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite derivative and no encoder-freeze/stop-gradient assumption"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "transfer-tools",
+      "title": "4. Reuse language-model tools with new measurement contracts 9:06",
+      "start": 546.85,
+      "end": 701.12,
+      "segments": [
+        21,
+        26
+      ],
+      "lecture_material": "Prompting, reasoning, scaling and sparse experts across modalities",
+      "teaching_construction": "Maintenance plan errors and controlled scaling denominators",
+      "research_extension": "Transfusion v1pp7\u20139 and MoT v2 experimental setups",
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Distinct data/compute/representation interventions"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Scaling and transfer remain active questions"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "chameleon",
+      "title": "5. Chameleon makes pictures part of a discrete sequence 11:41",
+      "start": 701.12,
+      "end": 931.79,
+      "segments": [
+        27,
+        35
+      ],
+      "lecture_material": "Chameleon, VQ-VAE, interleaving and multi-task sequence factorization",
+      "teaching_construction": "Dimensions, discrete chain rule and observation/generation distinction",
+      "research_extension": "Chameleon v1pp4\u20138; VQ-VAE-2 v1p2",
+      "evidence_class": "definition; empirical result; theorem",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Discrete image codes, nearest prototypes and autoregressive sequence"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "Chameleon tokenizer architecture and stability observations"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Probability chain rule on discrete sequence"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "quantization",
+      "title": "6. Reconstruction quality and task sufficiency are different 15:31",
+      "start": 931.86,
+      "end": 1010.61,
+      "segments": [
+        36,
+        38
+      ],
+      "lecture_material": "Discrete representation and visual understanding/generation limitations",
+      "teaching_construction": "Opposite labels quantize to the same index; exact Bayes error",
+      "research_extension": "Chameleon v1p4 OCR reconstruction limitation",
+      "evidence_class": "theorem; definition; empirical result",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Noninjective quantizer task-label counterexample"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Task-relevant sufficiency differs from reconstruction"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "Tokenizer-specific OCR reconstruction limitation"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "transfusion",
+      "title": "7. Transfusion combines discrete text with continuous image generation 16:50",
+      "start": 1010.61,
+      "end": 1257.55,
+      "segments": [
+        39,
+        47
+      ],
+      "lecture_material": "Transfusion, latent images, diffusion, shared autoregressive sequence and representation tradeoffs",
+      "teaching_construction": "Conditional-mean MSE proof, Gaussian uncertainty oracle, causal image-block mask and multi-layer path argument",
+      "research_extension": "Transfusion v1pp4\u20139",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Noise construction, CE+diffusion objective, switching decoder and hybrid attention"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Squared-error decomposition and Gaussian conditional moments"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "No later-block path under the declared hybrid mask"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite mask prefix-invariance and same-image communication tests"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "mot",
+      "title": "8. Mixture-of-Transformers separates weights while sharing attention 20:57",
+      "start": 1257.55,
+      "end": 1465.12,
+      "segments": [
+        48,
+        54
+      ],
+      "lecture_material": "MoT modality-specific weights, deterministic routing and joint attention",
+      "teaching_construction": "Row-vector dimensions, global normalization, cross-modal toy fixture and original SVG",
+      "research_extension": "MoT v2pp6\u20139",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Modality-specific QKV/O/FFN/norm and global attention"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Declared attention dimensions and uniform-score cross-modal dependence"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Exact finite branch-value change fixture"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "mot-results",
+      "title": "9. Read efficiency claims with their actual denominators 24:25",
+      "start": 1465.12,
+      "end": 1644.75,
+      "segments": [
+        55,
+        61
+      ],
+      "lecture_material": "Model ladder and dense/MoE experiments",
+      "teaching_construction": "Explicit stored/active parameter count and global attention MAC model",
+      "research_extension": "MoT v2pp11\u201313,15\u201316,20\u201321,31\u201332",
+      "evidence_class": "theorem; engineering check; empirical result; definition",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Nongated FFN parameter and MAC algebra"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite cost fixture; no measured latency"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "55.8% checkpoint and 760M/1.4B image metric comparisons restricted to original setup"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Expert-choice evaluation causality confounds and timing infrastructure"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "freeze",
+      "title": "10. Freeze a text pathway with a carefully stated preservation claim 27:27",
+      "start": 1647.76,
+      "end": 1813.71,
+      "segments": [
+        62,
+        67
+      ],
+      "lecture_material": "Combining sparse experts and adding a frozen existing pathway",
+      "teaching_construction": "Pure-text invariance induction and mixed-context counterexample",
+      "research_extension": "MoT v2p28; LMFusion v4pp4\u20137",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Frozen text pathway and added image branch with joint attention"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Pure-text preservation with all traversed components/settings fixed"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Changed mixed-context outputs despite frozen text values"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Adaptation compute excludes original language pretraining"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "branch-meaning",
+      "title": "11. A visual input can belong to an understanding branch 30:13",
+      "start": 1813.71,
+      "end": 1896.53,
+      "segments": [
+        68,
+        70
+      ],
+      "lecture_material": "Q&A: output/task specialization versus input-image understanding",
+      "teaching_construction": "Evidence photo versus generated diagram; proposed matched representation test",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; definition",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Generation-focused specialization does not certify universal understanding gain"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Observed and generated visual provenance differ"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "bagel",
+      "title": "12. BAGEL uses two visual representations and two task branches 31:38",
+      "start": 1898.64,
+      "end": 2045.87,
+      "segments": [
+        71,
+        76
+      ],
+      "lecture_material": "BAGEL and thinking before image generation",
+      "teaching_construction": "Understanding versus generation route labels; source-specific mask differences",
+      "research_extension": "BAGEL v1pp3\u20136,12,19",
+      "evidence_class": "definition; empirical result; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Text+ViT understanding branch and VAE generation branch; rectified flow objective"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Clean/noisy/ViT context policy differs from simple toy mask"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "IntelligentBench44.9 to55.3 self-CoT under350-example automated-judge protocol"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Exact overlay proposal is not a reported benchmark"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "actions",
+      "title": "13. An action modality introduces dynamics and execution semantics 34:05",
+      "start": 2045.87,
+      "end": 2098.53,
+      "segments": [
+        77,
+        78
+      ],
+      "lecture_material": "pi0.7 action modality example",
+      "teaching_construction": "Conditional action chunks, sensing/dynamics and execution boundary",
+      "research_extension": "pi0.7 v1pp1\u20134",
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Backbone, action expert, context, subgoals and gradient boundary"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Conditional policy is not an executed outcome"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Action modalities motivate physical intelligence"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "directional-transfer",
+      "title": "14. Ask which direction of transfer an experiment tests 34:58",
+      "start": 2098.53,
+      "end": 2356.29,
+      "segments": [
+        79,
+        88
+      ],
+      "lecture_material": "Transfer directions and possible abstraction/loss/redundancy explanations",
+      "teaching_construction": "Local gradient-alignment expression and controlled maintenance ablation",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Directional transfer observations and causal hypotheses"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "First-order shared-gradient loss change with small-step differentiability assumption"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Proposed controlled revision-recognition experiment"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "scope",
+      "title": "15. Match unified and specialized systems to the application 39:16",
+      "start": 2356.29,
+      "end": 2514.9,
+      "segments": [
+        89,
+        94
+      ],
+      "lecture_material": "Digital/physical workloads, specialized systems and conclusion",
+      "teaching_construction": "Three application gates and exact document/diagram provenance",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; engineering check",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Unified and specialized model scope"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Information, conditional-behavior and application-outcome gates"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "joint-attention",
+      "title": "16. Shared attention supplies a conditional interface 42:05",
+      "start": 2525.49,
+      "end": 2655.5,
+      "segments": [
+        95,
+        98
+      ],
+      "lecture_material": "Q&A shared attention and conditional interaction",
+      "teaching_construction": "Shape versus learned compatibility and two complementary invariance tests",
+      "research_extension": "MoT v2p9; LMFusion v4p5",
+      "evidence_class": "definition; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Shared attention across independent branch parameters"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Route/order/mask/feature debugging contract"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "representations",
+      "title": "17. Predictive representations do not require reconstructing every detail 44:17",
+      "start": 2657.81,
+      "end": 2785.12,
+      "segments": [
+        99,
+        102
+      ],
+      "lecture_material": "JEPA, visual documents and physical representations",
+      "teaching_construction": "Task sufficiency and nuisance information; no merged JEPA causal objectives",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; definition",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Representation and task motivation"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Target invariances need task-specific evidence"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "world",
+      "title": "18. Video generation and physical prediction have different tests 46:25",
+      "start": 2785.12,
+      "end": 2909.57,
+      "segments": [
+        103,
+        106
+      ],
+      "lecture_material": "Video generation, knowledge work and robot feedback",
+      "teaching_construction": "Prediction conditioned on observation/actions versus plausible sample",
+      "research_extension": null,
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Predictive distribution and generation-task boundary"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Video/robot research directions"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "ocr",
+      "title": "19. Rendered text forces a choice about exactness and invariance 48:29",
+      "start": 2909.57,
+      "end": 3210.26,
+      "segments": [
+        107,
+        118
+      ],
+      "lecture_material": "Rendered text, OCR, fonts/layout and scaling; speaker experiment limits",
+      "teaching_construction": "Many-to-one raster counterexample, trusted overlays and unresolved paper boundary",
+      "research_extension": null,
+      "evidence_class": "theorem; speaker judgment; engineering check",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Indistinguishable observations cannot determine lost exact character without extra information"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Rendered-text scaling discussion with explicitly limited experimentation"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Exact text/layout proposed evaluation; unnamed paper not certified"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "unified-representation",
+      "title": "20. One visual representation can face conflicting requirements 53:35",
+      "start": 3215.82,
+      "end": 3353.78,
+      "segments": [
+        119,
+        123
+      ],
+      "lecture_material": "Semantic and generative visual representations; unclear recent paper",
+      "teaching_construction": "Target-specific sufficiency and retained independent revision/detail bit",
+      "research_extension": null,
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Semantic sufficiency need not imply reconstruction sufficiency"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Unified representation question remains open here"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "autoregression",
+      "title": "21. Next-token prediction is a successful objective, not a necessity proof 55:53",
+      "start": 3353.78,
+      "end": 3492.5,
+      "segments": [
+        124,
+        128
+      ],
+      "lecture_material": "AR objectives, latent structure and possible discrete diffusion alternatives",
+      "teaching_construction": "Exact probability factorization versus finite learned conditionals",
+      "research_extension": null,
+      "evidence_class": "theorem; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Discrete probability chain rule"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Successful sequence approaches do not prove necessity or universality"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "spatial",
+      "title": "22. Spatial reasoning needs a coordinate and task contract 58:13",
+      "start": 3493.55,
+      "end": 3582.48,
+      "segments": [
+        129,
+        131
+      ],
+      "lecture_material": "Spatial reasoning, VLA backbone and expertise limit",
+      "teaching_construction": "Coordinate contract and proposed known-view-transform evaluation",
+      "research_extension": null,
+      "evidence_class": "definition; engineering check; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Image, operator and component reference frames"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Proposed controlled annotation test"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Robotics expertise boundary retained"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "language-scaffold",
+      "title": "23. Language can scaffold reasoning without exhausting it 59:42",
+      "start": 3582.67,
+      "end": 3869.2,
+      "segments": [
+        132,
+        142
+      ],
+      "lecture_material": "Language scaffolding, data and UX constraints, pure visual reasoning possibility",
+      "teaching_construction": "Plan versus generated-output evaluation and alternative representation channels",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; engineering check",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Practical language scaffold without necessity claim"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Proposed plan/no-plan comparison with extra-compute accounting"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "interaction-extension",
+      "title": "24. Deck extension: real-time interaction adds a timing contract",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Dated official deck-only extension and original deterministic queueing/stale-result example",
+      "research_extension": "Official deck PDFpp53\u201354 and company May11,2026 system/micro-turn/limitations sections; absent from actual ASR",
+      "evidence_class": "product claim; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "product claim",
+          "origin": "dated primary company page",
+          "claim": "200ms micro-turns, asynchronous background model and research-preview limitations"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Deterministic serial backlog recursion for stated service/arrival times"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Stale-result and tail-latency application tests"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "lab",
+      "title": "25. Executable finite checks",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Original finite stdlib architecture checks and exact stdout",
+      "research_extension": null,
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "origin": "original executable",
+          "claim": "Mask, quantization, CE gradient, frozen conditioning, Gaussian oracle, parameter model and19 invalid failures"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "exercises",
+      "title": "26. Exercises and complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Six mixed exercises with full derivation/computation/counterexample/experimental-design solutions",
+      "research_extension": null,
+      "evidence_class": "theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Resource/cardinality algebra, Bayes and CE lower bounds, masks, Gaussian moments and frozen-path induction"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite numerical checks and bounded proposed ablation/timing design"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "references",
+      "title": "27. References and evidence boundaries",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Pinned checked originals and explicit evidence boundaries",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original evidence exposition",
+          "claim": "Claim pages, source versions and product/speaker/original separation"
+        }
+      ],
+      "chapter": "lecture-08-native-multimodal-intelligence.html",
+      "video_id": "NDdc39KYqDU",
+      "duration": 3880
+    },
+    {
+      "section": "application",
+      "title": "1. A forward pass becomes a service",
+      "start": 4.72,
+      "end": 114.06,
+      "segments": [
+        1,
+        4
+      ],
+      "lecture_material": "1. A forward pass becomes a service",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Inference and serving layers; conditional next-token distribution.",
+          "origin": "lecture/original exposition"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "economics",
+      "title": "2. Demand determines the operational problem",
+      "start": 114.48,
+      "end": 406.05,
+      "segments": [
+        5,
+        15
+      ],
+      "lecture_material": "2. Demand determines the operational problem",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Economic motivation and deployment growth, bounded to lecture framing.",
+          "origin": "lecture"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original useful-completion denominator and accounting boundary.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "stack",
+      "title": "3. The serving stack and its contracts",
+      "start": 406.05,
+      "end": 512.11,
+      "segments": [
+        16,
+        19
+      ],
+      "lecture_material": "3. The serving stack and its contracts",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Replica, model service and layer responsibilities.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Versioned execution contract.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "archetypes",
+      "title": "4. Three workload archetypes",
+      "start": 512.11,
+      "end": 676.9,
+      "segments": [
+        20,
+        27
+      ],
+      "lecture_material": "4. Three workload archetypes",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Three deployment workload archetypes.",
+          "origin": "lecture"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original maintenance workload mixture and reporting strata.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "contract",
+      "title": "5. From a vague request to an SLO",
+      "start": 676.9,
+      "end": 795.86,
+      "segments": [
+        28,
+        33
+      ],
+      "lecture_material": "5. From a vague request to an SLO",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "SLO versus SLA and explicit measurement population.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Failures and offered-load accounting.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "shape",
+      "title": "6. Input, output, burstiness and prefix reuse",
+      "start": 795.86,
+      "end": 990.38,
+      "segments": [
+        34,
+        42
+      ],
+      "lecture_material": "6. Input, output, burstiness and prefix reuse",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Arrival/length distribution, token versus request units and causal prefix reuse.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Peak-to-average correction and workload boundary.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "metrics",
+      "title": "7. Four timing quantities that answer different questions",
+      "start": 990.38,
+      "end": 1152.26,
+      "segments": [
+        43,
+        48
+      ],
+      "lecture_material": "7. Four timing quantities that answer different questions",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "TTFT, ITL, TPOT excluding first token and TTLT.",
+          "origin": "lecture/research protocol"
+        },
+        {
+          "class": "theorem",
+          "claim": "Timestamp telescoping identity under defined emission boundary.",
+          "origin": "original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Synthetic trace and tool critical-path accounting.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "objectives",
+      "title": "8. Capacity is useful throughput under constraints",
+      "start": 1152.26,
+      "end": 1206.75,
+      "segments": [
+        49,
+        50
+      ],
+      "lecture_material": "8. Capacity is useful throughput under constraints",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Feasible rate, throughput and goodput.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "theorem",
+          "claim": "Joint target union bound without independence.",
+          "origin": "original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Quality-constrained cost denominator.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "benchmark",
+      "title": "9. Benchmarking one replica without changing the workload",
+      "start": 1206.75,
+      "end": 1302.54,
+      "segments": [
+        51,
+        54
+      ],
+      "lecture_material": "9. Benchmarking one replica without changing the workload",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Sequential/burst/open-loop measurement boundary and coordinated omission mechanism.",
+          "origin": "lecture/original"
+        },
+        {
+          "class": "theorem",
+          "claim": "Sequential throughput reciprocal-mean identity with zero inter-request gaps.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "tails",
+      "title": "10. A smooth median can conceal repeated stalls",
+      "start": 1302.54,
+      "end": 1390.7,
+      "segments": [
+        55,
+        58
+      ],
+      "lecture_material": "10. A smooth median can conceal repeated stalls",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Finite nearest-rank percentile and weighting populations.",
+          "origin": "original"
+        },
+        {
+          "class": "theorem",
+          "claim": "Independent-gap union probability and correlated counterexample.",
+          "origin": "original"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Lecture tail demonstration, no numeric plot reconstruction or reproduced benchmark.",
+          "origin": "lecture"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "quality",
+      "title": "11. Choose a model against a quality threshold",
+      "start": 1390.7,
+      "end": 1556.75,
+      "segments": [
+        59,
+        65
+      ],
+      "lecture_material": "11. Choose a model against a quality threshold",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Efficiency/capability-bound tasks relative to quality target.",
+          "origin": "lecture"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Dated ecosystem comparisons, not current rankings.",
+          "origin": "lecture"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Task-specific acceptance evaluation.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "efficient-model",
+      "title": "12. Small models do not remove every systems bottleneck",
+      "start": 1557.65,
+      "end": 1733.84,
+      "segments": [
+        66,
+        72
+      ],
+      "lecture_material": "12. Small models do not remove every systems bottleneck",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Fixed overhead, replica/partition tradeoffs and modality-dependent profiling.",
+          "origin": "lecture/original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Dated model examples without leaderboard attestation.",
+          "origin": "lecture"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "capable-model",
+      "title": "13. Active parameters and resident parameters are different",
+      "start": 1733.84,
+      "end": 1983.95,
+      "segments": [
+        73,
+        82
+      ],
+      "lecture_material": "13. Active parameters and resident parameters are different",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "MoE active versus total resident parameters and memory components.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Parallel layout and complete orchestration experiment.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Capability/ecosystem preferences bounded to lecture date.",
+          "origin": "lecture"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "engine",
+      "title": "14. The engine schedules state, not just matrix multiplication",
+      "start": 1984.18,
+      "end": 2104.21,
+      "segments": [
+        83,
+        87
+      ],
+      "lecture_material": "14. The engine schedules state, not just matrix multiplication",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Host/device scheduling responsibilities.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "PagedAttention block allocation and SGLang radix prefix reuse.",
+          "origin": "research"
+        },
+        {
+          "class": "definition",
+          "claim": "Exact reuse versus prompt rewriting semantic boundary.",
+          "origin": "research protocol"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "engine-choice",
+      "title": "15. Engine choice is a compatibility and evidence question",
+      "start": 2104.62,
+      "end": 2388.78,
+      "segments": [
+        88,
+        98
+      ],
+      "lecture_material": "15. Engine choice is a compatibility and evidence question",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Dated comparisons of engine organizations and practices.",
+          "origin": "lecture"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Versioned compatibility and reference-output evaluation.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "prefill-decode",
+      "title": "16. Prefill and decoding have different reuse patterns",
+      "start": 2388.78,
+      "end": 2560.99,
+      "segments": [
+        99,
+        105
+      ],
+      "lecture_material": "16. Prefill and decoding have different reuse patterns",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Causal prefill and per-sequence decoding dependency.",
+          "origin": "lecture/research exposition"
+        },
+        {
+          "class": "theorem",
+          "claim": "Original ideal resource bound and simplified weight-reuse intensity.",
+          "origin": "original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Synthetic numerical roofline examples; no hardware benchmark.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "hardware",
+      "title": "17. Capacity, bandwidth, arithmetic and links",
+      "start": 2560.99,
+      "end": 2784.88,
+      "segments": [
+        106,
+        115
+      ],
+      "lecture_material": "17. Capacity, bandwidth, arithmetic and links",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Memory, arithmetic and communication units.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Ideal startup-plus-transfer model and hardware fit criteria.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "NVIDIA-focused lecture scope.",
+          "origin": "lecture"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "alternatives",
+      "title": "18. Hardware alternatives require workload-specific evaluation",
+      "start": 2785.97,
+      "end": 2949.09,
+      "segments": [
+        116,
+        121
+      ],
+      "lecture_material": "18. Hardware alternatives require workload-specific evaluation",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Dated accelerator ecosystem and supply observations.",
+          "origin": "lecture"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Application-specific comparison rather than blanket capability claim.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "reliability",
+      "title": "19. Network distance and failure change the service envelope",
+      "start": 2949.09,
+      "end": 3089.58,
+      "segments": [
+        122,
+        127
+      ],
+      "lecture_material": "19. Network distance and failure change the service envelope",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Modal fleet health procedures and bounded reported incidents.",
+          "origin": "vendor original"
+        },
+        {
+          "class": "theorem",
+          "claim": "Original distinction between event count and probability with explicit Poisson assumption.",
+          "origin": "original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Failure reduces available service capacity and induces retries.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "allocation",
+      "title": "20. Autoscaling is delayed capacity control",
+      "start": 3089.74,
+      "end": 3224.9,
+      "segments": [
+        128,
+        133
+      ],
+      "lecture_material": "20. Autoscaling is delayed capacity control",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Allocation utilization, ready capacity and autoscaling delay.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original short-burst/cold-start counterexample and pooling boundary.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "startup",
+      "title": "21. Move startup work out of the critical path",
+      "start": 3224.9,
+      "end": 3424.53,
+      "segments": [
+        134,
+        141
+      ],
+      "lecture_material": "21. Move startup work out of the critical path",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Four Modal startup mechanisms and gVisor/device compatibility boundary.",
+          "origin": "vendor original"
+        },
+        {
+          "class": "definition",
+          "claim": "Cold readiness versus steady-state execution and necessary weight traffic.",
+          "origin": "lecture/original exposition"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "bugs",
+      "title": "22. Classify the defect before tuning it",
+      "start": 3424.78,
+      "end": 3547.95,
+      "segments": [
+        142,
+        146
+      ],
+      "lecture_material": "22. Classify the defect before tuning it",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Application, model-quality and performance defect taxonomy.",
+          "origin": "lecture"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Synthetic reproducer and reference-path fault localization.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "logs",
+      "title": "23. Observability is evidence for diagnosis",
+      "start": 3547.98,
+      "end": 3672.08,
+      "segments": [
+        147,
+        151
+      ],
+      "lecture_material": "23. Observability is evidence for diagnosis",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Operational observability and versioned request evidence.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "theorem",
+          "claim": "Original finite linear observability/dual controllability rank identity under stated system.",
+          "origin": "original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Trace-based diagnosis versus causal inference.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "evaluations",
+      "title": "24. Evaluations survive model swaps only when the task is stable",
+      "start": 3672.08,
+      "end": 3774.64,
+      "segments": [
+        152,
+        155
+      ],
+      "lecture_material": "24. Evaluations survive model swaps only when the task is stable",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Task-defined quality evaluation, exact/judged checks and held-out scope.",
+          "origin": "lecture/original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "telemetry",
+      "title": "25. Measure the request path and the device path",
+      "start": 3774.96,
+      "end": 4016.78,
+      "segments": [
+        156,
+        165
+      ],
+      "lecture_material": "25. Measure the request path and the device path",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Request/fleet/device telemetry and sample boundaries.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "theorem",
+          "claim": "Original M/M/1 stationary mean derived under explicit assumptions.",
+          "origin": "original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Synthetic queue sensitivity; dashboard correlation is not diagnosis.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "levers",
+      "title": "26. Optimization changes a coupled system",
+      "start": 4016.85,
+      "end": 4074.27,
+      "segments": [
+        166,
+        167
+      ],
+      "lecture_material": "26. Optimization changes a coupled system",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Interacting bottlenecks and overlapping speedup denominators.",
+          "origin": "lecture/original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "speculation",
+      "title": "27. Exact speculative sampling preserves a distribution",
+      "start": 4074.27,
+      "end": 4292.26,
+      "segments": [
+        168,
+        175
+      ],
+      "lecture_material": "27. Exact speculative sampling preserves a distribution",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Exact accepted/residual mass identity and conditional sequence induction.",
+          "origin": "research/original derivation"
+        },
+        {
+          "class": "theorem",
+          "claim": "Capped geometric progress and ideal cost factor under IID/fixed verification assumptions.",
+          "origin": "research/original derivation"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Synthetic categorical example, biased fallback and cost boundaries.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Lecture acceleration anecdotes not a deployment guarantee.",
+          "origin": "lecture"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "drafting",
+      "title": "28. Improving the draft is a cost\u2013acceptance tradeoff",
+      "start": 4292.26,
+      "end": 4423.62,
+      "segments": [
+        176,
+        181
+      ],
+      "lecture_material": "28. Improving the draft is a cost\u2013acceptance tradeoff",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Drafting alternatives and total cycle cost.",
+          "origin": "lecture/original"
+        },
+        {
+          "class": "definition",
+          "claim": "DFlash v1 target-feature conditioning and parallel block drafting.",
+          "origin": "research protocol"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Specified DFlash Table1 averages under named targets/backend/tasks/temperature.",
+          "origin": "research"
+        },
+        {
+          "class": "engineering check",
+          "claim": "No universal proposal/verification exactness attestation.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "quantization",
+      "title": "29. Fewer bits change memory and numerical behavior",
+      "start": 4423.62,
+      "end": 4581.39,
+      "segments": [
+        182,
+        187
+      ],
+      "lecture_material": "29. Fewer bits change memory and numerical behavior",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Weight/activation/KV quantization and packed payload boundary.",
+          "origin": "lecture/original exposition"
+        },
+        {
+          "class": "theorem",
+          "claim": "Original additive-runtime speedup sensitivity and full-history KV payload count.",
+          "origin": "original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "KIVI tuning-free counterexample and streaming cache layout.",
+          "origin": "research"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original GQA/block-slack example and quality tests.",
+          "origin": "original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "host",
+      "title": "30. Keep the host from starving the device",
+      "start": 4581.97,
+      "end": 4796.18,
+      "segments": [
+        188,
+        195
+      ],
+      "lecture_material": "30. Keep the host from starving the device",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Host starvation, fusion versus reusable CUDA graph.",
+          "origin": "vendor original/official CUDA12.8"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Specified Modal multimodal host-cache case study, not reproduced.",
+          "origin": "vendor original"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Straggler symptom versus unconfirmed mechanism and end-to-end remeasurement.",
+          "origin": "lecture/original"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "future",
+      "title": "31. Approximate execution needs its own acceptance contract",
+      "start": 4796.18,
+      "end": 4854.48,
+      "segments": [
+        196,
+        197
+      ],
+      "lecture_material": "31. Approximate execution needs its own acceptance contract",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Approximate output versus exact contract.",
+          "origin": "lecture/original"
+        },
+        {
+          "class": "definition",
+          "claim": "Research extension: DistServe disaggregation and Sarathi chunked prefills.",
+          "origin": "research protocol"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Future hardware predictions bounded as predictions.",
+          "origin": "lecture"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "agents",
+      "title": "32. Agents can search implementations only within a tested contract",
+      "start": 4854.48,
+      "end": 4940.11,
+      "segments": [
+        198,
+        201
+      ],
+      "lecture_material": "32. Agents can search implementations only within a tested contract",
+      "teaching_construction": "Original maintenance-service examples, definitions, local derivations and qualified design implications.",
+      "research_extension": "Only the linked original claim pages/sections; examples are not measurements from those sources.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "VibeServe original affiliation, outer/inner roles and user checker assumption.",
+          "origin": "research protocol"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original bounded agent-search contract and held-out cases.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Slide72 continual-improvement proposal; deck-only, not transcript coverage.",
+          "origin": "official slide72"
+        }
+      ],
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "lab",
+      "title": "33. A finite serving laboratory",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original executable examples and complete solutions.",
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "exercises",
+      "title": "34. Six problems with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original executable examples and complete solutions.",
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
+    },
+    {
+      "section": "references",
+      "title": "35. References and the limits of source checking",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Versioned original attribution and evidence limits.",
+      "chapter": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "video_id": "ZUdIsRZhWXI",
+      "duration": 4951
     }
   ]
 }

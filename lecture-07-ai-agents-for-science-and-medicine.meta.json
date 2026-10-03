@@ -1,0 +1,1016 @@
+{
+  "video_id": "jFdH7n6BAl0",
+  "title": "AI Agents for Science and Medicine",
+  "recording_title": "Advancing Science and Medicine with Collaborative AI Agents",
+  "chapter_order": 7,
+  "recording_lecture_number": 7,
+  "speaker": "Vivek Natarajan",
+  "date": "2026-05-14",
+  "official_schedule_url": "https://web.stanford.edu/class/cs25/",
+  "status": "Independently reviewed local reading chapter; course certification remains separate",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "transcript_sha256": "4a8163f3ffd0e03006a2859b8df6eeba4d5ef8008fe551726cf2abd536ce5948",
+  "transcript_text_sha256": "25417f021c01423a0b218677448a9c29168a133b78453796b0ebb9936ad47073",
+  "audio_sha256": "14ffb69a309d0cf47662b3376fed8498d0e9e7d45a366b5cba7aa72c5a39a550",
+  "audio_duration_seconds": 3992.121,
+  "transcription_audio_duration_seconds": 3992.1066875,
+  "playlist_duration_seconds": 3993,
+  "transcript_segment_count": 144,
+  "transcript_first_start_seconds": 4.78,
+  "transcript_last_end_seconds": 3985.71,
+  "slides": {
+    "status": "No official lecture7 deck acquired",
+    "lecture_video_visuals_inspected": false,
+    "primary_pdf_visuals": [
+      {
+        "source": "coscientist",
+        "pdf_page": 2,
+        "sha256": "79a6e43e2fa39dc979c6ca319430d580ef8aaa4d09bc7874db28c5d9c61800bf",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "coscientist",
+        "pdf_page": 24,
+        "sha256": "7e0a3483bbcf1967723b605c90893d4f4255e7b9e2a0b52c6e6966f7761c3bde",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "coscientist",
+        "pdf_page": 25,
+        "sha256": "e402c593feee3e63c24904f3ab2f7b676d59f8bb155596aefa6046dbb0b83a0e",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "protein-poster",
+        "pdf_page": 1,
+        "sha256": "275ca4998a22022834e0dc7c984dae02e745a0766fd8f92750fd193666ebb8e6",
+        "author_visually_inspected": true
+      }
+    ],
+    "boundary": "Only original paper/poster visual subset listed; no lecture frames, animations or human listening attestation"
+  },
+  "sections": [
+    {
+      "section": "mission",
+      "title": "1. Define the collaborator's job 1:02",
+      "start": 62.59,
+      "end": 145.07,
+      "segments": [
+        2,
+        4
+      ],
+      "lecture_material": "Collaborative science/medicine mission and co-scientist agenda.",
+      "research_extension": null,
+      "teaching_construction": "Fictional organoid decision; hypothesis/proposal distinction.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Collaborative research aspiration",
+          "origin": "recording 2–4"
+        },
+        {
+          "class": "definition",
+          "claim": "Hypothesis, proposal and distinct acceptance tests",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Fibrosis/antifibrotic terminology",
+          "origin": "nci-fibrosis; official definition and original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Collaborative research aspiration; definition: Hypothesis, proposal and distinct acceptance tests; definition: Fibrosis/antifibrotic terminology"
+    },
+    {
+      "section": "origins",
+      "title": "2. A hypothesis becomes consequential when it leaves the text interface 2:25",
+      "start": 145.07,
+      "end": 435.04,
+      "segments": [
+        5,
+        15
+      ],
+      "lecture_material": "Med-PaLM origins, genetic hypothesis collaboration and reported mouse validation.",
+      "research_extension": "Tu et al. 2026 original journal abstract only; no full-PDF inspection.",
+      "teaching_construction": "Intervention, phenotype and species boundaries.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Project origins",
+          "origin": "recording 5–15"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Abstract-reported hearing-loss candidate knock-in validation in mice",
+          "origin": "genetic-abstract; abstract only"
+        },
+        {
+          "class": "definition",
+          "claim": "Knock-in intervention and model-specific inference",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Phenotype as an observable or measurable biological trait",
+          "origin": "nhgri-phenotype; official glossary"
+        }
+      ],
+      "evidence_class": "speaker judgment: Project origins; empirical result: Abstract-reported hearing-loss candidate knock-in validation in mice; definition: Knock-in intervention and model-specific inference; definition: Phenotype as an observable or measurable biological trait"
+    },
+    {
+      "section": "slow",
+      "title": "3. Spending more time requires a reason to expect new information 7:15",
+      "start": 435.04,
+      "end": 547.81,
+      "segments": [
+        16,
+        19
+      ],
+      "lecture_material": "System-1/System-2 analogy and deliberately slow scientific reasoning.",
+      "research_extension": null,
+      "teaching_construction": "Uncertainty-operation-stopping task record and unchanged-premise counterexample.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Cognitive analogy",
+          "origin": "recording 16–19"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Evidence-seeking versus repeated defense task design",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Cognitive analogy; engineering check: Evidence-seeking versus repeated defense task design"
+    },
+    {
+      "section": "generality",
+      "title": "4. Breadth of interface and reliability of outcome are separate axes 9:07",
+      "start": 547.81,
+      "end": 1054.99,
+      "segments": [
+        20,
+        38
+      ],
+      "lecture_material": "Conceptual task/generality plot, AlphaFold contrast, Deep Blue and language interface.",
+      "research_extension": "IBM original history corrects the spoken match date to May1997.",
+      "teaching_construction": "Task-specific evaluation axes; predictions versus measured structures.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Generality plot and natural-language interface motivation",
+          "origin": "recording 20–38; no unseen plot inspection"
+        },
+        {
+          "class": "empirical result",
+          "claim": "May1997 Deep Blue match date",
+          "origin": "ibm; opening/match section"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Separate retrieval, interpretation and identifiable experiment outcomes",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Generality plot and natural-language interface motivation; empirical result: May1997 Deep Blue match date; engineering check: Separate retrieval, interpretation and identifiable experiment outcomes"
+    },
+    {
+      "section": "selfplay",
+      "title": "5. What can scientific debate inherit from self-play? 17:34",
+      "start": 1054.99,
+      "end": 1361.36,
+      "segments": [
+        39,
+        49
+      ],
+      "lecture_material": "Self-play/search lineage motivates scientific debate and multi-agent systems.",
+      "research_extension": "AlphaZero v1 pp.1–3: rules, random initialization, external outcomes and weight updates.",
+      "teaching_construction": "Closed game reward versus unresolved biological outcome.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Original AlphaGo versus AlphaZero training lineage and outcome-driven learning",
+          "origin": "alphazero; pp.1–3"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Reported within24h AlphaZero performance, correcting spoken duration",
+          "origin": "alphazero; p.1"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Scientific-debate transfer motivation",
+          "origin": "recording 39–49"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Rhetorical win without a measured biological label",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Original AlphaGo versus AlphaZero training lineage and outcome-driven learning; empirical result: Reported within24h AlphaZero performance, correcting spoken duration; speaker judgment: Scientific-debate transfer motivation; engineering check: Rhetorical win without a measured biological label"
+    },
+    {
+      "section": "goal",
+      "title": "6. Convert a research wish into an explicit contract 22:41",
+      "start": 1361.36,
+      "end": 1526.19,
+      "segments": [
+        50,
+        55
+      ],
+      "lecture_material": "Human goal, constraints, rubric, seeds, context and reports.",
+      "research_extension": "Co-scientist v1 pp.7–8,13 interface.",
+      "teaching_construction": "Hard constraints versus compensable preferences; claim-source record.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Human-controlled research-goal interface",
+          "origin": "coscientist; pp.7–8,13"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Organoid goal contract and unresolved source handling",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Human-controlled research-goal interface; engineering check: Organoid goal contract and unresolved source handling"
+    },
+    {
+      "section": "agents",
+      "title": "7. Specialized roles organize a search; they do not create independent scientists 25:26",
+      "start": 1526.19,
+      "end": 1738.16,
+      "segments": [
+        56,
+        63
+      ],
+      "lecture_material": "Asynchronous generation/reflection/ranking/evolution and specialized strategies.",
+      "research_extension": "Co-scientist v1 pp.7–13 six-role architecture; evolution retains previous hypotheses.",
+      "teaching_construction": "Version-bound stale-review counterexample.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Six roles and evolution adding new hypotheses",
+          "origin": "coscientist; pp.7–13"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Hypothesis/goal/source version binding",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Six roles and evolution adding new hypotheses; engineering check: Hypothesis/goal/source version binding"
+    },
+    {
+      "section": "ranking",
+      "title": "8. Derive Elo's meaning before interpreting its score 28:58",
+      "start": 1738.16,
+      "end": 1844.85,
+      "segments": [
+        64,
+        67
+      ],
+      "lecture_material": "Pairwise scientific debate and Elo prioritization.",
+      "research_extension": "Co-scientist v1 pp.11–12 initial1200; no inspected K/scale disclosure.",
+      "teaching_construction": "Explicit original scale400/step32 model, update arithmetic, conservation and cyclic impossibility.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Source initialization and comparison-based prioritization",
+          "origin": "coscientist; pp.11–12"
+        },
+        {
+          "class": "definition",
+          "claim": "Stipulated Elo convention; not verified implementation constants",
+          "origin": "original teaching"
+        },
+        {
+          "class": "theorem",
+          "claim": "Paired sum conservation and scalar cycle contradiction",
+          "origin": "original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Two-win arithmetic and preference/truth counterexample",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Source initialization and comparison-based prioritization; definition: Stipulated Elo convention; not verified implementation constants; theorem: Paired sum conservation and scalar cycle contradiction; engineering check: Two-win arithmetic and preference/truth counterexample"
+    },
+    {
+      "section": "memory",
+      "title": "9. Memory can improve the next prompt while leaving the model unchanged 30:44",
+      "start": 1844.85,
+      "end": 1994.86,
+      "segments": [
+        68,
+        73
+      ],
+      "lecture_material": "Attention bottleneck, debate summaries and humility.",
+      "research_extension": "Co-scientist v1 pp.9–12 prompt feedback without fine-tuning/RL/backprop.",
+      "teaching_construction": "Fixed parameters versus changing context; correlated-error derivation.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Prompt-context feedback with fixed weights",
+          "origin": "coscientist; pp.9–12"
+        },
+        {
+          "class": "theorem",
+          "claim": "Equicorrelated mean variance and PSD domain",
+          "origin": "original proof under stated equal-variance model"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Ten-review .82 variance and effective1.219512 count",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Prompt-context feedback with fixed weights; theorem: Equicorrelated mean variance and PSD domain; engineering check: Ten-review .82 variance and effective1.219512 count"
+    },
+    {
+      "section": "reports",
+      "title": "10. Compress reports without discarding the disagreement 33:14",
+      "start": 1994.86,
+      "end": 2081.73,
+      "segments": [
+        74,
+        76
+      ],
+      "lecture_material": "Stopping, clustered reports and dated multimodal/tool descriptions.",
+      "research_extension": "Co-scientist v1 pp.11–13 proximity/meta-review and imagined simulation.",
+      "teaching_construction": "Disagreement-preserving attention compression and actual-operation labels.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Proximity/meta-review and LLM-imagined simulation",
+          "origin": "coscientist; pp.11–13"
+        },
+        {
+          "class": "product claim",
+          "claim": "Speaker-described multimodal/tool system capabilities at talk date",
+          "origin": "recording 74–76"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Report preserves denominator objection and evidence boundary",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Proximity/meta-review and LLM-imagined simulation; product claim: Speaker-described multimodal/tool system capabilities at talk date; engineering check: Report preserves denominator objection and evidence boundary"
+    },
+    {
+      "section": "budget",
+      "title": "11. Test-time compute and the value of an experiment answer different questions 34:41",
+      "start": 2081.73,
+      "end": 2408.29,
+      "segments": [
+        77,
+        88
+      ],
+      "lecture_material": "Q&A compute saturation, expert incentives, experimental bottleneck and model-family cost tradeoffs.",
+      "research_extension": "Co-scientist v1 pp.14–18 GPQA and temporal-bucket evaluations.",
+      "teaching_construction": "Bayesian odds, conditional independence, sample information value and toy action policy.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Problem-dependent saturation and expert allocation",
+          "origin": "recording 77–88"
+        },
+        {
+          "class": "product claim",
+          "claim": "Dated same-family Flash/Pro cost and reasoning choices",
+          "origin": "recording 87–88; no matched performance verification"
+        },
+        {
+          "class": "empirical result",
+          "claim": "203-goal temporal-bucket auto-evaluation and78.4% question-matched GPQA top-rated accuracy",
+          "origin": "coscientist; pp.14–18"
+        },
+        {
+          "class": "theorem",
+          "claim": "Bayesian binary posterior and nonnegative gross sample-information value",
+          "origin": "original conditional proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "8/17,64/73 and .4/.1 utility fixtures",
+          "origin": "original teaching; not biological estimates"
+        }
+      ],
+      "evidence_class": "speaker judgment: Problem-dependent saturation and expert allocation; product claim: Dated same-family Flash/Pro cost and reasoning choices; empirical result: 203-goal temporal-bucket auto-evaluation and78.4% question-matched GPQA top-rated accuracy; theorem: Bayesian binary posterior and nonnegative gross sample-information value; engineering check: 8/17,64/73 and .4/.1 utility fixtures"
+    },
+    {
+      "section": "amr",
+      "title": "12. Recapitulating an unknown result is evidence with a provenance problem 40:08",
+      "start": 2408.29,
+      "end": 2638.86,
+      "segments": [
+        89,
+        96
+      ],
+      "lecture_material": "Thanksgiving2024 unpublished AMR recapitulation and two-day anecdote.",
+      "research_extension": "Co-scientist v1 pp.26–27 cf-PICI broad-host-range case.",
+      "teaching_construction": "Date-specific unpublished status and retrospective leakage controls.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Paper-reported expert-recognized AMR hypothesis case",
+          "origin": "coscientist; pp.26–27"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Timing and private-correspondence reassurance",
+          "origin": "recording 89–96"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Frozen information-boundary contamination design",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Phage/capsid terminology",
+          "origin": "niams-phage; original image description, text only"
+        }
+      ],
+      "evidence_class": "empirical result: Paper-reported expert-recognized AMR hypothesis case; speaker judgment: Timing and private-correspondence reassurance; engineering check: Frozen information-boundary contamination design; definition: Phage/capsid terminology"
+    },
+    {
+      "section": "validation",
+      "title": "13. The validation ladder has several independently testable rungs 43:58",
+      "start": 2638.86,
+      "end": 2719.78,
+      "segments": [
+        97,
+        99
+      ],
+      "lecture_material": "AML, organoid and protein-design collaboration overview.",
+      "research_extension": "Co-scientist v1 pp.19–21 prescreened expert review and experimental selection.",
+      "teaching_construction": "Evidence ladder, selection conditioning, multiplicity derivation.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Expert prescreened selection in reported workflow",
+          "origin": "coscientist; pp.19–21"
+        },
+        {
+          "class": "definition",
+          "claim": "Preference, simulation, cellular and clinical endpoints",
+          "origin": "original teaching"
+        },
+        {
+          "class": "theorem",
+          "claim": "Independent false-any formula and general union bound",
+          "origin": "original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "100 null-test .994079 illustration",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "empirical result: Expert prescreened selection in reported workflow; definition: Preference, simulation, cellular and clinical endpoints; theorem: Independent false-any formula and general union bound; engineering check: 100 null-test .994079 illustration"
+    },
+    {
+      "section": "aml",
+      "title": "14. Interpret a dose-response curve at the level actually measured 45:19",
+      "start": 2719.78,
+      "end": 2833.06,
+      "segments": [
+        100,
+        103
+      ],
+      "lecture_material": "AML dose-response, KIRA6 and narrower pathway novelty.",
+      "research_extension": "Co-scientist v1 pp.23–24 measured viability values and actual curves.",
+      "teaching_construction": "Original Hill model, midpoint-versus-absolute-half derivation and stable evaluation.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "KG-1/MOLM-13/HL-60 IC50s13/517/817nM and scoped known-pathway novelty",
+          "origin": "coscientist; pp.23–24"
+        },
+        {
+          "class": "definition",
+          "claim": "Original Hill curve and units",
+          "origin": "original teaching; not source fitting convention"
+        },
+        {
+          "class": "theorem",
+          "claim": "Dynamic-range midpoint and unattainable absolute-half conditions",
+          "origin": "original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": ".6 midpoint and12.909944 absolute-half fixture",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "empirical result: KG-1/MOLM-13/HL-60 IC50s13/517/817nM and scoped known-pathway novelty; definition: Original Hill curve and units; theorem: Dynamic-range midpoint and unattainable absolute-half conditions; engineering check: .6 midpoint and12.909944 absolute-half fixture"
+    },
+    {
+      "section": "liver",
+      "title": "15. Resolve the denominator before claiming an antifibrotic mechanism 47:13",
+      "start": 2833.06,
+      "end": 2945.54,
+      "segments": [
+        104,
+        107
+      ],
+      "lecture_material": "Hepatic organoid antifibrotic candidates and domain complementarity.",
+      "research_extension": "Co-scientist v1 p.25 selected targets and model-specific antifibrotic/cellular-toxicity scope.",
+      "teaching_construction": "Marker factorization and nonidentifiability; viable-cell counterexample.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Three selected targets; compounds on two show activity without observed toxicity in tested organoids",
+          "origin": "coscientist; p.25"
+        },
+        {
+          "class": "theorem",
+          "claim": "Nonidentifiability of N and q from M=Nq",
+          "origin": "original counterexample"
+        },
+        {
+          "class": "engineering check",
+          "claim": "50-total-marker two-mechanism fixture and extra denominator",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Epigenetic gene regulation without DNA-sequence change",
+          "origin": "nhgri-epigenetics; official glossary"
+        }
+      ],
+      "evidence_class": "empirical result: Three selected targets; compounds on two show activity without observed toxicity in tested organoids; theorem: Nonidentifiability of N and q from M=Nq; engineering check: 50-total-marker two-mechanism fixture and extra denominator; definition: Epigenetic gene regulation without DNA-sequence change"
+    },
+    {
+      "section": "structures",
+      "title": "16. Structural novelty can prioritize an anomaly without predicting its answer 49:05",
+      "start": 2945.54,
+      "end": 3031.54,
+      "segments": [
+        108,
+        110
+      ],
+      "lecture_material": "Structural Novelty Index and NRC7 eleven-member assembly.",
+      "research_extension": "Sept1,2026 author poster, later update; May preprint unavailable.",
+      "teaching_construction": "Anomalous assumed geometry versus externally measured assembly.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Maytalk structural-discovery report",
+          "origin": "recording 108–110"
+        },
+        {
+          "class": "definition",
+          "claim": "Poster anomaly-prioritization workflow and NRC helper-family hexamer baseline",
+          "origin": "protein-poster; single page"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Poster electron microscopy supports named NRC7 eleven-subunit rings",
+          "origin": "protein-poster; later Sept2026 single-page visual"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Novelty priority distinct from a predicted correct structure or function",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Maytalk structural-discovery report; definition: Poster anomaly-prioritization workflow and NRC helper-family hexamer baseline; empirical result: Poster electron microscopy supports named NRC7 eleven-subunit rings; engineering check: Novelty priority distinct from a predicted correct structure or function"
+    },
+    {
+      "section": "oct4",
+      "title": "17. A design loop needs an external definition of success 50:32",
+      "start": 3032.56,
+      "end": 3116.94,
+      "segments": [
+        111,
+        113
+      ],
+      "lecture_material": "OCT4 iterative variant design and speaker-reported laboratory feedback.",
+      "research_extension": "NCBI official POU5F1 identity/RefSeq summary through public Datasets API.",
+      "teaching_construction": "Intermediate structural score versus functional/organism endpoints.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "OCT4/POU5F1 transcription-factor identity",
+          "origin": "ncbi; gene5460 RefSeq summary"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Unpublished variant success",
+          "origin": "recording 111–113; not independently validated"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Separate design-loop endpoints",
+          "origin": "original teaching"
+        },
+        {
+          "class": "definition",
+          "claim": "Transcription factor as a protein controlling gene activity",
+          "origin": "ncbi; inspected gene5460 record"
+        }
+      ],
+      "evidence_class": "definition: OCT4/POU5F1 transcription-factor identity; speaker judgment: Unpublished variant success; engineering check: Separate design-loop endpoints; definition: Transcription factor as a protein controlling gene activity"
+    },
+    {
+      "section": "senescence",
+      "title": "18. An assay-defined cellular state is not an organism-level outcome 51:58",
+      "start": 3118.13,
+      "end": 3230.72,
+      "segments": [
+        114,
+        117
+      ],
+      "lecture_material": "Unpublished secreted-factor and Klotho comparisons.",
+      "research_extension": "NCI official cellular-state terminology.",
+      "teaching_construction": "Cell composition/readout counterexample and organism-level boundary.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unpublished senescence-factor results",
+          "origin": "recording 114–117; not independently validated"
+        },
+        {
+          "class": "definition",
+          "claim": "Cell-division arrest distinguished from death",
+          "origin": "nci; definition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Marker change does not uniquely identify state change or rejuvenation",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Unpublished senescence-factor results; definition: Cell-division arrest distinguished from death; engineering check: Marker change does not uniquely identify state change or rejuvenation"
+    },
+    {
+      "section": "ace",
+      "title": "19. A pathway narrative must preserve its causal gaps 53:50",
+      "start": 3230.72,
+      "end": 3399.28,
+      "segments": [
+        118,
+        123
+      ],
+      "lecture_material": "ACE/bradykinin/B2R pathway and chase-assay report.",
+      "research_extension": "No inspected original validates the specific speaker-described mechanism or clinical extension.",
+      "teaching_construction": "Edge-specific claim graph; causal-link and medication inference boundary.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unpublished pathway/chase-assay and disease-risk extension",
+          "origin": "recording 118–123; unresolved"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Plausible-edge composition does not certify the causal chain",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Unpublished pathway/chase-assay and disease-risk extension; engineering check: Plausible-edge composition does not certify the causal chain"
+    },
+    {
+      "section": "inverse",
+      "title": "20. Inverse comorbidity motivates a question, not a protective intervention 56:39",
+      "start": 3399.28,
+      "end": 3595.49,
+      "segments": [
+        124,
+        130
+      ],
+      "lecture_material": "Inverse-comorbidity/DHX9/SRRM4 exploratory expression and screening, explicitly unvalidated.",
+      "research_extension": "No inspected primary validation of the named target pair.",
+      "teaching_construction": "Competing-risk, ascertainment and expression-versus-dependency alternatives.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unvalidated exploratory gene-pair direction",
+          "origin": "recording 124–130"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Association does not select among causal/confounding explanations",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Unvalidated exploratory gene-pair direction; engineering check: Association does not select among causal/confounding explanations"
+    },
+    {
+      "section": "leakage",
+      "title": "21. “Future prediction” requires a frozen information boundary 59:55",
+      "start": 3595.49,
+      "end": 3654.48,
+      "segments": [
+        131,
+        132
+      ],
+      "lecture_material": "Q&A training cutoff/leakage and unquantified trial-prediction success.",
+      "research_extension": null,
+      "teaching_construction": "Prospective frozen model/corpus/tool/proposal selection design.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Reasonable clinical-trial prediction success, unquantified",
+          "origin": "recording 131–132"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Training cutoff alone does not freeze retrieval or human selection",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Reasonable clinical-trial prediction success, unquantified; engineering check: Training cutoff alone does not freeze retrieval or human selection"
+    },
+    {
+      "section": "exchange",
+      "title": "22. Scientific data need claims, methods and negative results that travel together 1:00:54",
+      "start": 3654.83,
+      "end": 3774.66,
+      "segments": [
+        133,
+        136
+      ],
+      "lecture_material": "Q&A scientific papers/peer review and scientific-data exchange proposal.",
+      "research_extension": null,
+      "teaching_construction": "Claim/method/observation/version/negative-result record; historical policy uncertainty.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Data-exchange proposal and dated policy concern",
+          "origin": "recording 133–136; current arXiv policy not asserted"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Reusable evidence fields and duplicate/selection controls",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Data-exchange proposal and dated policy concern; engineering check: Reusable evidence fields and duplicate/selection controls"
+    },
+    {
+      "section": "attention",
+      "title": "23. Preserve useful dissent when a report becomes conservative 1:02:54",
+      "start": 3774.66,
+      "end": 3895.86,
+      "segments": [
+        137,
+        140
+      ],
+      "lecture_material": "Q&A conservative reports, reframing and proof subproblems.",
+      "research_extension": null,
+      "teaching_construction": "Recommendation/exploratory archive and assumption-compatible composition.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Report attention and subproblem strategy",
+          "origin": "recording 137–140"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Preserve low-ranked dissent and missing connecting premises",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "speaker judgment: Report attention and subproblem strategy; engineering check: Preserve low-ranked dissent and missing connecting premises"
+    },
+    {
+      "section": "safety",
+      "title": "24. Monitor goals, trajectories and outcomes at their own levels 1:04:59",
+      "start": 3899.28,
+      "end": 3985.71,
+      "segments": [
+        141,
+        143
+      ],
+      "lecture_material": "Q&A layered goal/trajectory/base-model safeguards and illustrative10% threshold.",
+      "research_extension": "Co-scientist v1 pp.17,28 adversarial tests and limitations.",
+      "teaching_construction": "Severity-weighted expected harm and separate authority preconditions.",
+      "claim_provenance": [
+        {
+          "class": "product claim",
+          "claim": "Speaker-described system safeguards and threshold example",
+          "origin": "recording 141–143; no universal safety certification"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Preliminary paper adversarial-topic evaluation",
+          "origin": "coscientist; p.17"
+        },
+        {
+          "class": "definition",
+          "claim": "Source acknowledges remaining safety/evaluation limits",
+          "origin": "coscientist; p.28"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Low flagged fraction can retain one severe event",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "product claim: Speaker-described system safeguards and threshold example; empirical result: Preliminary paper adversarial-topic evaluation; definition: Source acknowledges remaining safety/evaluation limits; engineering check: Low flagged fraction can retain one severe event"
+    },
+    {
+      "section": "lab",
+      "title": "25. Numerical laboratory: preference, evidence and measurement",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original lab",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Exact original stdlib preference/evidence/measurement fixtures and numerical boundaries",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "engineering check: Exact original stdlib preference/evidence/measurement fixtures and numerical boundaries"
+    },
+    {
+      "section": "exercises",
+      "title": "26. Six exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original exercises",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Elo conservation/cycle contradiction, Bayes conditional model, sample-information value, nonidentifiability, multiplicity and covariance proofs",
+          "origin": "original teaching"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Finite arithmetic, research-design transfer and biological inference limits",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "theorem: Elo conservation/cycle contradiction, Bayes conditional model, sample-information value, nonidentifiability, multiplicity and covariance proofs; engineering check: Finite arithmetic, research-design transfer and biological inference limits"
+    },
+    {
+      "section": "references",
+      "title": "27. Original references and inspection boundaries",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original references",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Version-pinned bibliography and actual inspection scope",
+          "origin": "original teaching"
+        }
+      ],
+      "evidence_class": "definition: Version-pinned bibliography and actual inspection scope"
+    }
+  ],
+  "omitted_material": [
+    {
+      "segments": [
+        0,
+        1
+      ],
+      "start": 4.78,
+      "end": 62.59,
+      "reason": "Speaker biography and prior-project introduction; AMIE not expanded into an invented technical section"
+    }
+  ],
+  "coverage_check": {
+    "all_segments_sequentially_read": 144,
+    "substantive_segments_assigned_once": 142,
+    "assigned_range": [
+      2,
+      143
+    ],
+    "academic_qa_retained": true,
+    "unintelligible_fragment_boundary": "Question fragments in77/83/140 are not reconstructed; substantive responses retained",
+    "source_gap_boundary": "Navigation envelopes retain actual segment endpoints; silent gaps not fabricated"
+  },
+  "primary_source_audit": {
+    "sources": 11,
+    "retained_pdfs": 3,
+    "claim_pages_read": 32,
+    "primary_visuals_inspected": 4,
+    "scope": "Co-scientist pp.1–28, AlphaZero pp.1–3, later poster p.1, IBM/NCI/NCBI scoped text, four official terminology pages, genetic original abstract only; no full81page reading or biological reproduction claim"
+  },
+  "source_version_boundaries": [
+    "Co-scientist Feb2025 v1 used; June29,2026 v2 after talk and not substituted.",
+    "September1,2026 protein poster is explicitly later than May14 talk; unavailable May preprint not certified.",
+    "Unpublished OCT4/senescence/ACE/inverse-comorbidity examples remain date-specific speaker reports; no verified clinical conclusion.",
+    "arXiv policy remark remains dated concern; current rule not asserted."
+  ],
+  "references": [
+    {
+      "title": "Gottweis et al., Towards an AI co-scientist",
+      "url": "https://arxiv.org/pdf/2502.18864v1",
+      "supports": "February26,2025 v1; June2026 v2 not used; PDF pp.1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28"
+    },
+    {
+      "title": "Silver et al., Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm",
+      "url": "https://arxiv.org/pdf/1712.01815v1",
+      "supports": "December5,2017 v1; PDF pp.1,2,3"
+    },
+    {
+      "title": "Toghani et al., AI-guided discovery of atypical protein assemblies",
+      "url": "https://zenodo.org/records/22231261",
+      "supports": "September1,2026 author poster v1; later than lecture; PDF pp.1"
+    },
+    {
+      "title": "IBM, Deep Blue",
+      "url": "https://www.ibm.com/history/deep-blue",
+      "supports": "Historical opening and match narrative read"
+    },
+    {
+      "title": "National Cancer Institute, Definition of senescence",
+      "url": "https://www.cancer.gov/publications/dictionaries/cancer-terms/def/senescence",
+      "supports": "Official definition only"
+    },
+    {
+      "title": "NCBI, POU5F1 Gene ID5460",
+      "url": "https://www.ncbi.nlm.nih.gov/gene/5460",
+      "supports": "Official Datasets API gene identity and RefSeq summary only"
+    },
+    {
+      "title": "National Cancer Institute, Definition of fibrosis",
+      "url": "https://www.cancer.gov/publications/dictionaries/cancer-terms/def/fibrosis",
+      "supports": "Official definition actually read through public web; retained HTML is a JavaScript shell, not definition text; original teaching, not recording material"
+    },
+    {
+      "title": "NHGRI, Phenotype",
+      "url": "https://www.genome.gov/genetics-glossary/Phenotype",
+      "supports": "Official observable-trait definition only; original teaching, not recording material"
+    },
+    {
+      "title": "NHGRI, Epigenetics",
+      "url": "https://www.genome.gov/genetics-glossary/Epigenetics",
+      "supports": "Official DNA/protein modification and gene-activity definition only; original teaching, not recording material"
+    },
+    {
+      "title": "NIAMS, Procapsid of Bacteriophage virus Phi6",
+      "url": "https://www.niams.nih.gov/niams-multimedia-library/search/procapsid-bacteriophage-virus-phi6",
+      "supports": "Original structural-image description supports phage/capsid terminology only; no Phi6 mechanism or image inspection claimed"
+    },
+    {
+      "title": "Tu et al., Genetic Diagnosis and Discovery Enabled by Large Language Models",
+      "url": "https://advanced.onlinelibrary.wiley.com/doi/abs/10.1002/advs.202518656",
+      "supports": "Original journal abstract actually read through public web; only mouse knock-in origin claim used. No retained PDF/full-text attestation."
+    }
+  ],
+  "authored_body_sha256": "9abc2ed39f5e6e18d87d23296d08af5a31cf79a6eb1fff27a33abf8be1511aa2",
+  "prose_word_count_excluding_math_and_code": 8500,
+  "exercise_count": 6,
+  "original_code": {
+    "file": "chapter07.py",
+    "sha256": "20169e7f0da35c5ab1cad850e096be1a422654c193e6b23dc364fdeffa3270ee",
+    "standard_library_only": true,
+    "embedded_code_exact": true,
+    "embedded_stdout_exact": true,
+    "negative_input_checks": 33,
+    "extreme_endpoint_assertions": 14,
+    "scope": "Original stipulated preference/Bayes/decision/curve models; no biological predictor or co-scientist implementation reproduction"
+  },
+  "author_allocation": {
+    "agent": "/root/chapter09",
+    "role": "chapter7 author, not its reviewer",
+    "model": "Actual inherited available agent model; historical unavailable model names not asserted"
+  },
+  "quality_passes": [
+    {
+      "pass": "1-6,6a,6c",
+      "result": "Complete within the chapter recorded source, visual, mathematical, code and exercise scopes"
+    },
+    {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; exact reviewed body/code retained"
+    },
+    {
+      "pass": "9",
+      "result": "Actual local reader/source/program/privacy evidence recorded separately in validation-summary.json; human screen-reader audit is not performed"
+    }
+  ],
+  "gate_6b": {
+    "status": "pending",
+    "self_acceptance": false
+  },
+  "publication": "Not published; local reading edition",
+  "permission_errors_current_author_task": [],
+  "gate6b": {
+    "status": "accepted",
+    "rounds": 2,
+    "blocking_findings": 0,
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "9abc2ed39f5e6e18d87d23296d08af5a31cf79a6eb1fff27a33abf8be1511aa2",
+    "accepted_metadata_sha256": "ebe91717e22d3a4d36cf2e63c5fa84992c49728ea9c59def51e3c492c9e48405"
+  }
+}

@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><meta name="book-content-sha256" content="9abc2ed39f5e6e18d87d23296d08af5a31cf79a6eb1fff27a33abf8be1511aa2"><title>AI Agents for Science and Medicine · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout"><aside class="toc" id="chapter-toc" aria-label="On this page"><h2>On this page</h2></aside><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><!-- BOOK-CONTENT-START -->
+<header><p class="eyebrow">CS25 · Chapter 7 · May 14, 2026</p><h1>AI Agents for Science and Medicine</h1><p class="subtitle">From competing explanations to experiments that can distinguish them</p></header>
+<p><em>Fibrosis</em> is growth or accumulation of fibrous tissue; an <em>antifibrotic</em> intervention aims to reduce that process. A small research team has a budget for one follow-up study of an antifibrotic hypothesis. An AI assistant proposes candidate A, gives a compelling mechanistic explanation, and predicts a lower fibrosis marker in a hepatic organoid: a laboratory model grown from human cells that reproduces some aspects of liver biology. Candidate B has a less polished explanation but a clearer measurement plan. Which proposal deserves the team's attention? The terminology follows the <a href="https://www.cancer.gov/publications/dictionaries/cancer-terms/def/fibrosis">NCI fibrosis definition</a>; the research decision is an original teaching case.</p>
+<p>A lower marker alone cannot answer the question. It might mean that viable cells produce less fibrotic material, or that fewer cells remain to produce anything. Ten reviewers repeating the same mechanistic story will not resolve that ambiguity. We will keep this fictional research decision throughout the chapter, first organizing proposals, then deriving what ranking and new evidence can tell us, and finally examining the talk's actual biological examples. The numerical utilities and candidates below are original teaching constructions, not treatment recommendations or reproductions of the co-scientist system.</p>
+<aside class="callout"><strong>Source boundary.</strong> This chapter follows <a href="https://www.youtube.com/watch?v=jFdH7n6BAl0">Vivek Natarajan's May 14, 2026 talk</a>, including substantive academic questions. Timestamps come from local machine transcription, not publisher captions. No official deck or recording visuals have been inspected. Architectural and experimental claims are checked against <a href="https://arxiv.org/pdf/2502.18864v1">Gottweis et al., <cite>Towards an AI co-scientist</cite>, February 2025 version 1</a>, with page references. A September 2026 author poster is explicitly a later research update. Unpublished examples remain speaker reports. Introduction biographies and event logistics are omitted; unintelligible audience fragments are not reconstructed.</aside>
+
+<section id="mission"><h2>1. Define the collaborator's job <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=62">1:02</a></h2>
+<p>Natarajan's proposed <dfn>co-scientist</dfn> is an AI system that helps a human researcher formulate and improve scientific hypotheses. A hypothesis is a claim about the world that can have consequences distinguishable by observation. A proposal adds a rationale, existing evidence and a plan for testing those consequences. These objects have different acceptance conditions: a well-formed proposal can contain an ultimately false hypothesis.</p>
+<p>For our team, “find an antifibrotic drug” is too broad to guide the system. “Prioritize a mechanism whose effects can be distinguished from cell loss in the available organoid model” identifies a scientific ambiguity and an experimental constraint. This converts the assistant's job into proposing discriminating studies, locating relevant evidence and surfacing objections. It does not give the system the authority to declare a therapy successful.</p>
+<p>The collaboration is asymmetric. The scientist supplies the problem, constraints and domain judgment; the system can explore more explanations and organize their supporting material. The human still has to determine whether the chosen assay measures the intended construct. More fluent reports expand the number of items available for consideration, which can increase rather than remove the need to manage attention. We therefore judge the system by how it changes the researcher's next decision, not by the number of proposals it emits.</p>
+</section>
+
+<section id="origins"><h2>2. A hypothesis becomes consequential when it leaves the text interface <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=145">2:25</a></h2>
+<p>The talk traces the project through Med-PaLM and a collaboration on genetic hypotheses. The key transition is from answering a medical question to proposing an explanation that laboratory work could evaluate. A <em>phenotype</em> is an observable or measurable biological trait (<a href="https://www.genome.gov/genetics-glossary/Phenotype">NHGRI definition</a>). A model can connect a gene's described function, an observed phenotype and a candidate mechanism; such a connection is a lead rather than a causal demonstration.</p>
+<p>A later original journal abstract, <a href="https://advanced.onlinelibrary.wiley.com/doi/abs/10.1002/advs.202518656">Tu et al., <cite>Genetic Diagnosis and Discovery Enabled by Large Language Models</cite></a> (February 8, 2026), reports knock-in mice supporting a hearing-loss candidate. This is an <strong>empirical result scoped to that reported mouse experiment</strong>. The accessible abstract supports the origin story; the full publisher PDF was unavailable here, so we do not extend it into a detailed account of the gene, effect size or clinical diagnostic accuracy. Prior AMIE work appears in the introduction and is not the technical subject of this lecture.</p>
+<p>A <dfn>knock-in</dfn> introduces a specified genetic change into a model organism. A phenotype after that intervention can strengthen a causal argument under the experiment's controls. It still does not establish that the same variant explains every similar human presentation. Species, genetic background and the measured outcome matter. The equivalent discipline for our organoid team is to say exactly which experimental observation would support the proposed mechanism, and which alternative explanation would survive it.</p>
+</section>
+
+<section id="slow"><h2>3. Spending more time requires a reason to expect new information <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=435">7:15</a></h2>
+<p>The speaker uses the familiar “System 1” and “System 2” analogy to contrast rapid responses with deliberate reasoning. Here it is a <strong>speaker judgment and organizing analogy</strong>, not evidence that an LLM implements a measured human cognitive architecture. An agent can use additional inference calls to search literature, critique assumptions and revise proposals. Those calls can improve the answer only through the work they perform.</p>
+<p>Consider two uses of an extra minute. One generates another paragraph defending candidate A with the same premises. The other retrieves a report that its apparent antifibrotic effect disappears after normalization by viable-cell count. The first changes the presentation; the second can change the decision. An effective deliberation loop should therefore keep track of the question each call is intended to resolve.</p>
+<p>A useful task record contains a target uncertainty, an operation and a stopping condition: “check whether the cited result measures per-cell production; stop after resolving the assay normalization or explicitly marking it unresolved.” This is an original engineering design, not a verified implementation detail of the paper. It exposes a failure that token count hides: repeated reasoning can become a long computation over an unchanged mistaken premise. Deliberation is useful when it revises premises, compares alternatives or acquires evidence relevant to the next action.</p>
+</section>
+
+<section id="generality"><h2>4. Breadth of interface and reliability of outcome are separate axes <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=547">9:07</a></h2>
+<p>The talk's task-complexity and generality plot motivates systems that can assist with work taking experts substantial time. Treat that plot as a conceptual taxonomy, not an experimentally calibrated conversion between compute and scientist-years. A predicted protein structure is not automatically an experimentally resolved structure, and its availability does not mean that a fixed number of research years has been saved.</p>
+<p>A specialized model has a comparatively narrow input/output contract. An LLM can accept natural-language descriptions of genes, assays, papers and mathematical questions, which offers a broader interface. That breadth does not prove equal reliability across those domains. A system may explain a liver pathway, summarize a paper and compose a proposal while still failing to recognize an inappropriate assay control.</p>
+<p>The Deep Blue comparison makes the distinction vivid. IBM's <a href="https://www.ibm.com/history/deep-blue">original historical account</a> places the winning Kasparov match in <strong>May 1997</strong>, correcting the talk's spoken 1999 date. Chess competence under specified rules was a remarkable accomplishment; it was not a general scientific-reasoning certificate. Similarly, a language interface makes a scientific task expressible, but the downstream claim needs a domain-specific evaluation.</p>
+<p>For candidate A, the relevant axes are independently observable: Was the cited paper found? Was it interpreted correctly? Is the proposed mechanism testable? Can the experiment distinguish it from cell loss? A single “generality” score would conceal those failures. Empty regions in an illustrative capability plot should motivate experiments, not be treated as proof that no existing method works there.</p>
+</section>
+
+<section id="selfplay"><h2>5. What can scientific debate inherit from self-play? <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=1054">17:34</a></h2>
+<p>The lecture invokes the self-play lineage as an inspiration for iterative scientific debate. The lineage needs a precise distinction. The original AlphaGo used human examples as well as reinforcement learning; AlphaZero learned from self-play with game rules supplied. <a href="https://arxiv.org/pdf/1712.01815v1">Silver et al.'s December 2017 AlphaZero preprint</a> describes random initialization and superhuman performance within 24 hours for the reported experiments (PDF pp. 1–3; <strong>empirical result</strong>). We do not retain the lecture's approximate three-month timing as a verified training duration.</p>
+<p>AlphaZero's search obtains a terminal outcome from the game's rules. The model predicts a value and a move distribution; training adjusts parameters against the actual outcome and search probabilities. This closes a feedback loop: losing a game is externally determined even if the player's explanation sounds persuasive. A scientific debate generally lacks that immediate terminal label. A judge can prefer a hypothesis before any experiment capable of deciding its truth has been performed.</p>
+<p>The transferable idea is search over alternatives with iterative feedback. The difficult missing component is a reliable outcome signal. Our candidate A can defeat B in every rhetorical debate and still fail the assay. Giving a preference judge more computation improves neither its access to unmeasured biology nor the validity of its rubric by definition.</p>
+<p>Scientific self-critique can still be valuable: it can expose unsupported steps, produce counterexamples and design a decisive observation. The success condition must remain tied to those products. A debate victory can justify further examination; it cannot replace the observation that the debate proposed.</p>
+</section>
+
+<section id="goal"><h2>6. Convert a research wish into an explicit contract <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=1361">22:41</a></h2>
+<p>The co-scientist begins with a human research goal, supporting material and evaluation criteria. The original paper describes goal parsing, constraints, seed ideas and context documents (v1 PDF pp. 7–8, 13; <strong>definition of the reported interface</strong>). The researcher can refine the goal rather than leave the system to infer all preferences from a brief request.</p>
+<p>We distinguish a <dfn>hard constraint</dfn>, whose violation excludes a proposal, from a preference that can be traded against another preference. A study requiring an unavailable measurement fails a feasibility constraint; excellent novelty cannot compensate for that failure. Among feasible studies, cost, informativeness and plausibility can guide prioritization. A weighted score only makes sense after deciding which properties are compensable and how they are measured.</p>
+<p>Our original contract asks for a specified mechanism, a competing cell-loss explanation, measurable predictions under both, relevant existing evidence, and a feasible discrimination plan. Candidate A must identify the marker's denominator. Candidate B must identify whether its supposedly decisive observation actually changes under the alternative explanation. “High impact” alone gives neither proposal a usable acceptance test.</p>
+<p>The contract should also name what counts as unavailable evidence. An inaccessible paper cannot become supporting evidence merely because another agent repeats its title. A citation record should preserve the exact source, version, supported claim and unresolved boundary. This turns an uncertainty from a hidden assumption into an explicit task for the researcher.</p>
+</section>
+
+<section id="agents"><h2>7. Specialized roles organize a search; they do not create independent scientists <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=1526">25:26</a></h2>
+<p>The lecture emphasizes asynchronous generation, reflection, ranking and evolution. The paper's fuller architecture has six named roles: Generation proposes hypotheses; Reflection examines them; Ranking compares them; Proximity organizes similar proposals; Evolution generates refinements or combinations; Meta-review summarizes recurring strengths and failures (v1 pp. 7–13; <strong>definition</strong>). These are operational roles, often implemented with specialized prompts, rather than evidence of six independent sources of knowledge.</p>
+<p>The architecture's benefit is separation of work. A reviewer can search for contradictions while a generator explores a different mechanism. Proximity can group ten near-duplicate explanations so they do not consume ten units of attention. Evolution adds a new hypothesis without replacing the old one, an explicit paper design choice (p. 12). Retention preserves the ability to compare a changed claim with its prior version.</p>
+<p>Asynchrony creates a coordination problem. Suppose a reflection result concerns A-version-1, but the active report already displays A-version-2 with a new dose-response argument. Attaching the old review to the new proposal silently certifies an unreviewed claim. An original implementation discipline is to bind every review to a hypothesis identifier, claim version, research-goal version and source snapshot. A new version can inherit pointers to old evidence, but each changed claim needs a fresh assessment.</p>
+<p>This also makes evolution scientifically legible. “Improved” should say what changed: a citation was corrected, a confound was addressed, or a prediction was made more discriminating. A higher ranking after stylistic rewriting should remain distinguishable from a higher ranking after new experimental evidence.</p>
+</section>
+
+<section id="ranking"><h2>8. Derive Elo's meaning before interpreting its score <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=1738">28:58</a></h2>
+<p>Pairwise comparisons ask a judge which proposal better satisfies a rubric. The source initializes Elo ratings at 1200 and uses comparisons to allocate attention (v1 pp. 11–12). We now introduce an <strong>original teaching convention</strong> with scale 400 and step size 32; these constants are not a verified disclosure of the co-scientist implementation.</p>
+<p>Let $r_i,r_j\in\mathbb R$ be ratings of proposals $i,j$. Let $s_i$ be the comparison outcome: 1 for a win, 0 for a loss and $1/2$ for a tie. Define expected preference $e_i$ and positive update step $\kappa$ by</p>
+\[e_i=\frac{1}{1+10^{(r_j-r_i)/400}},\qquad r_i'=r_i+\kappa(s_i-e_i),\qquad r_j'=r_j-\kappa(s_i-e_i).\]
+<p>The increment is the observed-minus-expected discrepancy. If equal-rated A defeats B, $e_A=1/2$ and $\kappa=32$ gives 1216 and 1184. A second win has expectation $1/(1+10^{-32/400})\approx0.545922$, so the next ratings are approximately 1230.530498 and 1169.469502. The second surprise is smaller. The two changes cancel, proving that this paired update preserves $r_i+r_j$ in exact arithmetic. These numerical values are <strong>engineering checks</strong>.</p>
+<p>The corresponding odds are $e_i/(1-e_i)=10^{(r_i-r_j)/400}$. A 400-point gap means expected preference $10/11$ under this model. It does not mean a $10/11$ probability that the favored mechanism exists in an organoid. The modeled event is a rubric-based comparison result, and changing the judge or candidate pool changes its meaning.</p>
+<p>A scalar rating also imposes a consistency restriction. If A beats B with probability .9, B beats C with .9 and C beats A with .9, their implied log-odds differences would sum to $3\log 9&gt;0$. Rating differences around the same cycle sum to zero. Thus no scalar Elo model can exactly represent that cyclic preference pattern. Novelty, feasibility and mechanistic plausibility can produce precisely such tradeoffs. Preserve criterion-specific objections alongside the ranking rather than force every scientific disagreement into one number.</p>
+</section>
+
+<section id="memory"><h2>9. Memory can improve the next prompt while leaving the model unchanged <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=1844">30:44</a></h2>
+<p>The system summarizes debate patterns and feeds them into later work. The paper explicitly describes meta-review feedback appended to prompts without backpropagation, fine-tuning or reinforcement-learning parameter updates (v1 pp. 9–12; <strong>definition</strong>). This differs from the AlphaZero training loop.</p>
+<p>Using the book's notation, let $\theta$ be fixed trained parameters and $m_k$ the contextual memory at iteration $k$. The next generation distribution can change from $p_\theta(\text{proposal}\mid\text{goal},m_k)$ to $p_\theta(\text{proposal}\mid\text{goal},m_{k+1})$ while $\theta$ stays fixed. Context changes behavior. It does not establish that the model learned a verified biological fact in its weights.</p>
+<p>For our team, “previous proposals omitted viable-cell normalization” is useful memory. “Candidate A is correct because it has the highest rating” is dangerous memory: it converts an internal preference into a premise for future reasoning. A summary should carry its evidence type and retain disagreement. Otherwise repeated context can strengthen the model's confidence without strengthening the claim.</p>
+<p>Even multiple reviewers need a dependence check. Suppose an integer $m\geq2$ review errors have positive equal variance $\sigma^2$ and equal pairwise correlation $\rho$. With mean error $\bar\varepsilon=m^{-1}\sum_{a=1}^m\varepsilon_a$, expanding the variance yields</p>
+\[\operatorname{Var}(\bar\varepsilon)=\frac{m\sigma^2+m(m-1)\rho\sigma^2}{m^2}=\sigma^2\frac{1+(m-1)\rho}{m}.\]
+<p>This is a <strong>theorem under the stipulated equicorrelation model</strong>, not a measured correlation of these agents. For ten reviews and $\rho=.8$, the ratio is .82; their effective count relative to independent equal-variance reviews is $1/.82\approx1.219512$. The covariance matrix has eigenvalue $\sigma^2[1+(m-1)\rho]$ in the all-ones direction and $\sigma^2(1-\rho)$ in every orthogonal direction. Nonnegative eigenvalues therefore require $-1/(m-1)\leq\rho\leq1$. Independent-looking names do not establish independent errors. A retrieved contradiction or a new measurement is valuable for a different reason: it can challenge a shared premise.</p>
+</section>
+
+<section id="reports"><h2>10. Compress reports without discarding the disagreement <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=1994">33:14</a></h2>
+<p>The lecture describes stopping conditions, clustering and reports intended for a busy researcher. A useful report compresses the search, not the epistemic status of its outputs. The paper's proximity and meta-review components organize related hypotheses and summarize the work (v1 pp. 12–13). This is a response to the human attention bottleneck.</p>
+<p>Our report should show the current claim, strongest supporting observation, strongest unresolved objection and next distinguishing measurement. For candidate A, the top-line statement might be “marker reduction is plausible, but the available evidence does not separate per-cell suppression from cell loss.” That sentence is more actionable than a confident page of mechanism prose. The underlying source and prior versions must remain reachable so that compression does not make an objection disappear.</p>
+<p>Grouping proposals by mechanism can reveal that an apparently diverse top ten all rely on the same unverified assumption. Grouping only by wording can miss that common dependence. Conversely, a low-ranked proposal may provide a uniquely discriminating experiment even if its mechanism is less fashionable. A scientist needs the structure of the disagreement to decide which proposal merits a scarce measurement.</p>
+<p>The speaker's multimodal and tool-use descriptions are dated system claims. A tool being available does not mean every reported number was computed with it. The paper's reflection “simulation” includes model-imagined mechanistic scenarios (p. 11); it is not automatically a physical simulator or a biological experiment. Reports should identify the operation actually performed, including its assumptions.</p>
+</section>
+
+<section id="budget"><h2>11. Test-time compute and the value of an experiment answer different questions <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=2081">34:41</a></h2>
+<p>In the Q&amp;A, Natarajan makes compute saturation depend on the problem class and emphasizes expert incentives and experimental verification. The paper reports improving internal rankings across ten temporal buckets for 203 goals, and question-matched GPQA evaluation (v1 pp. 14–18; <strong>empirical results with their stated evaluation protocols</strong>). Its 78.4% top-rated GPQA answer accuracy is about questions with available ground truth. It is not the probability that a novel biological hypothesis is true. Higher Elo over time is partly an evaluation by the same kind of judge used in the search.</p>
+<p>To decide whether to investigate A, we need a model of evidence. Let $H$ denote “the specified per-cell mechanism operates in this model” and $\neg H$ its exhaustive alternative for this simplified example. Let prior probability be $\pi=P(H)$, sensitivity $\alpha=P(+\mid H)$ and false-positive probability $\beta=P(+\mid\neg H)$ for a defined binary assay result. These probabilities lie in $[0,1]$. The posterior formula below requires positive evidence probability; the finite odds identity additionally assumes $0&lt;\pi&lt;1$ and $\beta&gt;0$. Endpoint cases use the posterior formula directly. Bayes' rule gives</p>
+\[P(H\mid+)=\frac{\pi\alpha}{\pi\alpha+(1-\pi)\beta},\qquad \frac{P(H\mid+)}{P(\neg H\mid+)}=\frac{\pi}{1-\pi}\frac{\alpha}{\beta}.\]
+<p>The denominator follows by partitioning the event $+$ across the two alternatives; it must be positive. For the original fixture $\pi=.1,\alpha=.8,\beta=.1$, a positive gives $8/17\approx.470588$. The low prior matters: a seemingly good assay has not made the claim nearly certain. Two positive results produce $64/73\approx.876712$ only if they are conditionally independent given each alternative. Reusing the same measurement supplies one event, not two likelihood ratios. Distinct record identifiers prevent obvious duplication but cannot prove independence.</p>
+<p>Now define an original decision: commissioning a confirmatory analysis has expected utility $10p-5$ at belief $p$, while declining has utility zero. These are fictional research utility units, not patient outcomes. The optimal action changes at $p=1/2$. At prior .2, the team declines. With $\alpha=.8,\beta=.1$, a positive has probability .24 and posterior $2/3$; a negative has probability .76 and posterior $1/19$. Acting only after a positive gives expected utility $.24(10\cdot2/3-5)=.4$. Thus the expected value of sample information is .4; a test costing .3 has net value .1.</p>
+<p>For a finite action set and finite utilities, the general quantity is $\mathbb E_Y[\max_a\mathbb E[U(a,H)\mid Y]]-\max_a\mathbb E[U(a,H)]$, where $Y$ is the test result, $a$ an allowed action and $U$ its utility. Before subtracting cost, it is nonnegative because the decision-maker could always ignore $Y$ and keep the old action. Net value can be negative. This <strong>original conditional decision theorem</strong> depends on correct likelihoods, utilities and the same action set. It does not imply that every additional assay or model call is worth its cost.</p>
+<p>The Q&amp;A also describes using members of the same Gemini model family, with Flash/Pro choices trading cost against reasoning needs. This is a <strong>dated product description</strong>, not a matched performance comparison verified here. The decision principle transfers: spend an expensive call on a question whose resolution could change the research action. A cheaper call may suffice to format a report; a crucial contradictory source may justify deeper review. Neither choice establishes that internal reasoning has acquired a new experimental observation.</p>
+</section>
+
+<section id="amr"><h2>12. Recapitulating an unknown result is evidence with a provenance problem <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=2408">40:08</a></h2>
+<p>The antimicrobial-resistance story is a striking case of scientific hypothesis generation. A <em>phage</em> is a virus that infects bacteria; a <em>capsid</em> is a protein shell enclosing viral genetic material (<a href="https://www.niams.nih.gov/niams-multimedia-library/search/procapsid-bacteriophage-virus-phi6">NIAMS terminology</a>). The laboratory supplied a research problem about capsid-forming phage-inducible chromosomal islands, mobile genetic elements involved in gene transfer. The co-scientist proposed a broad-host-range explanation involving diverse phage tails that resembled work the collaborators had already done but had not then published (v1 pp. 26–27; <strong>reported empirical case study</strong>).</p>
+<p>The causal point is modest and useful: the system generated a hypothesis that laboratory experts recognized as consequential, using background that included decades of public work. The comparison “two days versus many years” is not a controlled estimate of how much scientific labor the system replaces. The earlier laboratory work supplied the ability to recognize and evaluate the generated idea; that evaluation was part of the outcome.</p>
+<p>“Unpublished” must be attached to a date. The talk describes the Thanksgiving 2024 episode, and the February 2025 preprint reports it. We do not assert that the result remains unpublished in October 2026. Nor do reassurance anecdotes about private correspondence establish a formal contamination audit. Such an audit would freeze the supplied context, model and tool versions, search-access dates, pre-existing laboratory records and generated outputs before comparing them.</p>
+<p>For our organoid team, the analogous good result is that an independent generation recovers an earlier unshared confound. Its strength depends on showing which information was actually unavailable to the system. A retrospective story motivates that control; it does not supply it automatically.</p>
+</section>
+
+<section id="validation"><h2>13. The validation ladder has several independently testable rungs <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=2638">43:58</a></h2>
+<p>The lecture moves from system operation to AML, hepatic organoids and protein design. These cases occupy different evidence levels. An expert's judgment that a proposal is novel is a measured preference. A model's mechanistic simulation is a conditional calculation or narrative. A cellular assay is an experiment in a defined model. Clinical effectiveness requires evidence about patients and relevant outcomes. Moving upward changes the question being answered.</p>
+<p>The paper's candidate selection is part of the evidence, not an administrative detail. Experts selected hypotheses for experiments. Clinician review used prescreened proposals rather than a random sample of everything the system could emit (v1 pp. 19–21). A favorable result in that pool supports a human-plus-system workflow with those filters. It does not estimate the unconditional success rate of autonomous generation.</p>
+<p>Selection also affects noisy measurements. Suppose an integer $m\geq1$ independent tests examine null hypotheses, each falsely positive with probability $\eta\in[0,1]$. Then the probability of at least one false positive is $1-(1-\eta)^m$. For $m=100,\eta=.05$, it is approximately .994079: a seemingly exciting hit is expected under this deliberately simplified all-null example. With arbitrary dependence, the union bound still gives $P(\text{any false positive})\leq m\eta$, capped at 1. Setting each threshold to a desired total error level divided by $m$ controls that bound.</p>
+<p>This is an <strong>original probability theorem and engineering check</strong>, not an accusation about the paper's experiments. It explains why the full candidate pool, filtering rules, negative results and confirmatory measurements matter. Expanding the search can improve the best real hypothesis while also making the largest noise fluctuation more impressive. A compute curve should separate these effects rather than label the maximum score “scientific progress.”</p>
+</section>
+
+<section id="aml"><h2>14. Interpret a dose-response curve at the level actually measured <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=2719">45:19</a></h2>
+<p>The AML case concerns acute myeloid leukemia cell lines. The paper reports KIRA6 viability IC50 values of 13 nM in KG-1, 517 nM in MOLM-13 and 817 nM in HL-60 (v1 pp. 23–24; <strong>empirical result in those assays</strong>). KIRA6's IRE1α pathway connection was already known; the novelty claim is narrower than “an entirely new biological mechanism.” These numbers describe concentration-response measurements in cultured cells, not feasible patient exposure, tumor selectivity, survival benefit or safety.</p>
+<p>The source's actual curves show why a single midpoint cannot replace the whole response. To make the issue mathematical, define an <strong>original Hill-type model</strong> for normalized viability $v(c)$ at concentration $c\geq0$:</p>
+\[v(c)=v_{\min}+\frac{v_{\max}-v_{\min}}{1+(c/c_{50})^h},\quad 0\leq v_{\min}\leq v_{\max}\leq1,\quad c_{50}&gt;0,\quad h&gt;0.\]
+<p>Here $c$ and $c_{50}$ have the same units, $h$ is dimensionless, and the endpoints describe the modeled response range. At $c=0$ the response is $v_{\max}$; as $c\to\infty$ it approaches $v_{\min}$. At $c=c_{50}$ it is $(v_{\max}+v_{\min})/2$. Thus this parameter is the midpoint of the dynamic range, not necessarily concentration giving absolute viability $1/2$.</p>
+<p>For fictional endpoints 1 and .2, exponent 2 and midpoint concentration 10 in arbitrary common units, $v(10)=.6$. Solving $v(c)=.5$ yields $(c/10)^2=5/3$ and $c\approx12.909944$. If the lower plateau exceeded .5, no finite concentration could reach absolute half in this model. Assay definitions and fitting conventions must therefore accompany “IC50”; our toy fit is not a reanalysis of the paper's three values.</p>
+<p>The program computes through log concentration differences to avoid overflowing $(c/c_{50})^h$. Numerical stability preserves the stipulated curve; it does not make that curve biologically adequate. Exposure duration, controls and off-target effects remain experimental questions outside this model.</p>
+</section>
+
+<section id="liver"><h2>15. Resolve the denominator before claiming an antifibrotic mechanism <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=2833">47:13</a></h2>
+<p><em>Epigenetic regulation</em> can alter gene activity through chemical modifications of DNA or associated proteins without changing the DNA sequence (<a href="https://www.genome.gov/genetics-glossary/Epigenetics">NHGRI definition</a>). The hepatic-organoid case combines proposed epigenetic targets with measured fibrosis-related outcomes. The preprint reports three selected target hypotheses from fifteen; compounds acting on two of those three targets showed antifibrotic activity without observed cellular toxicity in the tested organoids (v1 p. 25; <strong>empirical result</strong>). Four plotted drug suggestions do not establish four safe therapies. An organoid result does not settle in-vivo pharmacology or patient outcomes.</p>
+<p>Our fictional marker ambiguity can now be derived. Let $N&gt;0$ denote viable-cell count and $q\geq0$ mean marker production per viable cell. Under the simplified additive measurement model, total marker is $M=Nq$. Assume the reference has $q_{\mathrm{reference}}&gt;0$, so its total is nonzero. For treated and reference conditions,</p>
+\[\frac{M_{\mathrm{treated}}}{M_{\mathrm{reference}}}=\frac{N_{\mathrm{treated}}}{N_{\mathrm{reference}}}\frac{q_{\mathrm{treated}}}{q_{\mathrm{reference}}}.\]
+<p>A reference with $N=100,q=1$ has $M=100$. Observing treated $M=50$ fits both $N=100,q=.5$ and $N=50,q=1$. The same total cannot identify the separate factors. This is an <strong>original identifiability counterexample</strong>: distinct mechanisms produce the same observation. Measuring viable-cell count distinguishes those two stipulated cases, giving per-cell marker .5 or 1.</p>
+<p>The extra denominator is necessary for that distinction but is not a complete causal proof. Cell composition can change, the viability assay can itself be affected, and the simplified additive model can fail. A persuasive proposal must name those possibilities rather than treat normalization as a universal cure. For A and B, the practical output is a measurement plan with orthogonal controls and declared interpretations of contradictory outcomes.</p>
+<p>Cross-domain complementarity is valuable here. The model can connect epigenetic and fibrosis literature; the laboratory knows which readouts and confounds its organoid model permits. The scientific claim belongs to their combined evidence and controls. It should remain narrower than the aspiration that generated it.</p>
+</section>
+
+<section id="structures"><h2>16. Structural novelty can prioritize an anomaly without predicting its answer <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=2945">49:05</a></h2>
+<p>The speaker discusses a Structural Novelty Index and an unusual NRC7 protein assembly. The May 2026 original preprint could not be retrieved here. A separately inspected <a href="https://zenodo.org/records/22231261">September 1, 2026 author poster, <cite>AI-guided discovery of atypical protein assemblies</cite></a>, provides a <strong>later empirical research update</strong>; its timing must not be silently folded into what was available at the May 14 lecture.</p>
+<p>The poster's inspected workflow starts from NRC helper immune-receptor candidates and assumed hexameric structures. It combines model confidence with geometric and contact descriptors to prioritize atypical assemblies. The named NRC7 candidates are outliers under that assumption; subsequent purified-protein and electron-microscopy evidence supports eleven-subunit rings. This is not the same claim as “AlphaFold directly predicted the correct eleven-member structure.” An anomalous fit to an assumed six-member structure helped select a question for experiment.</p>
+<p>A <dfn>resistosome</dfn> is an activated immune-receptor assembly involved in plant defense. The relevant hexamer baseline is scoped to the NRC helper family in this work, not every plant immune receptor. Structural novelty does not by itself establish defensive function, crop performance or a useful agricultural intervention.</p>
+<p>The analogy for our team is productive: a hypothesis that fits a standard model poorly may be an experimental priority rather than a worthless proposal. But a novelty index ranks surprise under descriptors and assumptions. The physical measurement answers a different question. Preserve that two-stage logic when reporting a discovery.</p>
+</section>
+
+<section id="oct4"><h2>17. A design loop needs an external definition of success <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3032">50:32</a></h2>
+<p>The OCT4 example concerns iterative protein-variant design using structural-model tools and laboratory feedback. The <a href="https://www.ncbi.nlm.nih.gov/gene/5460">official NCBI POU5F1 record</a> identifies OCT4 as a transcription factor—a protein that helps control gene activity—involved in embryonic development and stem-cell pluripotency, the capacity to give rise to different cell types. The lecture's specific variant successes remain <strong>unpublished speaker reports</strong> here; no inspected original establishes a rejuvenation treatment or human safety result.</p>
+<p>A design loop can propose a sequence, assess predicted structure, revise it and request an experiment. Each stage has a different score. Structural confidence evaluates a model prediction. A functional assay evaluates a specified activity under conditions. A claim about age-related physiology would require further endpoints. Optimizing the first score does not logically maximize the later outcomes.</p>
+<p>For candidate A, the analogous mistake is to optimize a mechanistic-consistency score and then claim a clinically meaningful antifibrotic effect. A useful loop retains explicit links: which property is optimized, how that property could affect the next endpoint, and what measurement would refute the link. An impressive intermediate result can still be valuable; its report should state the intermediate outcome precisely.</p>
+</section>
+
+<section id="senescence"><h2>18. An assay-defined cellular state is not an organism-level outcome <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3118">51:58</a></h2>
+<p>The talk describes experiments on secreted factors and comparisons involving Klotho, with encouraging effects on senescence-related readouts. These are <strong>unpublished speaker reports</strong>; effect sizes, controls and replication are not independently verified here. We retain their role as examples of proposed research directions without certifying their biological conclusions.</p>
+<p><dfn>Cellular senescence</dfn> involves a persistent cell-cycle-arrest state. The <a href="https://www.cancer.gov/publications/dictionaries/cancer-terms/def/senescence">National Cancer Institute's definition</a> distinguishes stopping division from cell death. It should not be defined simply as inflammation or inability to divide in one observation. A fall in a senescence-associated marker could reflect changed expression, changed cell composition or removal of the cells being measured. The appropriate interpretation depends on the readout and controls.</p>
+<p>Our organoid ambiguity therefore transfers directly. A population-level marker change needs a denominator and a model of which cells remain. Even a convincing change in a cellular phenotype does not establish rejuvenation of an organism. The system's useful contribution is to propose alternative explanations and a study that distinguishes them. The evidence needed for a broader health claim remains a separate research program.</p>
+</section>
+
+<section id="ace"><h2>19. A pathway narrative must preserve its causal gaps <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3230">53:50</a></h2>
+<p>The ACE/bradykinin example describes a proposed pathway involving angiotensin-converting enzyme, a signaling peptide and the bradykinin B2 receptor, followed by a speaker-described chase assay. The specific mechanistic validation and Alzheimer-risk extension are <strong>unpublished speaker judgments and reports</strong>. They are not independently established clinical conclusions in this chapter.</p>
+<p>A biochemical narrative can concatenate several plausible arrows: an intervention changes a molecule, that molecule changes receptor behavior, and receptor behavior influences a disease-relevant process. The composition of plausible arrows is not a demonstrated causal chain. Each arrow can depend on concentration, tissue, timing and competing pathways, and an intermediate assay may measure only one link.</p>
+<p>Representing the chain as a claim graph is an original useful discipline. Attach a source and evidence type to each edge; distinguish an observed association from an intervention result. A missing edge should remain missing even if the whole story reads coherently. This is how reflection can improve a proposal without claiming more than its sources permit.</p>
+<p>The talk therefore supports a discussion of mechanistic hypothesis formation. It does not establish that prescribed ACE inhibitors cause clinical harm or justify a medication change. A patient's outcome is a different endpoint requiring clinical evidence. The scientific boundary follows from the missing causal links, not merely from uncertainty in the prose.</p>
+</section>
+
+<section id="inverse"><h2>20. Inverse comorbidity motivates a question, not a protective intervention <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3399">56:39</a></h2>
+<p>The speaker describes exploratory work on inverse comorbidity, where two conditions are observed together less often than expected, and mentions DHX9/SRRM4 in small-cell lung-cancer expression and screening analyses. He calls the direction unvalidated. The specific gene-pair conclusion remains an <strong>unpublished speaker report</strong>, not a verified target.</p>
+<p>An inverse association has several possible explanations. One disease may affect survival long enough to reduce observation of the other; surveillance and ascertainment can differ; shared risk factors or selection into a study can distort the comparison. A molecular mechanism is one possible explanation, not the default consequence of the association.</p>
+<p>Likewise, expression differences are not equivalent to a causal dependency. An intervention screen can strengthen the case for a role in a defined cell model, but its controls, effect definition and replication matter. Linking association, expression and intervention requires a coherent identification argument rather than stacking individually interesting facts.</p>
+<p>A co-scientist can help by generating those competing explanations and locating relevant data. Our team should reward a proposal that exposes a confound, even if it weakens the headline mechanism. A rubric that treats every objection as a rhetorical defect would systematically select more exciting but less identifiable hypotheses.</p>
+</section>
+
+<section id="leakage"><h2>21. “Future prediction” requires a frozen information boundary <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3595">59:55</a></h2>
+<p>The Q&amp;A asks about training cutoff and leakage, and the speaker mentions exploratory clinical-trial prediction with “reasonable success.” No quantified, inspected evaluation supports that phrase here. It remains a <strong>speaker judgment</strong>. A model's nominal training cutoff alone cannot establish that later retrieved documents, supplied context or human selection contained no outcome information.</p>
+<p>A prospective evaluation should freeze the task, model version, tool permissions, accessible corpus and predictions before outcomes are revealed. If retrieval is permitted, its dated snapshot is part of the predictor. If humans select which outputs to score after seeing outcomes, their selection can create apparent predictive success even when the full set performs poorly.</p>
+<p>For our team, the tempting retrospective test is to ask whether A would have been selected before the known assay. A credible version hides that assay, preserves all candidates and fixes the ranking rule in advance. It reports both successful and failed proposals. This separates a genuine decision improvement from an explanation composed after the result is available.</p>
+</section>
+
+<section id="exchange"><h2>22. Scientific data need claims, methods and negative results that travel together <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3654">1:00:54</a></h2>
+<p>The talk's questions about AI-written papers and peer review lead to a proposal for better scientific data exchange. Its remarks about arXiv policy are retained as dated concerns, not asserted as a current platform rule. We have not verified a policy text supporting the broad spoken characterization, and it is unnecessary to the scientific argument.</p>
+<p>A generated paper can be readable while failing to document how a result was produced. A machine-usable record should distinguish the hypothesis, method, raw observation, analysis, interpretation and unresolved alternatives. It should carry enough version information to tell whether two reports concern the same sample or independent measurements. Negative findings help constrain hypotheses even when they are less attractive as narrative conclusions.</p>
+<p>For candidate A, a reusable record would include the marker definition, viable-cell denominator, control condition, analysis convention and evidence supporting the proposed pathway. Without those fields, a future agent may combine incomparable measurements or count the same result twice. A standardized container does not make the contents true; it makes their boundaries inspectable.</p>
+<p>The social incentives remain part of the system. A corpus that rewards only successful, surprising outcomes gives generation and reflection a biased picture of the research space. Better tooling can preserve failures and contradictions, but researchers must still decide to record and share them.</p>
+</section>
+
+<section id="attention"><h2>23. Preserve useful dissent when a report becomes conservative <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3774">1:02:54</a></h2>
+<p>The final academic questions return to human attention, conservative reports, reframing a goal and solving smaller proof subproblems. A system can become cautious by averaging away ambitious ideas, or become reckless by promoting them without their objections. Neither behavior is fixed by a universal verbosity setting.</p>
+<p>An original reporting compromise is to keep an evidence-backed recommendation and a separate exploratory frontier. Candidate B may be the current feasible choice; A can remain archived with the exact observation that would make it competitive. This preserves a risky scientific idea without disguising it as a supported result. Evolution can revisit that archived claim when new data arrive.</p>
+<p>Decomposing a proof or mechanism into smaller subproblems is useful when each subproblem has an acceptance test and the composition is valid. Ten individually plausible subanswers can still fail if their assumptions conflict. In our marker example, proving that a pathway could reduce production does not prove that the measured total reduction came through that pathway. The assembled conclusion needs the connecting premises.</p>
+<p>The last audience fragment is not intelligible in the transcript and is not reconstructed here. The substantive answer preserved above is enough to expose the design problem: reports should direct attention to the next uncertainty while retaining the information needed to challenge the recommendation.</p>
+</section>
+
+<section id="safety"><h2>24. Monitor goals, trajectories and outcomes at their own levels <a class="timestamp" href="https://www.youtube.com/watch?v=jFdH7n6BAl0&amp;t=3899">1:04:59</a></h2>
+<p>The closing answer describes layered safeguards around the research goal, intermediate trajectories and the base model. These are <strong>speaker-described system practices</strong>. The spoken ten-percent threshold is an example-specific monitoring choice, not a demonstrated general safety guarantee. The paper also describes preliminary adversarial-topic evaluation while acknowledging remaining limitations (v1 pp. 17, 28).</p>
+<p>Counting undesirable steps loses severity information. A trajectory with one severe failure among a hundred steps has a one-percent rate; it could pass a ten-percent rule while still being unacceptable. If event $j$ has harm magnitude $w_j\geq0$ and probability $p_j$, an additive expected-harm model uses $\sum_j w_jp_j$, not simply a count of flagged sentences. This original model itself has limits: interactions, worst-case constraints and unknown probabilities can make an additive expectation insufficient.</p>
+<p>For our team, the safeguards should attach to concrete authority. A proposal generator may suggest a research direction; a laboratory reviewer assesses feasibility and experimental controls; clinical decisions require their own evidence and authorized professionals. A well-ranked proposal has not passed every subsequent gate. Tool access, report generation and external action should have explicit preconditions.</p>
+<p>The chapter's central lesson is now operational. Search creates candidates; critique improves their articulation; ranking allocates attention; an experiment can change belief if its likelihood model is justified; a later clinical claim requires additional evidence. A co-scientist is useful when it makes those transitions clearer and less costly, while preserving the places where the world has not yet answered.</p>
+</section>
+
+<section id="lab"><h2>25. Numerical laboratory: preference, evidence and measurement</h2>
+<p><a href="chapter07.py" download>Download the original stdlib program</a> and run <code>python chapter07.py</code>. It calls no remote model, searches no literature and performs no biological experiment. The reference labels in its tournament are stipulated: a proposal labeled false wins every judge comparison. That fixture tests the distinction between preference and truth; it does not measure an LLM's error rate. The actual code and its exact stdout follow.</p>
+<p>The program uses finite binary64 numbers. Scalar inputs must be Python integers or floats, excluding booleans; unrepresentable integers, infinities and NaNs raise <code>ValueError</code>. Probabilities lie in [0, 1]. Elo ratings lie in [−10<sup>6</sup>, 10<sup>6</sup>], the update step in [0, 1000], and outcomes are exactly 0, .5 or 1. Record sequences are lists or tuples of at most 10,000 uniquely identified entries. Conditional independence is a caller-supplied assumption even when identifiers differ. Impossible evidence raises an error.</p>
+<p>Counts for multiplicity and equicorrelation are bounded at one million; equicorrelation requires at least two reviews and a positive-semidefinite covariance domain. Hill concentrations are nonnegative, the midpoint positive and exponent in (0, 100]. Viability endpoints are ordered probabilities. Per-cell normalization requires a positive cell count and rejects overflow or a positive ratio that rounds to zero; an exactly zero marker remains zero. The exposed logistic function applies the same finite scalar validation as its callers; valid extreme log odds can saturate to a probability of zero or one. Experiment cost is in [0, 1000] fictional utility units. These bounded contracts make the fixtures inspectable; they do not claim a general statistical package.</p>
+<p>The Bayesian functions work in log weights so products such as $10^{-300}\cdot10^{-300}$ do not prematurely vanish. The record sequence accumulates likelihoods before converting to a posterior; rounding an intermediate posterior to 1 could otherwise prevent later contrary evidence from changing it. The final binary64 probability can still round to 0 or 1 when its exact value lies beyond representable resolution. The multiplicity calculation uses <code>expm1</code> and <code>log1p</code> to preserve tiny probabilities, and the Hill function uses a stable logistic expression in log concentration. Numerical accuracy is a property of the specified models, not evidence that their likelihoods, curves or utilities describe a real laboratory.</p>
+<pre><code class="language-python">&quot;&quot;&quot;Original scientific-decision fixtures; no biological predictor or LLM service.
+
+Inputs are finite int/float values converted to binary64; bool is excluded.
+All outputs are fictional teaching quantities. Independence is an assumption,
+not established by running this program. Tiny final probabilities may round to 0.
+&quot;&quot;&quot;
+import math
+
+
+def finite_real(value, name):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(name + &quot; must be an int or float, excluding bool&quot;)
+    try:
+        value = float(value)
+    except OverflowError as exc:
+        raise ValueError(name + &quot; is not representable&quot;) from exc
+    if not math.isfinite(value):
+        raise ValueError(name + &quot; must be finite&quot;)
+    return value
+
+
+def probability(value, name):
+    value = finite_real(value, name)
+    if not 0 &lt;= value &lt;= 1:
+        raise ValueError(name + &quot; must lie in [0, 1]&quot;)
+    return value
+
+
+def logistic(log_odds):
+    log_odds = finite_real(log_odds, &quot;log_odds&quot;)
+    if log_odds &gt;= 0:
+        return 1 / (1 + math.exp(-log_odds))
+    x = math.exp(log_odds)
+    return x / (1 + x)
+
+
+def elo_pair(rating_i, rating_j, outcome, step=32.0):
+    &quot;&quot;&quot;Stipulated scale-400 Elo, not a claim about the source implementation.&quot;&quot;&quot;
+    rating_i = finite_real(rating_i, &quot;rating_i&quot;)
+    rating_j = finite_real(rating_j, &quot;rating_j&quot;)
+    if max(abs(rating_i), abs(rating_j)) &gt; 1e6:
+        raise ValueError(&quot;ratings must lie in [-1e6, 1e6]&quot;)
+    outcome = probability(outcome, &quot;outcome&quot;)
+    if outcome not in (0, 0.5, 1):
+        raise ValueError(&quot;outcome must be a loss, tie or win&quot;)
+    step = finite_real(step, &quot;step&quot;)
+    if not 0 &lt;= step &lt;= 1000:
+        raise ValueError(&quot;step must lie in [0, 1000]&quot;)
+    expected = logistic((rating_i - rating_j) * math.log(10) / 400)
+    increment = step * (outcome - expected)
+    return rating_i + increment, rating_j - increment, expected
+
+
+def posterior_positive(prior, sensitivity, false_positive):
+    &quot;&quot;&quot;Binary Bayes model; exhaustive alternatives and known likelihoods required.&quot;&quot;&quot;
+    prior = probability(prior, &quot;prior&quot;)
+    sensitivity = probability(sensitivity, &quot;sensitivity&quot;)
+    false_positive = probability(false_positive, &quot;false_positive&quot;)
+    possible_h = prior &gt; 0 and sensitivity &gt; 0
+    possible_other = prior &lt; 1 and false_positive &gt; 0
+    if not possible_h and not possible_other:
+        raise ValueError(&quot;positive evidence has zero probability&quot;)
+    if not possible_h:
+        return 0.0
+    if not possible_other:
+        return 1.0
+    # Log weights preserve likelihoods when direct multiplication underflows.
+    log_h = math.log(prior) + math.log(sensitivity)
+    log_other = math.log1p(-prior) + math.log(false_positive)
+    return logistic(log_h - log_other)
+
+
+def posterior_independent_records(prior, records):
+    &quot;&quot;&quot;Each (unique ID, sensitivity, false-positive) is assumed conditionally independent.
+
+    Unique IDs prevent counting the same record twice. Distinct IDs do not
+    establish independence: the caller must justify the statistical model.
+    &quot;&quot;&quot;
+    prior = probability(prior, &quot;prior&quot;)
+    if not isinstance(records, (list, tuple)) or len(records) &gt; 10000:
+        raise ValueError(&quot;records must be a list/tuple of at most 10000 entries&quot;)
+    log_h = math.log(prior) if prior &gt; 0 else -math.inf
+    log_other = math.log1p(-prior) if prior &lt; 1 else -math.inf
+    seen = set()
+    for record in records:
+        if not isinstance(record, (tuple, list)) or len(record) != 3:
+            raise ValueError(&quot;records require ID and two likelihoods&quot;)
+        ident, sensitivity, false_positive = record
+        if not isinstance(ident, str) or not ident or ident in seen:
+            raise ValueError(&quot;record IDs must be nonempty, unique strings&quot;)
+        seen.add(ident)
+        sensitivity = probability(sensitivity, &quot;sensitivity&quot;)
+        false_positive = probability(false_positive, &quot;false_positive&quot;)
+        log_h += math.log(sensitivity) if sensitivity &gt; 0 else -math.inf
+        log_other += math.log(false_positive) if false_positive &gt; 0 else -math.inf
+        if log_h == log_other == -math.inf:
+            raise ValueError(&quot;evidence sequence has zero probability&quot;)
+    if log_h == -math.inf:
+        return 0.0
+    if log_other == -math.inf:
+        return 1.0
+    return logistic(log_h - log_other)
+
+
+def experiment_value(prior, sensitivity, false_positive, cost):
+    &quot;&quot;&quot;Toy action: utility 10p-5, abstention 0; conditional assay model.&quot;&quot;&quot;
+    prior = probability(prior, &quot;prior&quot;)
+    sensitivity = probability(sensitivity, &quot;sensitivity&quot;)
+    false_positive = probability(false_positive, &quot;false_positive&quot;)
+    cost = finite_real(cost, &quot;cost&quot;)
+    if not 0 &lt;= cost &lt;= 1000:
+        raise ValueError(&quot;cost must lie in [0, 1000] fictional utility units&quot;)
+    q = prior * sensitivity + (1 - prior) * false_positive
+    value = 0.0
+    if q &gt; 0:
+        plus = posterior_positive(prior, sensitivity, false_positive)
+        value += q * max(0.0, 10 * plus - 5)
+    if q &lt; 1:
+        minus = posterior_positive(prior, 1 - sensitivity, 1 - false_positive)
+        value += (1 - q) * max(0.0, 10 * minus - 5)
+    before = max(0.0, 10 * prior - 5)
+    return value - before, value - before - cost
+
+
+def false_any(tests, alpha):
+    &quot;&quot;&quot;Independent null tests only; this is not a correlated-test estimate.&quot;&quot;&quot;
+    if isinstance(tests, bool) or not isinstance(tests, int) or not 1 &lt;= tests &lt;= 10**6:
+        raise ValueError(&quot;tests must be an integer in [1, 1e6]&quot;)
+    alpha = probability(alpha, &quot;alpha&quot;)
+    if alpha == 1:
+        return 1.0
+    return -math.expm1(tests * math.log1p(-alpha))
+
+
+def mean_variance_ratio(reviews, correlation):
+    if isinstance(reviews, bool) or not isinstance(reviews, int) or not 2 &lt;= reviews &lt;= 10**6:
+        raise ValueError(&quot;reviews must be an integer in [2, 1e6]&quot;)
+    correlation = finite_real(correlation, &quot;correlation&quot;)
+    if not -1 / (reviews - 1) &lt;= correlation &lt;= 1:
+        raise ValueError(&quot;correlation violates the equicorrelation PSD bound&quot;)
+    return (1 + (reviews - 1) * correlation) / reviews
+
+
+def hill_viability(concentration, midpoint, exponent, lower=0.0, upper=1.0):
+    concentration = finite_real(concentration, &quot;concentration&quot;)
+    midpoint = finite_real(midpoint, &quot;midpoint&quot;)
+    exponent = finite_real(exponent, &quot;exponent&quot;)
+    lower = probability(lower, &quot;lower&quot;)
+    upper = probability(upper, &quot;upper&quot;)
+    if concentration &lt; 0 or midpoint &lt;= 0 or not 0 &lt; exponent &lt;= 100 or lower &gt; upper:
+        raise ValueError(&quot;require c&gt;=0, midpoint&gt;0, 0&lt;h&lt;=100 and lower&lt;=upper&quot;)
+    if concentration == 0:
+        return upper
+    z = exponent * (math.log(concentration) - math.log(midpoint))
+    return lower + (upper - lower) * logistic(-z)
+
+
+def per_viable_cell(marker, viable_cells):
+    marker = finite_real(marker, &quot;marker&quot;)
+    viable_cells = finite_real(viable_cells, &quot;viable_cells&quot;)
+    if marker &lt; 0 or viable_cells &lt;= 0:
+        raise ValueError(&quot;require nonnegative marker and positive viable-cell count&quot;)
+    result = marker / viable_cells
+    if not math.isfinite(result) or (marker &gt; 0 and result == 0):
+        raise ValueError(&quot;positive per-cell ratio is not representable&quot;)
+    return result
+
+
+def main():
+    a, b, _ = elo_pair(1200, 1200, 1)
+    a, b, expected = elo_pair(a, b, 1)
+    assert math.isclose(a + b, 2400)
+    print(f&quot;two Elo wins: {a:.6f}, {b:.6f}; second expectation {expected:.6f}&quot;)
+    for _ in range(18):
+        a, b, _ = elo_pair(a, b, 1)
+    # Reference labels are stipulated; Elo sees only preference outcomes.
+    assert a &gt; b
+    print(f&quot;20 wins for stipulated false proposal: {a:.6f} &gt; {b:.6f}&quot;)
+    one = posterior_positive(0.1, 0.8, 0.1)
+    two = posterior_independent_records(0.1, [(&#x27;assay-1&#x27;, .8, .1), (&#x27;assay-2&#x27;, .8, .1)])
+    assert math.isclose(one, 8 / 17) and math.isclose(two, 64 / 73)
+    print(f&quot;one positive: {one:.6f}; two conditionally independent: {two:.6f}&quot;)
+    gross, net = experiment_value(.2, .8, .1, .3)
+    assert math.isclose(gross, .4) and math.isclose(net, .1)
+    print(f&quot;experiment value: gross {gross:.6f}; net {net:.6f}&quot;)
+    ratio = mean_variance_ratio(10, .8)
+    print(f&quot;10 correlated reviews: variance ratio {ratio:.6f}; effective count {1/ratio:.6f}&quot;)
+    print(f&quot;100 independent null tests: false-any {false_any(100, .05):.6f}&quot;)
+    absolute_half = 10 * math.sqrt(5 / 3)
+    assert math.isclose(hill_viability(absolute_half, 10, 2, .2, 1), .5)
+    print(f&quot;Hill midpoint viability {hill_viability(10,10,2,.2,1):.6f}; absolute half at {absolute_half:.6f}&quot;)
+    print(f&quot;same marker 50: per-cell {per_viable_cell(50,100):.6f} or {per_viable_cell(50,50):.6f}&quot;)
+    assert math.isclose(posterior_positive(1e-300, 1e-300, 1e-300), 1e-300, rel_tol=1e-12, abs_tol=0)
+    assert hill_viability(1e300, 1e-300, 100) == 0
+    assert hill_viability(1e-300, 1e300, 100) == 1
+    assert math.isclose(false_any(10**6, 1e-300), 1e-294, rel_tol=1e-12, abs_tol=0)
+    assert experiment_value(.2, 0, 0, 0) == (0.0, 0.0)
+    assert experiment_value(.2, 1, 1, 0) == (0.0, 0.0)
+    assert posterior_positive(0, .8, .1) == 0 and posterior_positive(1, .8, .1) == 1
+    balanced = posterior_independent_records(.5, [(&#x27;a&#x27;, 1, 1e-300), (&#x27;b&#x27;, 1e-300, 1)])
+    assert math.isclose(balanced, .5)
+    assert logistic(0) == .5
+    assert logistic(1e308) == 1
+    assert logistic(-1e308) == 0
+    assert per_viable_cell(0, 1e308) == 0
+    assert per_viable_cell(5e-324, 1) == 5e-324
+    print(&quot;14 extreme/endpoint assertions passed&quot;)
+    bad = [
+        lambda: finite_real(True, &#x27;x&#x27;), lambda: finite_real(10**1000, &#x27;x&#x27;),
+        lambda: finite_real(float(&#x27;nan&#x27;), &#x27;x&#x27;), lambda: finite_real(&#x27;1&#x27;, &#x27;x&#x27;),
+        lambda: elo_pair(float(&#x27;inf&#x27;), 1200, 1), lambda: elo_pair(1e7, 1200, 1),
+        lambda: elo_pair(1200, 1200, .7), lambda: elo_pair(1200, 1200, 1, -1),
+        lambda: posterior_positive(-.1, .8, .1), lambda: posterior_positive(.1, 0, 0),
+        lambda: posterior_positive(0, 1, 0), lambda: posterior_positive(.1, 2, .1),
+        lambda: posterior_independent_records(.1, [(&#x27;x&#x27;, .8, .1), (&#x27;x&#x27;, .8, .1)]),
+        lambda: posterior_independent_records(.1, [(&#x27;x&#x27;, .8)]),
+        lambda: posterior_independent_records(.1, None),
+        lambda: experiment_value(.2, .8, .1, -1), lambda: false_any(True, .05),
+        lambda: false_any(0, .05), lambda: false_any(2, -1),
+        lambda: mean_variance_ratio(1, .8), lambda: mean_variance_ratio(3, -.6),
+        lambda: hill_viability(-1, 10, 2), lambda: hill_viability(1, 0, 2),
+        lambda: hill_viability(1, 10, 0), lambda: hill_viability(1, 10, 2, .8, .2),
+        lambda: per_viable_cell(1, 0), lambda: per_viable_cell(1e308, 1e-300),
+        lambda: per_viable_cell(5e-324, 1e308),
+        lambda: logistic(float(&#x27;nan&#x27;)), lambda: logistic(True),
+        lambda: logistic(10**1000), lambda: logistic(float(&#x27;inf&#x27;)),
+        lambda: logistic(float(&#x27;-inf&#x27;)),
+    ]
+    for case in bad:
+        try:
+            case()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(&quot;invalid input accepted&quot;)
+    print(f&quot;{len(bad)} invalid-input checks passed&quot;)
+
+
+if __name__ == &#x27;__main__&#x27;:
+    main()
+</code></pre>
+<h3>Actual stdout</h3>
+<pre><code class="language-text">two Elo wins: 1230.530498, 1169.469502; second expectation 0.545922
+20 wins for stipulated false proposal: 1365.435144 &gt; 1034.564856
+one positive: 0.470588; two conditionally independent: 0.876712
+experiment value: gross 0.400000; net 0.100000
+10 correlated reviews: variance ratio 0.820000; effective count 1.219512
+100 independent null tests: false-any 0.994079
+Hill midpoint viability 0.600000; absolute half at 12.909944
+same marker 50: per-cell 0.500000 or 1.000000
+14 extreme/endpoint assertions passed
+33 invalid-input checks passed
+</code></pre>
+</section>
+
+<section id="exercises"><h2>26. Six exercises with complete solutions</h2>
+<article class="exercise"><h3>Exercise 1 — Derive what a tournament can represent</h3>
+<p>Use scale 400 and update step 32. Two proposals start at 1200, and A wins twice. Derive both updates and prove pairwise rating-sum conservation. Then suppose A beats B, B beats C and C beats A, each with probability .9. Can one scalar Elo model fit all three probabilities? Explain what a tournament win permits you to infer about a biological mechanism.</p>
+<details class="solution"><summary>Solution</summary>
+<p>At equal ratings the expected preference is .5, so the first increment is $32(1-.5)=16$. The ratings become 1216 and 1184. The gap is 32, giving second expected preference $e=1/(1+10^{-.08})\approx.545921923$. The increment is $32(1-e)\approx14.530498$. The ratings become approximately 1230.530498 and 1169.469502. Since one increment is added and exactly the same increment subtracted, the exact sum remains 2400. Floating-point execution can introduce roundoff; the fixture checks numerical closeness.</p>
+<p>For a probability .9, odds are 9, so a fitted gap must satisfy $(r_A-r_B)\log(10)/400=\log9$. The other two comparisons require the same positive right-hand side. Adding all three leaves zero on the left because the differences telescope, but $3\log9&gt;0$ on the right. This is a contradiction. Scalar ratings cannot exactly fit these cyclic preferences. Criterion vectors, matchup-specific effects or an explicitly misspecified approximate model are alternatives.</p>
+<p>A win establishes a preferred proposal under the judge, rubric and available information. It supplies no biological likelihood ratio unless a separate calibration establishes such a relationship. The program's twenty wins by a stipulated false proposal demonstrate the logical separation without claiming an observed error rate.</p>
+</details></article>
+
+<article class="exercise"><h3>Exercise 2 — Count observations rather than descriptions</h3>
+<p>A binary mechanism has prior .1. An assay has sensitivity .8 and false-positive probability .1. Compute the posterior after one positive and after two conditionally independent positives. An agent summarizes the first positive three different ways. What posterior is justified? Why do unique record IDs and a model training cutoff fail to establish independence?</p>
+<details class="solution"><summary>Solution</summary>
+<p>The prior odds are $1/9$, and a positive likelihood ratio is $.8/.1=8$. After one positive the odds are $8/9$, giving posterior $(8/9)/(1+8/9)=8/17\approx.470588$. If two assays are conditionally independent under both $H$ and $\neg H$, their joint likelihoods are $.8^2$ and $.1^2$. The posterior odds become $64/9$, giving $64/73\approx.876712$.</p>
+<p>Three descriptions of the first result remain one observed event. Their joint occurrence can be determined by that event, so multiplying the single-event likelihood ratio three times is unjustified. The posterior remains $8/17$ unless the summaries contain additional independently modeled evidence. Even physically distinct assays can share preparation errors or batch effects, so separate measurements do not automatically justify factorization.</p>
+<p>Unique IDs are an accounting safeguard against literal duplicate entries. They cannot detect shared samples, copied sources or common errors without provenance. A training cutoff concerns potential model information; it says nothing about assay independence and does not rule out later retrieval leakage. Both questions require explicit information records. A posterior calculation inherits those records' limitations.</p>
+</details></article>
+
+<article class="exercise"><h3>Exercise 3 — Find the experiment's decision value</h3>
+<p>Use prior .2, sensitivity .8 and false-positive probability .1. An allowed research action has expected utility $10p-5$ at belief $p$; abstaining gives zero. Derive the optimal policy before and after an assay, its expected value of information, and its net value at costs .3 and .5. Prove why gross value is nonnegative under the stipulated decision model.</p>
+<details class="solution"><summary>Solution</summary>
+<p>Act when $10p-5&gt;0$, equivalently $p&gt;1/2$; at equality either action has zero expected utility. At prior .2 the team abstains. A positive has probability $.2(.8)+.8(.1)=.24$ and posterior $.16/.24=2/3$. A negative has probability .76 and posterior $.2(.2)/.76=1/19$. The optimal conditional actions are therefore act after a positive and abstain after a negative.</p>
+<p>Conditional utility after a positive is $10(2/3)-5=5/3$. The pre-assay expected optimized utility is $.24(5/3)+.76(0)=.4$. Subtracting the prior optimal utility zero gives gross value .4. Cost .3 produces net .1; cost .5 produces net −.1, so that test is not worth purchasing under this model. More informative evidence can be too costly.</p>
+<p>For a general finite action set, let $a_0$ maximize prior expected utility. For every observed $Y$, the optimized conditional utility is at least that of $a_0$. Taking expectations and using total expectation yields $\mathbb E_Y\max_a\mathbb E[U(a,H)\mid Y]\geq\mathbb E[U(a_0,H)]$. Subtracting the same prior maximum proves nonnegative gross value. The proof allows ignoring the test result and assumes the action set has not changed. If testing itself changes the system or consumes a scarce resource that changes feasible actions, the simpler formula needs revision. None of these fictional utilities imply a clinical decision rule.</p>
+</details></article>
+
+<article class="exercise"><h3>Exercise 4 — Separate a midpoint from a mechanism</h3>
+<p>Use $v_{\max}=1,v_{\min}=.2,h=2,c_{50}=10$ in the Hill model. Find viability at $c_{50}$ and concentration at absolute viability .5. State when absolute half is unreachable. Then show why total marker 50 compared with reference 100 fails to identify an antifibrotic per-cell effect, and name an extra observation that distinguishes the two chapter fixtures.</p>
+<details class="solution"><summary>Solution</summary>
+<p>At midpoint, the denominator is 2 and viability is $.2+.8/2=.6$. To reach .5, solve $.3=.8/(1+(c/10)^2)$. Hence $1+(c/10)^2=8/3$, so $c=10\sqrt{5/3}\approx12.909944$ in the same concentration units as the midpoint. If $v_{\min}&gt;.5$ the model cannot attain .5. If $v_{\min}=.5&lt;v_{\max}$ it approaches half only in the infinite-concentration limit. If the endpoints coincide, the curve is constant and concentration cannot be identified from its value.</p>
+<p>With $M=Nq$, reference $(N,q)=(100,1)$ gives 100. Treated $(100,.5)$ and $(50,1)$ both give 50. The observation map sends two different parameter pairs to the same total and is therefore not one-to-one. A viable-cell count distinguishes those pairs: dividing 50 by 100 gives .5 per cell, while dividing by 50 gives 1.</p>
+<p>The normalized result addresses that particular ambiguity. It does not establish which pathway changed production, whether the cell-count assay is valid, or whether the effect translates to an organism. A well-designed proposal should specify additional controls for those questions. Treating a fitted midpoint as a mechanism or a per-cell effect as a clinical outcome skips separate inference steps.</p>
+</details></article>
+
+<article class="exercise"><h3>Exercise 5 — Quantify two ways a larger search can mislead</h3>
+<p>For 100 independent null tests at false-positive rate .05, compute the probability of at least one false positive. Derive a bound without independence and a threshold that guarantees total false-positive probability at most .05. Separately derive the variance of the mean of ten equal-variance reviews with pairwise correlation .8 and its effective independent-review count. Explain why those calculations do not establish the co-scientist's measured error rates.</p>
+<details class="solution"><summary>Solution</summary>
+<p>Under independence, all tests are negative with probability $.95^{100}$. The complementary probability is $1-.95^{100}\approx.994079$. Without independence, the union bound sums the marginal false-positive probabilities and yields at most $100(.05)=5$, reduced to the trivial bound 1. Giving each test threshold $.05/100=.0005$ yields a union-bound guarantee at most .05 when each marginal test actually controls its error at that threshold. This bound does not require independence. Adaptive tests or invalid marginal p-values require an appropriate model rather than merely applying the arithmetic.</p>
+<p>For review errors $\varepsilon_a$, expand $\operatorname{Var}(\sum_a\varepsilon_a)$ into ten variances and 90 ordered off-diagonal covariances. Dividing by $10^2$ gives $\sigma^2(10+90(.8))/100=.82\sigma^2$. Independent equal-variance reviews would give $\sigma^2/m_{\mathrm{eff}}$, so $m_{\mathrm{eff}}=1/.82\approx1.219512$. This is a variance equivalence, not a literal count of independent agents.</p>
+<p>The first example stipulates an all-null pool and independent valid tests. The second stipulates equicorrelated errors with known variance and correlation. Neither parameter set was estimated from the co-scientist's outputs. Their value is to reveal evaluation requirements: preserve the full search and selection procedure, and measure common errors instead of assuming prompt diversity establishes independence.</p>
+</details></article>
+
+<article class="exercise"><h3>Exercise 6 — Design an evidence-preserving research workflow</h3>
+<p>A outranks B; its report cites an inaccessible paper, a simulation and a lowered total marker. Evolution produces A-version-2 with a new normalization argument, while a reviewer is still checking A-version-1. Design a workflow that produces a defensible next research decision. Include provenance, hard constraints, stale reviews, an informative measurement, leakage controls and the boundary of any eventual clinical claim.</p>
+<details class="solution"><summary>Solution</summary>
+<p>First bind the goal and rubric to a version: the task is to distinguish a specified per-cell effect from cell loss in the available organoid model. Feasibility is a hard constraint. A study requiring an unavailable instrument is excluded before weighted comparison; eloquence cannot compensate. Keep criterion-specific scores and objections so A's higher overall rating does not hide its weak measurement plan.</p>
+<p>Represent each supported statement separately. Mark the inaccessible paper as unresolved, preserving its identity and the exact claim that remains unchecked. Label the simulation by what was actually executed: an LLM narrative is a conditional imagined scenario, while a numerical simulator would additionally need equations, parameters and verification. Neither is a biological experiment. Link the total-marker observation to its sample and assay so multiple summaries cannot count as independent evidence.</p>
+<p>Give A-version-2 a new immutable claim version with a parent pointer. The ongoing review of version 1 remains attached to version 1. Transfer unchanged source assessments explicitly; recheck the new denominator claim rather than copy an acceptance label. Preserve B and failed alternatives. Request an independently justified viable-cell measurement and appropriate controls to distinguish the two $M=Nq$ fixtures, then examine remaining assay and pathway confounds. Do not infer that normalization alone proves the mechanism.</p>
+<p>Before an evaluation, freeze the source snapshot, tool permissions, model version, proposal set and decision rule. Record predictions before revealing follow-up outcomes and score failures as well as successes. Use new evidence to revise beliefs under explicit likelihood assumptions; keep Elo as a preference measure. If the organoid outcome supports A, state that model-specific experimental result. Patient effectiveness, exposure and safety remain separate endpoints requiring additional evidence. This workflow provides a concrete next action without claiming that any ranking, simulation or cellular marker already validates a therapy.</p>
+</details></article>
+</section>
+
+<section id="references"><h2>27. Original references and inspection boundaries</h2>
+<ul>
+<li><a href="https://arxiv.org/pdf/2502.18864v1">Gottweis et al., <cite>Towards an AI co-scientist</cite>, arXiv:2502.18864v1</a> (February 26, 2025): architecture, evaluation and biological case studies; PDF pp. 1–28 read, with actual figures on pp. 2, 24 and 25 inspected. The June 2026 v2 is not substituted into the lecture.</li>
+<li><a href="https://arxiv.org/pdf/1712.01815v1">Silver et al., <cite>Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm</cite>, arXiv:1712.01815v1</a> (December 5, 2017): PDF pp. 1–3, historical training and external game-outcome feedback.</li>
+<li><a href="https://www.ibm.com/history/deep-blue">IBM, <cite>Deep Blue</cite></a>: original company history, used for the May 1997 match date.</li>
+<li><a href="https://advanced.onlinelibrary.wiley.com/doi/abs/10.1002/advs.202518656">Tu et al., <cite>Genetic Diagnosis and Discovery Enabled by Large Language Models</cite></a> (February 8, 2026): original journal abstract inspected; the full PDF returned HTTP 403. The chapter uses only the abstract's mouse-validation origin claim.</li>
+<li><a href="https://zenodo.org/records/22231261">Toghani et al., <cite>AI-guided discovery of atypical protein assemblies</cite>, author poster version 1</a> (September 1, 2026): the single poster page and its diagrams inspected. This is a later update. The May bioRxiv preprint was unavailable here and is not certified.</li>
+<li><a href="https://www.cancer.gov/publications/dictionaries/cancer-terms/def/senescence">National Cancer Institute, <cite>Definition of senescence</cite></a>: the official definition is used for the cellular-state terminology, not for the speaker's unpublished results.</li>
+<li><a href="https://www.ncbi.nlm.nih.gov/gene/5460">NCBI, <cite>POU5F1, Gene ID 5460</cite></a>: identity and RefSeq summary inspected through the official public Datasets API; used for terminology, not variant validation.</li>
+<li><a href="https://www.cancer.gov/publications/dictionaries/cancer-terms/def/fibrosis">National Cancer Institute, <cite>Definition of fibrosis</cite></a>: official fibrous-tissue terminology for the original teaching case.</li>
+<li><a href="https://www.genome.gov/genetics-glossary/Phenotype">NHGRI, <cite>Phenotype</cite></a> and <a href="https://www.genome.gov/genetics-glossary/Epigenetics"><cite>Epigenetics</cite></a>: official terminology checked for the local first-use explanations; no new biological outcome inferred.</li>
+<li><a href="https://www.niams.nih.gov/niams-multimedia-library/search/procapsid-bacteriophage-virus-phi6">NIAMS, <cite>Procapsid of Bacteriophage virus Phi6</cite></a>: original image description checked for phage and capsid definitions; no Phi6 mechanism or image-inspection claim.</li>
+</ul>
+<p>The original decision models, arithmetic, program and exercises are teaching constructions. The OCT4, senescence, ACE and inverse-comorbidity examples retain recording attribution and unresolved experimental status. No transcript, private source copy or uninspected talk image is reproduced.</p>
+</section>
+<!-- BOOK-CONTENT-END --></article><nav class="page-turn" aria-label="Chapter navigation"><a rel="prev" href="lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html">Previous available chapter</a><a href="index.html">Lecture index</a><a rel="next" href="lecture-08-native-multimodal-intelligence.html">Next available chapter</a></nav></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

@@ -10,7 +10,7 @@
   ],
   "date": "2026-04-09",
   "date_boundary": "CS25 recording date; Lucas reused subdeck cover states NVIDIA April6.",
-  "status": "Independently reviewed chapter; local reader validation recorded separately; course completion pending",
+  "status": "Independently reviewed local reading chapter; course certification remains separate",
   "transcript_provenance": "local machine transcription; not publisher captions",
   "transcription_model": "Systran/faster-whisper-small.en",
   "audio_sha256": "54e00ec72bb2dff5b2d5610a7515045291bf06a182d71d4e41babde4675c5c46",
@@ -1175,50 +1175,27 @@
   "authored_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
   "quality_passes": [
     {
-      "result": "All150 segments sequentially read,55-page slide text read; full substantive spine and Q&A directly authored.",
-      "pass": "1-2"
-    },
-    {
-      "result": "Notation, derivational hinges, numerical checks, code and six full mixed solutions author checked.",
-      "pass": "3-6"
-    },
-    {
-      "result": "26 listed deck pages and listed primary pages actually rendered/viewed; static still boundary.",
-      "pass": "6a"
-    },
-    {
-      "result": "Claim-bearing portions of12 cited archived originals checked;2022 original403 scoped to historical attribution and privately recorded.",
-      "pass": "6c"
-    },
-    {
-      "result": "Pending DIFFERENT independent editor; no author self-acceptance.",
-      "pass": "6b"
-    },
-    {
-      "result": "Author prose/notation/parity reread against accepted pilot and previously read CS230ch9/CS231Nch14; independent review pending.",
-      "pass": "7-8"
-    },
-    {
-      "result": "Author exact embedded/output and static checks; root runtime/reader integration pending.",
-      "pass": "9"
+      "pass": "1-6,6a,6c",
+      "result": "Complete within the chapter recorded source, visual, mathematical, code and exercise scopes"
     },
     {
       "pass": "6b,7,8",
-      "result": "Different-agent editorial/prose/parity acceptance; reviewed scientific body retained; source and finite-code boundaries remain explicit"
+      "result": "Different-agent editorial/prose/parity acceptance; exact reviewed body/code retained"
     },
     {
-      "pass": "6b,7,8",
-      "result": "Different-agent editorial/prose/parity acceptance; reviewed body retained; source and finite-code limits remain explicit"
+      "pass": "9",
+      "result": "Actual local reader/source/program/privacy evidence recorded separately in validation-summary.json; human screen-reader audit is not performed"
     }
   ],
   "gate6b": {
     "status": "accepted",
+    "rounds": 1,
     "blocking_findings": 0,
     "independent_reviewer": "Different agent from chapter author",
     "accepted_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
     "accepted_metadata_sha256": "b4628d115969759b57af87c65c90c722c6263249f23a19f1d7acf715098b97b1"
   },
-  "publication": "local only; not published",
+  "publication": "Not published; local reading edition",
   "permission_errors_current_author_task": [],
   "references": [
     {

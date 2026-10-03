@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><meta name="book-content-sha256" content="0df596f805e619d9ab5c88cb9088fb81010fdf48c48d3a75bfef1590c26bdf44"><title>From Next-Token Prediction to Next-Generation Intelligence · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout"><aside class="toc" id="chapter-toc" aria-label="On this page"><h2>On this page</h2></aside><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><!-- BOOK-CONTENT-START --><h1>From Next-Token Prediction to Next-Generation Intelligence</h1>
+<p class="lead">A training corpus is a resource allocation problem. Which material should a model encounter, how often, in what order, and with what opportunity to compute before it predicts? This chapter develops those questions through two-phase pretraining, early reasoning exposure, and reinforcement as a pretraining objective.</p>
+<p>Based on Shrimai Prabhumoye’s CS25 lecture. The recording supplies the topic sequence and attributed proposals; the finite models, derivations, executable checks and exercises are original teaching constructions. Primary research is cited at the claims it supports.</p>
+
+<section id="case"><h2>A scientific assistant with a fixed learning budget</h2>
+<p>Suppose you are building a small language model to continue scientific explanations. It must finish a paragraph about a physical relationship, explain an algebraic transformation, and preserve ordinary-language competence. A fluent completion with the wrong sign in a dependence can lead a reader to a wrong conclusion. More training text is helpful only insofar as the training process turns it into useful predictive structure.</p>
+<p>Your available material has three components: broad web text, worked quantitative explanations, and code. You can repeat the scarce explanations, emphasize them late in training, include reasoning traces before instruction tuning, or ask the model to generate an intermediate thought and reward its effect on the next observed token. These are different interventions. A better final score does not by itself tell you which intervention helped or whether it consumed more compute.</p>
+<p>We will keep two ledgers. The <em>exposure ledger</em> records observed corpus tokens and repetitions. The <em>computation ledger</em> records generated thoughts, parameter updates and evaluation cost. A small optimization model will demonstrate why identical token totals can produce different endpoints; a frozen probabilistic scorer will demonstrate what a thought reward can and cannot establish. Neither finite construction is an LLM benchmark.</p>
+<p>The prerequisites are conditional probability, logarithms, expectations, derivatives and basic gradient descent. Chapter 1’s attention definitions and Chapter 3’s architecture tradeoffs provide useful background, but an architecture’s ability to represent a function is distinct from a training objective’s ability to find it.</p></section>
+
+<section id="recipe"><h2>1. Four levers in a training recipe</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=76">Lecture: 1:16–3:30</a></p>
+<p>A <em>token</em> is one vocabulary item produced by a tokenizer; it may be part of a word, a complete word or another text fragment. Counts below use a fixed tokenizer and are not automatically word or document counts. An LLM is a large language model: here, a parameterized conditional distribution over token continuations.</p>
+<p>Prabhumoye organizes model development around data, architecture, algorithms and collaboration. Data work includes filtering, deduplication—removing exact or near-duplicate material—and constructing a mixture of sources. Architecture specifies how token representations are transformed. Algorithms determine losses, updates and sampling. Collaboration connects the people making these decisions: a pretraining change may alter which post-training recipe is effective.</p>
+<p>The opening names MIND, Nemotron-CC and its math material, Nemotron Nano 2, Prismatic Synthesis and CrossThink as background projects. Their role here is contextual: they illustrate that a model recipe can involve synthetic dialogues, web extraction and diverse reasoning material. Their individual quality or popularity claims are not needed to derive the three training mechanisms studied in this chapter.</p>
+<p><em>Pretraining</em> builds a model’s initial predictive behavior on a broad corpus. <em>Continued pretraining</em> (CPT) starts from an existing checkpoint and continues a language-modeling objective on further data. A <em>checkpoint</em> is a saved parameter state. <em>Supervised fine-tuning</em> (SFT) trains on specified input/output examples, often instructions and desired responses. <em>Reinforcement learning</em> (RL) samples outputs and changes their probabilities using a reward. <em>RL with verifiable rewards</em> (RLVR) uses a checkable output criterion, such as agreement with a reference answer. These names describe training operations; they do not prove that pretraining learns only facts or that reasoning begins only during RL.</p></section>
+
+<section id="learners"><h2>2. Four learners, three interventions</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=210">Lecture: 3:30–6:34</a></p>
+<p>The lecture’s Pascal, Volta, Ampere and Hopper analogy changes how learners use material. Pascal reads without a designed curriculum or deliberate use of the reasoning examples. Volta follows a curriculum. Ampere also encounters reasoning examples early. Hopper additionally explores intermediate thoughts. A <em>curriculum</em> is a schedule for presenting data or tasks during optimization, rather than a claim that a document has an inherent place in a universal hierarchy.</p>
+<p>The analogy asks a productive question: can learning strategy change the value extracted from a fixed resource? Its answer must come from a controlled comparison. The actual studies below use different models, corpora, training stages and evaluation suites. Their reported improvements cannot be multiplied together to certify one Hopper model’s advantage over one Pascal model.</p>
+<p>For our scientific assistant, this suggests three successive decisions: choose source exposures; compare their order while preserving those exposures; and allocate extra compute to generated thoughts. A fourth decision—when to introduce curated reasoning examples—crosses pretraining and SFT. Keeping the interventions distinct makes the analogy useful for experiment design.</p></section>
+
+<section id="stock"><h2>3. A finite stock is a motivation, not a deadline</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=394">Lecture: 6:34–7:41</a></p>
+<p>Large corpora draw on web text, books, scientific papers, code and specialist documents. The lecture motivates efficient learning with a forecast of limited human-generated text. The <a href="https://epoch.ai/publications/will-we-run-out-of-data-limits-of-llm-scaling-based-on-human-generated-data">June 2024 Epoch analysis</a> concerns publicly available human text after quality and repetition adjustments. Its projected utilization window is conditional on scaling assumptions; it is not an observation that all useful data will be exhausted on one calendar date.</p>
+<p>That distinction matters operationally. A stock of unique documents, an effective training stock that permits repetitions, and the number of tokens processed in a run are different quantities. Images, private corpora, synthetic text and improved algorithms may change the constraint. The recording’s “95% around 2030” wording should not be treated as a separately established measurement.</p>
+<p>Our case does not require a global exhaustion prediction. Its budget and source sizes are already finite. The local question is whether another exposure to a scarce explanation is more valuable than another new web passage, and whether computing a thought is worth its additional cost.</p></section>
+
+<section id="blend"><h2>4. Source weights and repeated exposure</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=463">Lecture: 7:43–9:31</a></p>
+<p>Let there be $m\in\mathbb N$ sources. Source $j$ contains $N_j&gt;0$ unique tokens under one fixed tokenizer. A run processes $T&gt;0$ observed tokens, with token mixture weights $w_j\geq0$ satisfying $\sum_{j=1}^m w_j=1$. If sampling produces this mixture in expectation, source $j$ contributes $Tw_j$ tokens. Its expected equivalent number of complete passes, or <em>epochs</em>, is</p>
+<div class="equation">$$e_j=\frac{Tw_j}{N_j}.$$</div>
+<p>This is an exposure identity. It does not assume that repeated examples remain equally informative. If you sample documents rather than tokens, document lengths affect the resulting token weights; the chosen sampling unit must be specified before using the identity.</p>
+<p>For the case, measure tokens in a common unit and take $(N_1,N_2,N_3)=(800,100,100)$, representing web, explanations and code. With $T=1000$ and $w=(0.6,0.3,0.1)$, the run allocates $(600,300,100)$ exposures and $e=(0.75,3,1)$. The explanations have a much larger repeat count despite a smaller absolute stock. A natural-distribution mixture would instead use $w_j=N_j/\sum_kN_k=(0.8,0.1,0.1)$, giving one epoch per source at this budget.</p>
+<p>A quality classifier assigns a label or score according to a rubric. An epoch study varies repeat counts and evaluates the result. The <a href="https://arxiv.org/abs/2412.15285v1">Two-Phase study</a> uses both to construct blends. A high-quality label is an operational assessment, and an empirical best blend is best among tested candidates under a particular objective. Neither is a mathematical optimum over all possible corpora.</p>
+<p>At a fixed $T$, raising one source’s weight necessarily takes exposure away from others. Thus a repetition ablation is also a mixture intervention. For our assistant, three epochs of explanations may improve quantitative tasks while reducing linguistic coverage. Held-out evaluations should measure both consequences.</p></section>
+
+<section id="curriculum"><h2>5. Two phases can preserve the total mixture</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=571">Lecture: 9:31–11:50</a></p>
+<p>Let $T_1,T_2&gt;0$ be the token budgets of two phases, with $T=T_1+T_2$, and let $w^{(1)},w^{(2)}$ be their respective probability vectors over sources. Their aggregate mixture is</p>
+<div class="equation">$$\bar w_j=\frac{T_1w_j^{(1)}+T_2w_j^{(2)}}{T},\qquad e_j=\frac{T\bar w_j}{N_j}.$$</div>
+<p>The hinge is conservation of source exposure: a curriculum can change timing while holding every numerator $T\bar w_j$ fixed. To identify an ordering effect, compare the curriculum with a randomly ordered run using that same aggregate mixture, not with a differently weighted natural mixture.</p>
+<p>Use $T_1=600$, $w^{(1)}=(0.8,0.1,0.1)$, $T_2=400$, and $w^{(2)}=(0.3,0.6,0.1)$. The two phases contribute $(480,60,60)$ and $(120,240,40)$ tokens. Their sum is $(600,300,100)$, exactly our earlier mixture. Phase 1 is broader; phase 2 emphasizes explanations. Randomly permuting the same exposures changes order without changing their expected repeat counts.</p>
+<p>The research recipe emphasizes diversity early and selected high-quality material later. “Diversity” is bounded by its curation pipeline: the selected early web blend can exclude the lowest-quality tail. Diversity does not mean retaining every noisy document. In contrast, the natural-distribution baseline weights sources by available token stock, while a random-order baseline uses the chosen quality/epoch blend. These baselines answer different questions.</p></section>
+
+<section id="order-proof"><h2>6. Why identical data can lead to different endpoints</h2>
+<p>An original scalar example makes the ordering mechanism exact. Let $\theta\in\mathbb R$ be a parameter and let a training example with target $a\in\mathbb R$ have loss $L_a(\theta)=\frac12(\theta-a)^2$. One gradient step with learning rate $\eta\in(0,1]$ gives $F_a(\theta)=(1-\eta)\theta+\eta a$.</p>
+<p>Compare processing $a$ then $b$ with processing $b$ then $a$. Expanding the two compositions gives</p>
+<div class="equation">$$F_b(F_a(\theta))=(1-\eta)^2\theta+\eta(1-\eta)a+\eta b,$$</div>
+<div class="equation">$$F_a(F_b(\theta))=(1-\eta)^2\theta+\eta(1-\eta)b+\eta a.$$</div>
+<p>Subtracting cancels the initial parameter and leaves</p>
+<div class="equation">$$F_b(F_a(\theta))-F_a(F_b(\theta))=\eta^2(b-a).$$</div>
+<p>With $\theta=0$, $a=0$, $b=2$ and $\eta=1/4$, the endpoints are $0.5$ and $0.375$. The same two examples yield a difference of $0.125$. In this model later examples have more influence because earlier updates are contracted by subsequent steps.</p>
+<p>This proves that finite optimization is path dependent even for simple convex example losses. It does not prove that “high quality last” is universally best: which endpoint is better depends on the evaluation objective. If both runs instead fully minimize the same strongly convex aggregate loss $\frac12(L_a+L_b)$, their unique optimum is $(a+b)/2$. Order can disappear at that limit. Neural optimization introduces further interactions, but the finite-step hinge is already visible without them.</p></section>
+
+<section id="two-phase-results"><h2>7. Isolating selection from order in the reported results</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=711">Lecture: 11:51–12:41</a></p>
+<p>An accuracy score of $s$ on a percentage scale is different from a relative improvement. For old and new scores $s_0&gt;0$ and $s_1$, the percentage-point change is $s_1-s_0$, while the relative percentage change is $100(s_1-s_0)/s_0$. Define this before interpreting the lecture’s 17% and 3.4% claims.</p>
+<table><caption>Two-Phase v1, Table 4, PDF page 4: reported aggregate scores</caption><thead><tr><th>Condition</th><th>Score</th><th>What changes</th></tr></thead><tbody><tr><td>Natural distribution</td><td>45.17</td><td>Stock-based mixture, random order</td></tr><tr><td>Chosen blend, random order</td><td>51.12</td><td>Quality and repeat allocation</td></tr><tr><td>Chosen blend, two phases</td><td>52.86</td><td>Order with the same aggregate blend</td></tr></tbody></table>
+<p>The total difference is $7.69$ points, or about $17.02\%$ relative to natural distribution. The ordering comparison is $1.74$ points, or about $3.40\%$ relative to the random-order chosen blend. The total 17% figure therefore cannot be attributed entirely to curriculum order. The table’s overall average aggregates individual evaluation tasks; it is not simply the mean of its four displayed category columns. <a href="https://arxiv.org/abs/2412.15285v1">Feng and collaborators, §§3.4–4</a>.</p>
+<p>The study also varies repeats and phase duration. Its tested setting favors six epochs of high-quality crawl, roughly eight of math/task material, and a final phase spanning 40% of training; extending phase 2 to 50% reduces the reported overall score. These are recipe-specific measurements, not constants of learning. At a longer horizon with unchanged finite source stocks, repeat counts increase; the paper’s epoch-adjusted blend illustrates why a mixture may need revision when scaling the budget. Our assistant should carry its $e_j$ ledger into any such scale-up.</p></section>
+
+<section id="early-reasoning"><h2>8. Introduce reasoning examples before SFT?</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=762">Lecture: 12:42–15:17</a></p>
+<p>The second intervention changes when reasoning-style examples are encountered. A reasoning trace is an example’s sequence of intermediate explanatory steps, typically followed by a final answer. It may offer useful supervision, but its length alone does not establish correctness, and its surface explanation need not reveal a model’s internal computation.</p>
+<p>The <a href="https://arxiv.org/abs/2510.03264v1">Front-Loading study</a> trains an 8B hybrid model for 1T tokens and tests selected reasoning corpora during pretraining and subsequent SFT. Its reasoning conditions use an 80% general/20% reasoning blend. The baseline lacks this separately introduced reasoning corpus; calling it “no-reason” does not assert that its general corpus contains no logical structure or that its model is incapable of reasoning.</p>
+<p>Three conditions organize the lecture: SHQ is a small, curated, high-quality reasoning set; LDQ is a larger, more diverse set of heterogeneous quality; LMQ combines them. These labels name experimental datasets. Teacher model, domain composition, trace length, filtering and scale change together. SHQ versus LDQ is consequently not a pure intervention on one universally defined quality variable.</p>
+<p>Formally, write $U_{\mathrm{PT}},U_{\mathrm{SFT}},U_{\mathrm{RL}}$ for finite training procedures, each taking a parameter state and a specified data/compute recipe. The final state is $\theta_{\mathrm{final}}=U_{\mathrm{RL}}(U_{\mathrm{SFT}}(U_{\mathrm{PT}}(\theta_0)))$. The operators need not commute, and a corpus’ marginal value can depend on the incoming state. Our earlier scalar example gives a limited but explicit reason that delaying all explanations until SFT need not reproduce early exposure.</p></section>
+
+<section id="evaluation"><h2>9. Measure the advantage within each training stage</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=918">Lecture: 15:18–17:25</a></p>
+<p>Base-model evaluation and post-training evaluation use different task suites and generation protocols. The Front-Loading study includes general reasoning, math, science and code tests for base models; its SFT suite adds harder competition problems, graduate science questions and instruction following. <em>Pass@1</em> is the probability that one sampled attempt succeeds under the specified decoding protocol; averaging estimated Pass@1 across repeated runs is different from counting a success among many attempts.</p>
+<p>Its main Table 1 reports a base aggregate of $52.70$ without the introduced reasoning corpus and $61.05$ for the aggregate reasoning condition: $8.35$ points, or $15.84\%$ relative. Main Table 2 reports $26.62$ versus $35.92$ after SFT: $9.30$ points. Calling the second change “9.3% relative” would be wrong; the relative change would be approximately $34.94\%$.</p>
+<p>The lower SFT numbers do not show that SFT destroyed the base model: the evaluation suite changed. Likewise, the two gap sizes cannot establish that an identical measured capability “grew” by a specific amount across stages. Within-stage matched comparisons support the narrower conclusion that this early-data advantage remains visible after the tested post-training procedure. <a href="https://arxiv.org/abs/2510.03264v1">Front-Loading, PDF pages 6–7</a>.</p>
+<p>For our assistant, keep a fixed scientific continuation evaluation throughout training and separately evaluate instruction responses. Otherwise an apparent durable gain could be a change in what is being measured. Report individual task regressions as well as any aggregate increase.</p></section>
+
+<section id="latent"><h2>10. A benefit can become visible after a later intervention</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=1045">Lecture: 17:25–18:54</a></p>
+<p>In the main base table, LDQ and LMQ score $64.09$ and $64.07$: adding the narrow curated component does not improve that immediate aggregate. After the Table 4 SFT procedure, their scores are $46.70$ and $50.95$, a $4.25$-point difference. This is the lecture’s latent-benefit observation. <a href="https://arxiv.org/abs/2510.03264v1">Front-Loading v1, Tables 1 and 4</a>.</p>
+<p>“Latent” here means a benefit measured after a subsequent intervention that was not apparent in the earlier reported aggregate. It does not identify the representation carrying the benefit. Nor does it imply that the two base states were functionally identical: an aggregate can conceal changes across tasks, and a later training procedure can amplify those changes.</p>
+<p>For the assistant, two pretraining recipes might match on short continuations yet differ in how efficiently they acquire a multi-step explanation style during SFT. A useful experiment therefore evaluates both states before and after the same later operation, recording separate task outcomes. To infer a mechanism, one would additionally need interventions or measurements that isolate it.</p></section>
+
+<section id="catchup"><h2>11. What the catch-up and RL comparisons establish</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=1134">Lecture: 18:54–22:20</a></p>
+<p>Doubling the tested baseline SFT changes its main Table 4 score from $26.62$ to $34.01$. The SHQ-pretrained comparator is $37.33$, leaving $3.32$ points. This shows a failed catch-up attempt under that experiment. It does not prove that every possible later-data recipe or unlimited SFT compute must fail. The recording additionally reports a fixed-data-budget 12% advantage; the archived entries do not establish its exact matched numerical comparison, so no precise verified gain is assigned to that separate statement.</p>
+<p>Main Table 3 compares final baseline and LMQ models after SFT and RL, with reported overall scores $37.92$ and $56.66$. Their difference is $18.74$ points, approximately $49.42\%$ relative. The paper’s adjacent prose gives $18.57$ and an AIME improvement of $39.32$, while the matched AIME24 entries give $45.21-12.29=32.92$ points and AIME25 gives $33.96-16.04=17.92$ points. The 39% wording in the lecture remains an unresolved reported number; averaging those two displayed gains does not recover it. <a href="https://arxiv.org/abs/2510.03264v1">Front-Loading v1, PDF pages 7–8</a>.</p>
+<p>There are also table-local aggregate discrepancies between the main text and appendix. For example, the appendix SFT baseline overall is $35.52$, whereas main Table 2 uses $26.62$. The comparison above retains each named main-table pair and does not silently combine these different reported aggregates. The robust teaching conclusion is conditional persistence of an early-data advantage, not a theorem that one recipe sets an immutable performance ceiling.</p>
+<p>Return to the exposure ledger: adding early reasoning data must displace something else within a fixed observed-token budget, or increase that budget. Repeating it in SFT adds later exposures. An experiment must state which totals, datasets and update costs are held fixed before attributing the final difference to timing alone.</p></section>
+
+<section id="quality"><h2>12. Quality labels, long traces and domain limits</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=1340">Lecture: 22:20–25:05</a></p>
+<p>The first Q&amp;A probes what “reasoning” and “quality” mean. Prabhumoye describes using released datasets with questions, long reasoning traces and solutions, primarily in math, code and STEM. She explains the relative SHQ/LDQ labels through filtering and dataset composition. The study does not establish equivalent effects for legal reasoning or every form of scientific inference.</p>
+<p>A long response is a measurable feature; a correct derivation is a semantic property. Filtering by length can also change domain, difficulty and teacher-model distribution. In the Front-Loading appendix, long traces have a different domain composition from the original heterogeneous corpus. Improved scores under that filter therefore do not isolate length as the causal variable. <a href="https://arxiv.org/abs/2510.03264v1">Front-Loading, §2.2 and appendix C</a>.</p>
+<p>For the assistant, annotate separate properties: reference-answer correctness, intermediate-step validity, explanation length, domain, duplication and source provenance. A scalar classifier score can help rank candidates, but a high score does not certify all these properties. Disentangling them prevents a convenient proxy from becoming the definition of reasoning quality.</p></section>
+
+<section id="recipe-search"><h2>13. Recipe search spends a second budget</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=1505">Lecture: 25:05–27:53</a></p>
+<p>The lecture’s mixture design combines automated quality assessment and repeat estimation with manual decisions. An epoch ablation starts with a candidate blend, increases exposure to a selected domain, and removes corresponding exposure from another source. The questioner correctly recognizes that this is a series of experiments, rather than a direct observation of an intrinsic optimal repeat count.</p>
+<p>Keep a recipe-search budget as well as a final-run budget. If a method selects its blend from many expensive trial runs while the comparator uses a default blend, the final training FLOPs alone omit development cost. Within a chosen comparison, reserve validation material for recipe selection and a separate test set for final measurement; repeatedly choosing on the test score makes that test part of the recipe.</p>
+<p>Prabhumoye reports that reversing quality-late/diversity-early performed poorly in an additional ablation. Its numerical reverse-order comparison is not established here, so this remains a lecture-attributed observation. Our scalar ordering proof establishes possible path dependence, and the verified random-order comparison establishes the measured contrast; neither establishes a universal direction for every corpus.</p></section>
+
+<section id="active-learning"><h2>14. Generated thoughts change the training interaction</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=1674">Lecture: 27:54–31:28</a></p>
+<p>The Leo/Bolt bridge analogy motivates exploring and receiving feedback. One learner builds a workable bridge by trying it; another imitates an elegant design that does not serve the task. The computational counterpart is not that ordinary next-token prediction cannot learn abstractions. It is that an explicit policy can sample intermediate continuations and receive a reward tied to their measured effect.</p>
+<p><em>Next-token prediction</em> (NTP) maximizes observed-token likelihood, or minimizes its negative logarithm. If $x_t$ is an observed token and $h_t=(x_1,\ldots,x_{t-1})$ its prefix, a model $q_\theta$ has loss $-\log q_\theta(x_t\mid h_t)$. It is a continuous loss, not a binary “right or wrong” reward. Predicting text across many contexts can require reasoning even though the objective does not explicitly ask for a thought trace.</p>
+<p>Reinforcement as a pretraining objective, abbreviated <em>RLP</em>, adds a sampled thought as an action before scoring the observed token. The supervision still comes from corpus text. The new interaction is that the model’s own sampled action influences a scored prediction, then its action probability is updated. Useful predictive computation can be encouraged without human-written rationale labels at every position.</p></section>
+
+<section id="causal-thought"><h2>15. Separate the prefix, the thought and the held-out token</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=1890">Lecture: 31:30–33:18</a></p>
+<p>The lecture uses a photosynthesis continuation to illustrate a thought preceding a predicted token. For our scientific assistant, use the original prefix “At fixed resistance, doubling the current multiplies Joule heating by”. A generated thought might apply the squared-current dependence before predicting the next textual item. The prefix alone may already support that conclusion; the thought spends extra computation to make it easier for an imperfect model to use.</p>
+<p>Let $\mathcal V$ be a finite token vocabulary, $x_t\in\mathcal V$ the observed target, and $\mathcal C$ the set of finite, nonempty thought-token sequences. A <em>thought policy</em> $\pi_\theta(c\mid h_t)$ is a probability distribution over $c\in\mathcal C$. A <em>reasoned scorer</em> $p_\theta(x_t\mid h_t,c)$ predicts the target after receiving the prefix and sampled thought. The RLP paper uses the same network parameters $\theta$ for these two roles. A separate parameter state $\phi$ supplies a no-think scorer $b_\phi(x_t\mid h_t)$.</p>
+<p>Generate $c$ from $h_t$ without the target or future suffix. Only after generation may the scoring operation reveal $x_t$. This is <em>teacher forcing</em>: the data’s actual token is used to evaluate likelihood rather than allowing a sampled token to replace it. If the generation prompt includes the answer, a high reward can measure target leakage rather than useful predictive computation. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, §§2.1–2.2 and Algorithm 1</a>.</p>
+<p>Under this protocol, for a fixed prefix, the sampled thought and target are conditionally independent in the data-generating experiment: $c\perp x_t\mid h_t$. The thought can process information already available in the prefix; it cannot legitimately import the held-out token into its own generation. This independence is central to the interpretation of the expectation below.</p></section>
+
+<section id="reward"><h2>16. A log-evidence reward and its numerical meaning</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2000">Lecture: 33:20–35:49</a></p>
+<p>Assume both scorers assign strictly positive probability to every target in the data support. Use natural logarithms, so rewards are in <em>nats</em>. For the observed target, define</p>
+<div class="equation">$$r(c;x_t,h_t)=\log p_\theta(x_t\mid h_t,c)-\log b_\phi(x_t\mid h_t).$$</div>
+<p>Since logarithm is strictly increasing, $r&gt;0$ if and only if the thought-conditioned scorer assigns greater probability to that particular observed token than the baseline. Reward zero means equality; negative reward means lower observed-token probability. This is a continuous-valued signal, not a score certifying every sentence in the thought.</p>
+<p>Freeze a hypothetical baseline at $0.2$ for the case’s next observed token. Three sampled thoughts yield reasoned probabilities $0.6$, $0.2$ and $0.1$. Their rewards are $\log3\approx1.098612$, $0$ and $-\log2\approx-0.693147$. The positive reward shows a threefold increase for this token. It does not show that the thought is logically valid or that all unobserved alternatives become better calibrated.</p>
+<p>The paper calls this an information-gain reward. It is precisely an observed-token log-likelihood ratio. Its mathematical role should not be conflated with mutual information, which is an expectation of a different ratio involving a joint distribution and its marginals. The distinction becomes sharper when we average over the actual data distribution.</p></section>
+
+<section id="ce-proof"><h2>17. Expected reward equals a cross-entropy difference</h2>
+<p>Fix a prefix $h$ and a realized thought $c$. Let $p^*(y\mid h)$ be the data distribution over token $y\in\mathcal V$. For distributions $a$ and strictly positive $q$ on this vocabulary, define cross-entropy by $\operatorname{CE}(a,q)=-\sum_y a(y)\log q(y)$. Finite vocabulary and positive support make this expression finite. It measures expected predictive log loss under the data distribution.</p>
+<p>Taking the expectation of the reward over $y\sim p^*(\cdot\mid h)$ gives</p>
+<div class="equation">$$\begin{aligned}
+\mathbb E_y[r(c;y,h)]
+&amp;=\sum_y p^*(y\mid h)\log p_\theta(y\mid h,c)
+-\sum_y p^*(y\mid h)\log b_\phi(y\mid h)\\
+&amp;=\operatorname{CE}(p^*,b_\phi)-\operatorname{CE}(p^*,p_\theta(\cdot\mid h,c)).
+\end{aligned}$$</div>
+<p>The hinge is linearity of expectation and the definition of cross-entropy. This identity is the paper’s Proposition 1; it concerns fixed distributions, not an assurance that each optimizer step improves them. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, PDF pages 4 and 16</a>.</p>
+<p>For an original binary-token check, let $p^*=(3/4,1/4)$, baseline $(1/2,1/2)$, and reasoned predictor $(3/4,1/4)$. The improvement is $\log2-[-\frac34\log\frac34-\frac14\log\frac14]\approx0.130812$ nats. One sample of the second token instead yields $\log(1/4)-\log(1/2)=-\log2$. A negative sample reward is compatible with a positive expected improvement.</p>
+<p>There is also a useful ceiling. Write $H(p^*)=-\sum_y p^*(y)\log p^*(y)$. Cross-entropy decomposes as $H(p^*)+D_{\mathrm{KL}}(p^*\|q)$, where the <em>Kullback–Leibler (KL) divergence</em> is $D_{\mathrm{KL}}=\sum_y p^*(y)\log[p^*(y)/q(y)]\geq0$. An already exact predictor $q=p^*$ cannot improve its expected log loss by generating a prefix-conditioned thought. Since $c\perp y\mid h$, the true conditional mutual information $I(y;c\mid h)$ is zero under this protocol. Positive model log-reward can still arise from helping an imperfect scorer compute a better distribution from the same information. Computation and acquisition of new external information are different resources.</p>
+<p>The identity also respects the corpus’ limits. Predicting an erroneous corpus claim more confidently can be rewarded. Agreement with observed text is not a general truth, causal-validity or hallucination guarantee for our scientific assistant.</p></section>
+
+<section id="marginal-proof"><h2>18. Sampled thoughts and the marginalized predictor</h2>
+<p>For this derivation, assume a finite maximum thought length over a finite vocabulary, and positive scored target probabilities. The resulting finite set of thoughts makes the displayed expectations well defined. More general thought distributions require the corresponding integrability assumptions.</p>
+<p>A deployed predictor might sample one thought, or average over many. To relate these operations, fix $h$ and the realized target $y$, with thought policy $\pi_\theta$. Define the collapsed, or marginalized, predictor</p>
+<div class="equation">$$\widetilde p_\theta(y\mid h)=\mathbb E_{c\sim\pi_\theta(\cdot\mid h)}[p_\theta(y\mid h,c)].$$</div>
+<p>It is a probability distribution because each conditional scorer is normalized and the thought weights sum to one. Concavity of logarithm gives Jensen’s inequality:</p>
+<div class="equation">$$\mathbb E_c[\log p_\theta(y\mid h,c)]\leq
+\log\mathbb E_c[p_\theta(y\mid h,c)]
+=\log\widetilde p_\theta(y\mid h).$$</div>
+<p>Subtracting the common $\log b_\phi(y\mid h)$ leaves a lower bound on the marginalized log improvement. Equality holds when the scored target probability is constant almost surely across thoughts. Averaging the probabilities before taking the logarithm differs from averaging their logarithms. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, Proposition 2 and appendix §8.3</a>.</p>
+<p>Take two equiprobable thoughts giving $0.6$ and $0.1$ for the target, with baseline $0.2$. Expected sampled-thought reward is $\frac12\log3+\frac12\log(1/2)=\frac12\log(3/2)\approx0.202733$. The marginalized probability is $0.35$, giving $\log(0.35/0.2)=\log(7/4)\approx0.559616$. Both satisfy the inequality; they describe different prediction procedures.</p>
+<p>A lower bound is not a monotonic training guarantee. Increasing a lower bound does not necessarily increase the bounded quantity on every update. In addition, computing the marginalized predictor exactly may require an intractable sum over thought sequences. This result explains the objective’s relation to prediction, while leaving optimization and inference-cost questions open.</p></section>
+
+<section id="ema"><h2>19. A moving no-think comparator</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2149">Lecture: 35:49–36:27</a></p>
+<p>The no-think scorer is an <em>exponential moving average</em> (EMA) teacher. After initializing $\phi$ to the model’s parameters, the paper updates it after an optimizer step by $\phi\leftarrow\tau\phi+(1-\tau)\theta$, with decay $\tau=0.999$. This is an average in parameter space; it is not generally an average of token probabilities because the network’s parameter-to-probability map is nonlinear.</p>
+<p>In a scalar parameter illustration, old teacher value $2$ and new student value $4$ give $2.002$ at that decay. If the student stays fixed for $k$ subsequent steps, the teacher discrepancy is multiplied by $\tau^k$. Its approximate half-life is $\log(1/2)/\log(0.999)\approx693$ steps. A lagged comparator can make a raw reward interpretable relative to a moving reference; equality of student and teacher parameters does not force the thought-conditioned and no-think predictions to match.</p>
+<p>The lecture motivates the lag as mitigating reward hacking—optimizing the measured reward in ways that fail the intended task. The EMA is not an independent correctness verifier. More decisively, its common log-probability term cancels from the grouped update developed below. That algebra constrains what mechanism can be attributed to the EMA within the displayed algorithm. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, §2.1 and Algorithm 1</a>.</p></section>
+
+<section id="policy-hinge"><h2>20. Which gradient is actually applied?</h2>
+<p>Generated thought tokens are discrete sampled actions. For a fixed prefix, temporarily distinguish policy parameters $\alpha$ from frozen scorer parameters $\beta,\phi$. Let $r_{\beta,\phi}(c)$ be the scored reward, and assume a finite thought set with differentiable positive policy probabilities. Then</p>
+<div class="equation">$$\nabla_\alpha\sum_c\pi_\alpha(c\mid h)r_{\beta,\phi}(c)
+=\sum_c\pi_\alpha(c\mid h)r_{\beta,\phi}(c)\nabla_\alpha\log\pi_\alpha(c\mid h).$$</div>
+<p>The hinge is $\nabla\pi=\pi\nabla\log\pi$. The <em>score-function estimator</em> uses sampled rewards multiplying derivatives of action log probabilities. Also $\mathbb E_c[\nabla_\alpha\log\pi_\alpha(c\mid h)]=\nabla_\alpha\sum_c\pi_\alpha(c\mid h)=0$, so subtracting a constant independent of the sampled action preserves this gradient’s expectation.</p>
+<p>RLP shares policy and scorer parameters, but <em>detaches</em> the reward: it treats the computed score as constant during the update and applies gradients through thought-token probabilities. This is a partial, or semigradient, update. If one differentiated the full shared-parameter objective $J(\theta)=\mathbb E_{\pi_\theta}[r_\theta(c)]$ directly, an additional term $\mathbb E[\nabla_\theta r_\theta(c)]$ would appear. The detached procedure omits that term by design.</p>
+<p>The v2 methodology explicitly states that it does not add a standard next-token loss in this update, despite broader introductory wording about likelihood training. Its next observed token supplies a score, while thought tokens receive the policy update. Shared weights can change both roles over time, so the fixed-scorer identity above describes one mathematical hinge, not the full evolving neural dynamics. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, §§2.4 and Algorithm 1</a>.</p></section>
+
+<section id="group-proof"><h2>21. Inclusive group centering and its correction</h2>
+<p>For one prefix and observed target, sample $G\geq2$ thoughts independently under the behavior policy. Let their detached rewards be $r_1,\ldots,r_G$, and define $\bar r=G^{-1}\sum_jr_j$. RLP uses the corrected advantage</p>
+<div class="equation">$$A_i=\frac{G}{G-1}(r_i-\bar r).$$</div>
+<p>An <em>advantage</em> measures relative desirability within the sampled group. Its sign need not equal the raw reward’s sign. Two harmful thoughts with rewards $-0.7,-0.9$ have mean $-0.8$ and advantages $0.2,-0.2$: the less harmful thought receives positive relative weight. All-equal rewards give zero advantages even when every raw reward is positive.</p>
+<p>Why the factor? For fixed rewards and an on-policy sample, write $s_i=\nabla\log\pi(c_i\mid h)$ and $g=\mathbb E[r_is_i]$. Independence gives $\mathbb E[r_js_i]=\mathbb E[r_j]\mathbb E[s_i]=0$ for $j\ne i$. Therefore</p>
+<div class="equation">$$\mathbb E[(r_i-\bar r)s_i]
+=g-\frac1Gg=\frac{G-1}{G}g,\qquad
+\mathbb E[A_is_i]=g.$$</div>
+<p>The factor removes shrinkage from including the action’s own reward in its baseline. This proof applies to iid on-policy sampling, frozen rewards and the unnormalized sequence score-function estimator. Clipping, reusing old samples, or dividing sequence scores by variable thought lengths changes the estimator; the proof does not establish unbiasedness for all those modifications. The correction is the paper’s formula, while this derivation exposes its assumptions. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, equation 7</a>.</p>
+<p>For the case’s three rewards $(\log3,0,-\log2)$, the mean is $\log(3/2)/3\approx0.135155$. Multiplication by $3/2$ gives approximately $(1.445186,-0.202733,-1.242453)$, whose sum is zero. The neutral raw reward is below the group mean and gets a negative advantage.</p></section>
+
+<section id="baseline-cancellation"><h2>22. The common EMA term cancels</h2>
+<p>For a fixed prefix and target, let $s_i=\log p_\theta(y\mid h,c_i)$ and $b=\log b_\phi(y\mid h)$. Every group reward is $r_i=s_i-b$. Substituting into the advantage gives</p>
+<div class="equation">$$A_i=\frac{G}{G-1}\left[(s_i-b)-\frac1G\sum_j(s_j-b)\right]
+=\frac{G}{G-1}\left(s_i-\frac1G\sum_js_j\right).$$</div>
+<p>The baseline cancels exactly in real arithmetic, including the correction factor. Changing its probability from $0.2$ to $0.4$ shifts each raw reward by $-\log2$ but leaves all advantages unchanged. With detached rewards, the downstream clipping formula also receives the same advantages. The common term can describe absolute predictive improvement, while this grouped update depends on differences among thought-conditioned scores.</p>
+<p>Consequently the displayed update alone does not establish that the EMA decay stabilizes the policy gradient. RLP’s appendix Table S.6 reports different outcomes for different EMA decays; that empirical table does not identify what additional implementation detail makes the decay consequential despite this cancellation. One should neither erase the table nor invent a reconciliation. Reward preprocessing, numerical arithmetic or an additional objective would have to be specified and checked to explain the difference. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, equation 7 and PDF page 24</a>.</p>
+<p>For the scientific assistant, log both raw rewards and centered advantages. Positive raw reward answers “better than this comparator on this observed token”; positive advantage answers “better than these sampled alternatives.” A group can reinforce a harmful thought relative to still worse thoughts. Neither statement certifies physical correctness.</p></section>
+
+<section id="clipping"><h2>23. Per-token clipping is a surrogate objective</h2>
+<p>Let $c_i=(\ell_{i1},\ldots,\ell_{iL_i})$ be thought $i$ with length $L_i\geq1$. Its token prefix includes $h$ and the preceding thought tokens. Define an importance ratio $\rho_{iu}$ as the current policy probability of token $\ell_{iu}$ divided by its probability under the behavior snapshot that generated the sample. Assume both probabilities are positive. With clipping widths $0\leq\epsilon_\ell&lt;1$ and $\epsilon_h\geq0$, the paper minimizes</p>
+<div class="equation">$$L_{\mathrm{clip}}
+=-\frac1G\sum_{i=1}^G\frac1{L_i}\sum_{u=1}^{L_i}
+\min\left(\rho_{iu}A_i,\operatorname{clip}(\rho_{iu},1-\epsilon_\ell,1+\epsilon_h)A_i\right).$$</div>
+<p>The advantage is treated as constant. Length normalization makes each thought contribute a mean token surrogate, rather than allowing a longer sequence to contribute more terms automatically. This is an optimization design choice; it differs from the unnormalized sequence-score estimator used in the preceding unbiasedness proof. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, equation 8</a>.</p>
+<p>Set both widths to $0.2$. For positive advantage $A=2$ and ratio $\rho=1.5$, the two terms are $3$ and $2.4$, so the selected objective is $2.4$. For negative advantage $A=-2$ and ratio $\rho=0.5$, the terms are $-1$ and $-1.6$, so the selected objective is $-1.6$. The minimum is required for the conservative surrogate in both sign cases; clipping the ratio alone and multiplying does not explain its full behavior.</p>
+<p>Clipping removes some incentive for a probability change to move farther in the rewarded direction on that sample. It is not a hard constraint on all model probabilities or a guarantee against reward hacking. Shared parameters, other sampled tokens and future batches can still move the distribution. Our finite program evaluates these scalars, without claiming to implement neural policy optimization.</p></section>
+
+<section id="qwen"><h2>24. The Qwen experiment and post-training persistence</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2187">Lecture: 36:27–38:42</a></p>
+<p>RLP v2’s main Qwen3-1.7B experiment starts from a base checkpoint and uses 1B observed input tokens. It compares the base, a CPT condition, and an RLP condition, then applies the same SFT/RLVR post-training recipe to each. Observed input tokens are corpus exposure, not generated thought tokens or the number of positions receiving a reward.</p>
+<table><caption>RLP v2, Table 1, PDF page 6: reported Overall row</caption><thead><tr><th>Condition</th><th>Before post-training</th><th>After SFT + RLVR</th></tr></thead><tbody><tr><td>Base</td><td>30.32</td><td>39.34</td></tr><tr><td>CPT</td><td>30.85</td><td>39.90</td></tr><tr><td>RLP</td><td>36.03</td><td>42.51</td></tr></tbody></table>
+<p>Before post-training, the RLP/base difference is $5.71$ points, or $18.83\%$ relative; RLP/CPT is $5.18$ points, or $16.79\%$ relative. After post-training, RLP/base is $3.17$ points, or $8.06\%$ relative. This supports the lecture’s rounded 19%, 17% and 8% comparisons using these named baselines. The advantage persists, but its absolute Overall-row gap is smaller after post-training; “compounding” must not be interpreted as a demonstrated widening of that same gap.</p>
+<p>These are reported table aggregates with specified task and generation conventions. They do not independently certify performance outside the evaluated suite, and the other RLP tables use different aggregates. For the assistant, the analogous design is to compare both initial and final states under a specified evaluation, preserving the CPT comparator as well as the original checkpoint. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, §§3–4</a>.</p></section>
+
+<section id="compute"><h2>25. Input tokens, generated tokens, FLOPs and time</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2324">Lecture: 38:44–40:14</a></p>
+<p>A token-matched comparison fixes corpus exposure; it need not fix computation. For an original bookkeeping model, let positive integers $D,L_{\mathrm{prefix}},L_{\mathrm{thought}}$ count documents, fixed prefix tokens and fixed tokens per thought, respectively; let integer $G\geq2$ count thoughts per selected position. Then $T_{\mathrm{input}}=DL_{\mathrm{prefix}}$ and $T_{\mathrm{generated}}=DGL_{\mathrm{thought}}$. If only thought tokens receive gradients, their count is $T_{\mathrm{update}}=DGL_{\mathrm{thought}}$ in this idealized fixed-length model.</p>
+<p>Let $P&gt;0$ be parameter count. A floating-point operation count, or <em>FLOP</em> count, estimates arithmetic work. A rough dense-model convention assigns about $2P$ FLOPs to a generated-token forward pass and $6P$ to a training-token forward/backward pass. With those assumptions, an illustrative ledger is</p>
+<div class="equation">$$F_{\mathrm{RLP}}\approx
+6P\,T_{\mathrm{update}}+2P\,T_{\mathrm{generated}}
++F_{\mathrm{prefix}}+F_{\mathrm{scoring}}.$$</div>
+<p>The two additional terms include prefix processing and reasoned/baseline scoring, whose costs depend on caching and reuse. Attention work, architecture, memory traffic and parallel execution can change the approximation. Its dimensions are operations, not seconds. Dividing only the first two terms by $6P$ yields $T_{\mathrm{update}}+T_{\mathrm{generated}}/3$ training-equivalent tokens.</p>
+<p>For $D=100$, $L_{\mathrm{prefix}}=100$, $G=4$ and $L_{\mathrm{thought}}=20$, this gives $10000$ input tokens, $8000$ generated tokens, and approximately $10666.67$ training-equivalent tokens before the omitted costs. Reusing a prefix can reduce repeated processing; it cannot make the generated thought tokens disappear from the ledger.</p>
+<p>The paper reports a 170M-input-token RLP condition against a CPT condition with 6B tokens under its FLOP accounting. That is $6\mathrm B/170\mathrm M\approx35.29$ times as many observed tokens for CPT. Table 4 reports $43.36$ versus $38.04$, a $5.32$-point or $13.99\%$ relative gain. Appendix page 25 instead uses $35.60$ for the 6B baseline; main Table 4 assigns that number to its separate 1B DPT row. The comparison here uses the correctly named main-table pair. The paper’s approximate budget conversion is not independently reconstructed from a measured operator trace. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, Table 4 and appendix pages 22, 25</a>.</p>
+<p>The same appendix’s separate 32K-context SFT/RLP timing comparison gives $5.54$ and $12.47$ seconds per step at its specified batch/hardware, roughly a $2.25$-fold RLP slowdown. It is not a direct certification of a CPT speed ratio. A 35-fold input-token ratio is certainly not a 35-fold wall-time speedup. Report exposure efficiency, estimated compute efficiency and measured runtime separately.</p></section>
+
+<section id="nano"><h2>26. A larger hybrid model and mixed outcomes</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2419">Lecture: 40:19–42:21</a></p>
+<p>The lecture extends the comparison to Nemotron-Nano-12B-v2, a hybrid Mamba2/Transformer model. The RLP condition starts from a 19.8T-token checkpoint and processes another 250M observed tokens; the comparator is a 20T-token base. The exposure difference is approximately $199.75$B tokens, not a statement that their total computation is identical.</p>
+<p>Main Table 2 reports Overall $42.81$ for the base and $61.32$ for RLP: $18.51$ points or $43.24\%$ relative. The lecture and one paper summary say 35%; the table arithmetic and later main-text interpretation give about 43%. After the same post-training recipe the scores are $65.31$ and $68.09$, a $2.78$-point difference. The chapter keeps the table-derived calculation rather than silently repairing the reported 35% claim. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, Table 2 and PDF pages 3, 7–8</a>.</p>
+<p>The result is not uniform across tasks. In the pre-post-training comparison, MATH500 declines from $79.95$ to $78.68$, and AMC23 from $70.63$ to $57.19$. A higher overall score does not erase those regressions. The experiments give evidence in a pure Transformer and one larger hybrid family; they do not prove architecture-independent effectiveness for all models.</p>
+<p>For the assistant, this reinforces two evaluation requirements: preserve task-level measurements, and include a comparator starting from the same intermediate checkpoint when isolating the algorithm’s effect. Comparing only with a later baseline addresses a practical allocation question but changes more than one factor.</p></section>
+
+<section id="related"><h2>27. Four ways to learn from intermediate reasoning</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2541">Lecture: 42:21–45:19</a></p>
+<p>The comparison with Quiet-STaR, RPT and RLPT is clearest when separated into the predicted object, the reward rule and the update. These methods are not interchangeable labels for one objective.</p>
+<table><caption>Primary method boundaries, with no universal capability ranking</caption><thead><tr><th>Method</th><th>Prediction / scoring</th><th>Important distinction</th></tr></thead><tbody>
+<tr><td>Quiet-STaR</td><td>Intermediate rationales improve future-text predictions, mixed with base predictions</td><td>Uses a learned mixing head, future-token likelihood and a rationale policy update alongside likelihood training</td></tr>
+<tr><td>RPT</td><td>Generated continuation must match a corpus prefix at a valid token boundary</td><td>Binary deterministic matching reward; a proxy-model filter is a separate data-selection operation</td></tr>
+<tr><td>RLPT</td><td>Generated text segment must semantically match reference text</td><td>A generative semantic judge supplies binary reward; masked-segment task deliberately provides following context</td></tr>
+<tr><td>RLP v2</td><td>Thought-conditioned observed-token log likelihood minus a no-think comparator</td><td>Detached continuous reward and grouped thought-token surrogate; explicit method omits a standard NTP loss</td></tr>
+</tbody></table>
+<p><a href="https://arxiv.org/abs/2403.09629v2">Quiet-STaR v2, §§4.1–4.4</a>, generates thoughts along separate prefix-conditioned paths using an attention mask, then mixes base and thought-conditioned predictions. Its method includes a likelihood signal and a policy-gradient term, with its own choices about negative rewards. RLP’s formulas should not be substituted for that objective.</p>
+<p><a href="https://arxiv.org/abs/2506.08007v1">RPT v1, §3.2</a>, checks the generated bytes against the observed continuation and requires their length to end on a valid token boundary. That reward can be computed without a second model. The paper’s chosen setup also uses a small proxy model to select high-entropy training positions. Token selection and reward verification are separate operations; describing both as an external verifier loses that distinction.</p>
+<p><a href="https://arxiv.org/abs/2509.19249v2">RLPT v2, §§3.2–3.3</a>, predicts a sentence-like segment and uses a generative judge for semantic prefix consistency. Its autoregressive segment task uses preceding context; its middle-segment task also uses following context. The latter is an intentional masked-prediction problem, not a causal next-token experiment. It also uses a cold-start SFT phase. “Reinforcement pretraining” therefore does not specify one common initial policy state.</p>
+<p>RLP’s token-matched OmniMath comparison reports Overall $41.69$ for its RPT condition and $43.35$ for RLP: $1.66$ points, or $3.98\%$ relative. This is a result for that paper’s specific reproduction/comparison, not a proof that continuous reward is universally superior to binary reward. Different target-position counts and its separately reported FLOP-matched protocol also matter. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, Table 3</a>.</p></section>
+
+<section id="synthesis-results"><h2>28. Corpus robustness and the limits of a combined story</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2721">Lecture: 45:21–48:46</a></p>
+<p>The lecture returns to its learners and suggests that curriculum, early reasoning and active thought can be complementary. This is a research program: data ordering controls what the model encounters when; early traces change the learned foundation; sampled thoughts change where computation and reward are applied. Their compatibility is plausible, but their effects need not add or multiply.</p>
+<p>In RLP’s corpus ablation, Table 4 reports $34.19$ for its base and $41.43$ through $43.36$ for six tested SFT-style/general corpora at 170M inputs. These are gains of $7.24$ through $9.17$ percentage points under that table’s aggregate. They include web, academic and mathematical text conditions. They support utility beyond only one curated reasoning dataset in the tested setting, not an assertion that any text stream yields a universal 7–9% relative improvement.</p>
+<p>The paper also varies thought count, completion length and a KL regularization coefficient. Its selected recipe uses 16 rollouts, a maximum thought completion length of 2048 and zero KL coefficient under the tested configuration. More computation does not produce monotonic gains: its 32-rollout aggregate is below the 16-rollout result, and extending completions to 4096 yields little additional measured overall gain. These are empirical hyperparameter findings, not theoretical optimal values. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, Table 4 and Table S.1</a>.</p>
+<p>The recording’s rough combined 60% learner summary spans different studies. For our assistant, the corresponding claim would require a factorial experiment: independently switch curriculum, early reasoning and RLP on/off under a clearly defined budget, then estimate their interactions. Multiplying isolated relative improvements assumes compatible baselines, metrics and effects; those assumptions are not supplied by this lecture.</p></section>
+
+<section id="grpo"><h2>29. Group-relative optimization does not require binary rewards</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=2929">Lecture: 48:49–50:20</a></p>
+<p>The final Q&amp;A asks how RLP relates to Group Relative Policy Optimization, or <em>GRPO</em>. Both sample a group and use within-group comparisons, but reward construction and normalization are distinct choices. In the original <a href="https://arxiv.org/abs/2402.03300v2">DeepSeekMath paper, §§4.1.2–4.1.3</a>, outcome supervision uses learned reward scores and standard-deviation normalization, and process supervision can score intermediate steps. Binary reward is not an intrinsic requirement of GRPO.</p>
+<p>RLP v2’s $G/(G-1)$-corrected mean-centered advantage does not divide by the group standard deviation. It is consequently not numerically equivalent to the standard outcome-normalized form $(r_i-\bar r)/\operatorname{std}(r)$. If every reward is identical, mean-centered RLP advantages are zero, whereas variance normalization also needs an explicit convention for a zero denominator.</p>
+<p>The lecture’s “replace zero/one with log gain” description is a useful high-level analogy. An implementation must still specify the precise estimator, clipping, length averaging, reward detachment and any regularization. Our scientific assistant cannot reproduce a paper merely by adopting an algorithm name.</p></section>
+
+<section id="open-questions"><h2>30. Multimodal, alignment and quality questions remain distinct</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=3020">Lecture: 50:20–55:33</a></p>
+<p>Asked about vision-language alignment, Prabhumoye says the proposed techniques had not yet been tried there. Extending the thought policy to image-conditioned prediction is an experimental possibility; the lecture does not establish multimodal effectiveness. The subsequent discussion of human-feedback RL, bias, hallucinations and classifiers is explicitly outside the speaker’s main expertise and remains a set of research questions. A reward tied to observed text should not be interpreted as a cure for sycophancy or false explanations.</p>
+<p>The quality Q&amp;A returns to operational rubrics. The <a href="https://arxiv.org/abs/2406.17557v1">FineWeb paper, §4 and appendix E.1</a>, describes educational annotations on a $0$–$5$ scale, a classifier trained on those annotations, and a selected threshold for FineWeb-Edu. Its rubric favors school-level educational content; this is a specific target, not universal value or graduate scientific correctness. The recording describes the scale informally as one to five. The original includes zero, so a faithful reproduction must preserve that range.</p>
+<p>The lecture also mentions EssentialWeb’s finer domain/educational categories as an example of tailoring a rubric. The useful transferable idea is to state what you want to extract and measure agreement with that criterion. No detailed dataset-card schema or classifier performance is asserted here. For our assistant, a school-content score might downweight an advanced but valuable derivation. A rubric should therefore match the intended reader and task, and the resulting blend should be tested rather than assumed useful.</p></section>
+
+<section id="sampling"><h2>31. Eligible everywhere does not mean trained everywhere</h2><p class="timestamp"><a href="https://www.youtube.com/watch?v=e_H_tkpCAK4&amp;t=3335">Lecture: 55:35–57:48</a></p>
+<p>Prabhumoye clarifies that the practical RLP runs randomly choose one target token per document, without entropy-based position selection, then move to another document. The RLP v2 setup states this explicitly. Its reward is eligible at any token position, but the reported run does not attach a separate rollout group to every position. <a href="https://arxiv.org/abs/2510.01265v2">RLP v2, §3</a>.</p>
+<p>Sampling defines the target distribution. If documents $d=1,\ldots,D$ are selected uniformly and an eligible position is selected uniformly within document $d$ of length $L_d$, the expected reward is $D^{-1}\sum_d L_d^{-1}\sum_t r_{dt}$. Uniform sampling over all tokens instead gives $(\sum_dL_d)^{-1}\sum_{d,t}r_{dt}$. These coincide only under additional conditions, such as equal lengths or identical document means. For two documents of lengths 2 and 8 with mean rewards 0 and 1, document-uniform sampling gives $0.5$ and token-uniform sampling gives $0.8$. This is an original exposure-measure check, not a claim about an undocumented loader detail.</p>
+<p>For the case, if short worked examples and long web articles receive equal document probability, their reward positions are weighted differently from their token exposure. The exposure and computation ledgers must record both selection measures. Uniform selection is simple and avoids an extra entropy filter; it does not by itself make the reward estimator uniform over every corpus token.</p>
+<p>The closing Q&amp;A reports an additional experiment from a 4T-token checkpoint, about 20% of a 20T run. That is an attributed, unpublished checkpoint result without a retained benchmark table here. It motivates testing earlier interventions; it does not establish how far back RLP will reliably outperform CPT. The central open problem is to map useful learning strategies against model state, corpus, objective and total cost.</p></section>
+
+<section id="program"><h2>32. Executable: two ledgers and a frozen thought scorer</h2>
+<p>The following original standard-library Python program requires no model download, network, files or randomness. Its functions compute expected source epochs, finite scalar updates, observed-token log gains, corrected advantages, signed clipped surrogates, cross-entropies, the Jensen bound and an idealized compute ledger. It prints deterministic results and raises an assertion if a mathematical or input check fails. Run the companion <code>chapter05.py</code> with Python 3.</p>
+<p>Numeric scalar inputs are finite <code>int</code>/<code>float</code> values excluding booleans. Mixtures are nonempty list/tuple probability vectors summing to one within a stated floating tolerance; dimensions must match. Scored probabilities are strictly positive and at most one. Epoch computation uses binary scaling so a representable product/ratio survives otherwise destructive intermediates, and rejects final overflow or positive ratios that round to zero. Group centering uses exact standard-library rational accumulation of the binary64 inputs before rounding, preserving tiny residuals after large cancellations. Equal subnormal rewards yield zero advantages. A nonzero centered mean or advantage that rounds to zero, or a required value that overflows, raises <code>ValueError</code>. Clipping also rejects unrepresentable required intermediates. Positive-integer compute counts are exact until the final floating approximation; an unrepresentable equivalent count raises <code>ValueError</code>.</p>
+<p>The two-row CE check and frozen thought probabilities are supplied fixtures, not estimates from a trained model. The compute model omits prefix/scoring/attention/hardware costs as explained above. Functions return new values and do not mutate their inputs. The printed comparison is an engineering check of these finite equations, not an implementation of RLP or a reproduction of the cited neural results.</p>
+<pre><code class="language-python">"""Finite curriculum/reward/compute checks; no model, files, network or randomness."""
+import math
+from fractions import Fraction
+
+
+def finite_real(value, name="value"):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(name + " must be an int or float, excluding bool")
+    try:
+        result = float(value)
+    except OverflowError:
+        raise ValueError(name + " is not representable") from None
+    if not math.isfinite(result):
+        raise ValueError(name + " must be finite")
+    return result
+
+
+def vector(values, name="vector"):
+    if not isinstance(values, (list, tuple)) or not values:
+        raise ValueError(name + " must be a nonempty list or tuple")
+    return [finite_real(x, name) for x in values]
+
+
+def distribution(values, name="distribution", strictly_positive=False):
+    result = vector(values, name)
+    if any(x &lt; 0 or x &gt; 1 or (strictly_positive and x == 0) for x in result):
+        raise ValueError(name + " has an invalid probability")
+    if not math.isclose(math.fsum(result), 1, rel_tol=0, abs_tol=1e-12):
+        raise ValueError(name + " must sum to one")
+    return result
+
+
+def _scaled_product_ratio(left, right, divisor):
+    """Nonnegative product/positive divisor without destructive intermediates."""
+    if left == 0 or right == 0:
+        return 0.0
+    lm, le = math.frexp(left)
+    rm, re = math.frexp(right)
+    dm, de = math.frexp(divisor)
+    try:
+        result = finite_real(math.ldexp(lm * rm / dm, le + re - de), "ratio")
+    except OverflowError:
+        raise ValueError("ratio is not representable") from None
+    if result == 0:
+        raise ValueError("positive ratio underflows to zero")
+    return result
+
+
+def exposures(total_tokens, unique_tokens, weights):
+    total = finite_real(total_tokens, "total tokens")
+    sizes = vector(unique_tokens, "unique tokens")
+    blend = distribution(weights, "weights")
+    if total &lt;= 0 or any(x &lt;= 0 for x in sizes) or len(sizes) != len(blend):
+        raise ValueError("positive budget/source sizes and matching dimensions required")
+    return [_scaled_product_ratio(total, weight, size)
+            for size, weight in zip(sizes, blend)]
+
+
+def scalar_train(targets, learning_rate, initial=0):
+    targets = vector(targets, "targets")
+    rate = finite_real(learning_rate, "learning rate")
+    state = finite_real(initial, "initial state")
+    if not 0 &lt; rate &lt;= 1:
+        raise ValueError("learning rate must lie in (0,1]")
+    for target in targets:
+        state = finite_real((1-rate)*state + rate*target, "updated state")
+    return state
+
+
+def log_gain(reasoned_probability, baseline_probability):
+    p = finite_real(reasoned_probability, "reasoned probability")
+    b = finite_real(baseline_probability, "baseline probability")
+    if not 0 &lt; p &lt;= 1 or not 0 &lt; b &lt;= 1:
+        raise ValueError("scored probabilities must lie in (0,1]")
+    return math.log(p) - math.log(b)
+
+
+def corrected_advantages(rewards):
+    rewards = vector(rewards, "rewards")
+    count = len(rewards)
+    if count &lt; 2:
+        raise ValueError("at least two rewards required")
+    # Binary64 inputs have exact rational representations. Accumulate before
+    # rounding, so large cancellations cannot discard a tiny, finite residual.
+    anchor = Fraction(rewards[0])
+    differences = [Fraction(x)-anchor for x in rewards]
+    mean = sum(differences, Fraction(0)) / count
+    try:
+        rounded_mean = finite_real(float(mean), "centered mean")
+    except OverflowError:
+        raise ValueError("centered mean is not representable") from None
+    if mean and rounded_mean == 0:
+        raise ValueError("nonzero centered mean underflows to zero")
+    result = []
+    for difference in differences:
+        exact = (difference-mean) * count / (count-1)
+        try:
+            rounded = finite_real(float(exact), "advantage")
+        except OverflowError:
+            raise ValueError("advantage is not representable") from None
+        if exact and rounded == 0:
+            raise ValueError("nonzero advantage underflows to zero")
+        result.append(rounded)
+    return result
+
+
+def clipped_objective(ratio, advantage, lower_width=0.2, upper_width=0.2):
+    ratio = finite_real(ratio, "importance ratio")
+    advantage = finite_real(advantage, "advantage")
+    low = finite_real(lower_width, "lower clipping width")
+    high = finite_real(upper_width, "upper clipping width")
+    if ratio &lt;= 0 or not 0 &lt;= low &lt; 1 or high &lt; 0:
+        raise ValueError("positive ratio and valid clipping widths required")
+    upper = finite_real(1+high, "upper clipping bound")
+    clipped = max(1-low, min(upper, ratio))
+    raw = finite_real(ratio*advantage, "raw surrogate")
+    bounded = finite_real(clipped*advantage, "clipped surrogate")
+    return min(raw, bounded)
+
+
+def cross_entropy(data_distribution, predictor):
+    truth = distribution(data_distribution, "data distribution")
+    prediction = distribution(predictor, "predictor", strictly_positive=True)
+    if len(truth) != len(prediction):
+        raise ValueError("distribution dimensions must match")
+    return math.fsum(-a*math.log(b) for a, b in zip(truth, prediction))
+
+
+def marginal_bound(thought_weights, target_probabilities, baseline_probability):
+    weights = distribution(thought_weights, "thought weights")
+    probabilities = vector(target_probabilities, "target probabilities")
+    if len(weights) != len(probabilities):
+        raise ValueError("thought dimensions must match")
+    rewards = [log_gain(p, baseline_probability) for p in probabilities]
+    expected = math.fsum(w*r for w, r in zip(weights, rewards))
+    marginal = math.fsum(w*p for w, p in zip(weights, probabilities))
+    return expected, log_gain(marginal, baseline_probability)
+
+
+def compute_tokens(documents, prefix_length, group_size, thought_length):
+    """Idealized counts, not an implementation of the paper's FLOP estimator."""
+    values = (documents, prefix_length, group_size, thought_length)
+    if any(isinstance(x, bool) or not isinstance(x, int) or x &lt;= 0 for x in values):
+        raise ValueError("compute dimensions must be positive integers")
+    if group_size &lt; 2:
+        raise ValueError("group size must be at least two")
+    input_tokens = documents*prefix_length
+    generated = documents*group_size*thought_length
+    # Original teaching approximation: train thoughts at 6P and generate at 2P.
+    try:
+        equivalent = generated + generated/3
+    except OverflowError:
+        raise ValueError("equivalent token count is not representable") from None
+    if not math.isfinite(equivalent):
+        raise ValueError("equivalent token count is not representable")
+    return input_tokens, generated, equivalent
+
+
+def check():
+    epochs = exposures(1000, [800, 100, 100], [.6, .3, .1])
+    assert epochs == [.75, 3, 1]
+    # Finite result despite an otherwise overflowing multiplication.
+    assert exposures(1e308, [1e308], [1]) == [1]
+    assert scalar_train([0, 2], .25) == .5
+    assert scalar_train([2, 0], .25) == .375
+    rewards = [log_gain(p, .2) for p in [.6, .2, .1]]
+    advantages = corrected_advantages(rewards)
+    shifted = corrected_advantages([log_gain(p, .4) for p in [.6, .2, .1]])
+    assert all(math.isclose(a,b,abs_tol=1e-14) for a,b in zip(advantages,shifted))
+    assert math.isclose(math.fsum(advantages), 0, abs_tol=1e-14)
+    assert corrected_advantages([1e308,1e308]) == [0,0]
+    assert corrected_advantages([5e-324,5e-324]) == [0,0]
+    cancellation = corrected_advantages([0, 1e308, -1e308, 1e-300])
+    assert math.isclose(cancellation[0], -1e-300/3, rel_tol=1e-14, abs_tol=0)
+    assert math.isclose(cancellation[3], 1e-300, rel_tol=1e-14, abs_tol=0)
+    assert corrected_advantages([-.7,-.9])[0] &gt; 0
+    assert corrected_advantages([2,2]) == [0,0]
+    assert math.isclose(clipped_objective(1.5,2),2.4)
+    assert math.isclose(clipped_objective(.5,-2),-1.6)
+    expected, bound = marginal_bound([.5,.5],[.6,.1],.2)
+    assert expected &lt; bound
+    assert math.isclose(cross_entropy([.75,.25],[.5,.5]) -
+                        cross_entropy([.75,.25],[.75,.25]), .130812035941137)
+    assert compute_tokens(100,100,4,20) == (10000,8000,8000+8000/3)
+    invalids = [
+        lambda: finite_real(True), lambda: finite_real(10**1000),
+        lambda: finite_real(math.nan), lambda: finite_real(".2"),
+        lambda: exposures(0,[1],[1]), lambda: exposures(1,[0],[1]),
+        lambda: exposures(1,[1,2],[1]), lambda: exposures(1,[1],[.5]),
+        lambda: exposures(1e308,[1e-308],[1]),
+        lambda: exposures(1e-308,[1e308],[1]),
+        lambda: scalar_train([], .2), lambda: scalar_train([1],0),
+        lambda: log_gain(0,.2), lambda: log_gain(1.1,.2),
+        lambda: corrected_advantages([1]),
+        lambda: corrected_advantages([1e308,-1e308]),
+        lambda: corrected_advantages([5e-324,1e-323]),
+        lambda: clipped_objective(0,1), lambda: clipped_objective(1,1,1),
+        lambda: cross_entropy([1,0],[1,0]),
+        lambda: marginal_bound([1],[.2,.3],.2),
+        lambda: compute_tokens(True,2,2,2), lambda: compute_tokens(1,2,1,2),
+        lambda: compute_tokens(10**1000,2,2,2),
+    ]
+    for call in invalids:
+        try:
+            call()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("invalid input accepted")
+    print("expected source epochs:", epochs)
+    print("curriculum endpoints: %.6f / %.6f" %
+          (scalar_train([0,2],.25),scalar_train([2,0],.25)))
+    print("log-gain rewards:", [round(x,6) for x in rewards])
+    print("corrected advantages:", [round(x,6) for x in advantages])
+    print("common-baseline cancellation: passed")
+    print("expected reward / marginal bound: %.6f / %.6f" % (expected,bound))
+    print("signed clipped objectives: %.6f / %.6f" %
+          (clipped_objective(1.5,2),clipped_objective(.5,-2)))
+    print("input / generated / training-equivalent tokens: %d / %d / %.6f" %
+          compute_tokens(100,100,4,20))
+    print("All finite mathematical checks and %d invalid-input checks passed." % len(invalids))
+
+
+if __name__ == "__main__":
+    check()
+</code></pre>
+<p>Exact isolated output:</p>
+<pre><code class="language-text">expected source epochs: [0.75, 3.0, 1.0]
+curriculum endpoints: 0.500000 / 0.375000
+log-gain rewards: [1.098612, 0.0, -0.693147]
+corrected advantages: [1.445186, -0.202733, -1.242453]
+common-baseline cancellation: passed
+expected reward / marginal bound: 0.202733 / 0.559616
+signed clipped objectives: 2.400000 / -1.600000
+input / generated / training-equivalent tokens: 10000 / 8000 / 10666.666667
+All finite mathematical checks and 24 invalid-input checks passed.
+</code></pre></section>
+
+<section id="exercises"><h2>33. Exercises with complete solutions</h2>
+
+<div class="exercise"><h3>Exercise 1: scale the exposure ledger</h3>
+<p>Use unique source sizes $(800,100,100)$, the 600/400 phase budgets and weights from §5. Verify the aggregate blend and expected epochs. If the total budget doubles while the phase proportions and weights remain unchanged, compute the new repeat counts. Impose an explanation-source cap of four expected epochs. What upper bound must its aggregate weight satisfy at the doubled budget? Explain why this does not determine the best replacement blend.</p></div>
+<details class="solution"><summary>Solution</summary>
+<p>Phase 1 gives $600(0.8,0.1,0.1)=(480,60,60)$, and phase 2 gives $400(0.3,0.6,0.1)=(120,240,40)$. Adding gives $(600,300,100)$, so division by $1000$ yields $(0.6,0.3,0.1)$. Dividing each exposure by its source stock gives $(600/800,300/100,100/100)=(0.75,3,1)$ epochs.</p>
+<p>Doubling the run with the same proportions yields $(1200,600,200)$ exposures and $(1.5,6,2)$ epochs. The scarce explanations exceed the four-epoch cap. With total $T'=2000$, its new aggregate weight must satisfy $2000\bar w_2/100\leq4$, hence $\bar w_2\leq0.2$. At the cap, $400$ explanation tokens remain allowable, so $200$ of the original scaled exposure must move elsewhere.</p>
+<p>This inequality is a feasibility constraint. It says nothing about whether the removed exposure should become web, code, a new explanation source or a shorter total run. That decision requires validation and a computation budget. A phase schedule must also realize the new aggregate weights through nonnegative phase weights summing to one; fixing phase-1 exposures may impose an additional constraint on phase 2.</p></details>
+
+<div class="exercise"><h3>Exercise 2: prove an order effect and locate its limit</h3>
+<p>For $L_a(\theta)=\frac12(\theta-a)^2$, derive the difference between orders $a\to b$ and $b\to a$ under two equal-rate gradient steps. Evaluate it at $(a,b,\eta,\theta_0)=(0,2,1/4,0)$. For the equally weighted aggregate loss, find the unique minimizer and explain why the finite-step result does not prove a permanent curriculum advantage.</p></div>
+<details class="solution"><summary>Solution</summary>
+<p>The derivative is $\theta-a$, so $F_a(\theta)=\theta-\eta(\theta-a)=(1-\eta)\theta+\eta a$. The two-step expressions are $(1-\eta)^2\theta+\eta(1-\eta)a+\eta b$ and $(1-\eta)^2\theta+\eta(1-\eta)b+\eta a$. Subtracting leaves $\eta[-\eta a+\eta b]=\eta^2(b-a)$. Equal targets or a vanishing step eliminate the difference.</p>
+<p>The first order starts $0\to0\to0.5$; the reverse starts $0\to0.5\to0.375$. The difference is $0.125=(1/16)\cdot2$. If evaluation favors target 2, the first endpoint is closer; if it favors target 0, the reverse is closer. The statement of an order effect does not choose an evaluation objective.</p>
+<p>The aggregate is $\bar L=\frac14[(\theta-a)^2+(\theta-b)^2]$, with derivative $\theta-(a+b)/2$ and second derivative 1. Its unique minimizer is $(a+b)/2=1$. An optimization procedure that actually converges to this same aggregate minimizer loses the finite-endpoint distinction. This differs from indefinitely cycling constant-rate single-example steps, which can retain a cycle. One must specify the optimization limit before asserting that order ceases to matter.</p></details>
+
+<div class="exercise"><h3>Exercise 3: predictive improvement without new information</h3>
+<p>Let the data distribution on two tokens be $(3/4,1/4)$, with a uniform baseline and an exact reasoned predictor equal to the data distribution. Compute expected log reward. For two equiprobable thoughts giving target probabilities $0.6$ and $0.1$, baseline $0.2$, compute the expected reward and marginal bound. Finally explain why a prefix-only randomized thought has zero true conditional mutual information with the target while still helping an imperfect predictor.</p></div>
+<details class="solution"><summary>Solution</summary>
+<p>The per-token rewards are $\log[(3/4)/(1/2)]=\log(3/2)$ and $\log[(1/4)/(1/2)]=-\log2$. Their expectation is $\frac34\log(3/2)-\frac14\log2\approx0.130812$ nats. The same result is baseline CE $\log2$ minus the data entropy $-\frac34\log(3/4)-\frac14\log(1/4)$. This verifies both the expectation identity and the possibility of a negative reward on one observed sample.</p>
+<p>In the second fixture, mean sampled reward is $\frac12[\log3+\log(1/2)]=\frac12\log(3/2)\approx0.202733$. Mean target probability is $(0.6+0.1)/2=0.35$, and marginalized reward is $\log(0.35/0.2)=\log(7/4)\approx0.559616$. Strict inequality follows because the thought-conditioned target probabilities differ with positive probability and logarithm is strictly concave.</p>
+<p>Fix the model state and prefix $h$. The sampling protocol gives $p^*(y,c\mid h)=p^*(y\mid h)\pi(c\mid h)$, so the ratio defining conditional mutual information is one and its logarithm zero. A thought cannot add fresh target information beyond $h$ under this experiment. It can, however, make an imperfect model’s computation from $h$ more effective, reducing its KL error. An optimal predictor cannot improve below the data entropy: with positive $p^*$, $\log u\leq u-1$ implies $\sum_y p^*(y)\log[q(y)/p^*(y)]\leq\sum_y[q(y)-p^*(y)]=0$, hence $D_{\mathrm{KL}}(p^*\|q)\geq0$. The benefit is computational, and the reward’s “information gain” name does not alter the probability model.</p></details>
+
+<div class="exercise"><h3>Exercise 4: verify the group correction by enumeration</h3>
+<p>A binary thought policy has $\Pr(C=1)=q=\operatorname{sigmoid}(\alpha)$, where $\operatorname{sigmoid}(\alpha)=1/(1+e^{-\alpha})$. Frozen rewards are $r(1)=1$ and $r(0)=0$. At $q=1/2$, sample $G=2$ iid thoughts. Enumerate the four groups and compute the expected corrected score-function estimator. Compare it with uncorrected inclusive centering. What happens if the same constant is subtracted from every reward?</p></div>
+<details class="solution"><summary>Solution</summary>
+<p>The expected reward is $q$, whose derivative with respect to $\alpha$ is $q(1-q)=1/4$ at $q=1/2$. The score of a sampled Bernoulli action is $\partial_\alpha\log\pi(C)=C-q$, hence $-1/2$ for 0 and $1/2$ for 1.</p>
+<p>Each group has probability $1/4$. In groups $(0,0)$ and $(1,1)$, both centered advantages are zero and the estimator is zero. In $(0,1)$, rewards $(0,1)$ have mean $1/2$ and corrected advantages $2(-1/2,1/2)=(-1,1)$. The mean of advantage-times-score is $\frac12[(-1)(-1/2)+(1)(1/2)]=1/2$. The group $(1,0)$ gives the same $1/2$. The expected estimator is $(0+0+1/2+1/2)/4=1/4$, matching the derivative.</p>
+<p>Without the factor 2, mixed groups give $1/4$ and the total expectation is $1/8$: precisely half the desired gradient. Subtracting a constant $b$ changes rewards and their mean by the same amount, leaving every advantage and estimator unchanged. In particular a common no-think log baseline cannot change this grouped gradient in exact arithmetic. The result assumes frozen rewards and unnormalized sequence scores; it is not an unbiasedness claim for variable-length averaging or clipped off-policy surrogates.</p></details>
+
+<div class="exercise"><h3>Exercise 5: signed clipping and the compute ledger</h3>
+<p>Take two thoughts with advantages $2,-2$, each of length two. Their importance ratios are $(1.5,1.1)$ and $(0.5,0.9)$, with clipping widths $0.2$. Compute the mean clipped objective and negative loss. Then compute input, generated and idealized training-equivalent tokens for 100 documents, prefix length100, four thoughts each of length20. What changes if thought count doubles, and why does no input-token speedup follow?</p></div>
+<details class="solution"><summary>Solution</summary>
+<p>For the positive thought, ratio1.5 selects $\min(3,2.4)=2.4$ and ratio1.1 selects $2.2$, giving mean $2.3$. For the negative thought, ratio0.5 selects $\min(-1,-1.6)=-1.6$ and ratio0.9 selects $-1.8$, giving mean $-1.7$. Equal averaging across thoughts gives $(2.3-1.7)/2=0.3$, so the minimized loss is $-0.3$. The signs explain why the minimum is essential.</p>
+<p>The input count is $100\cdot100=10000$. Generated and updated thought tokens are each $100\cdot4\cdot20=8000$. Under the stated $2P$ generation/$6P$ update convention, the included work corresponds to $8000+8000/3\approx10666.67$ training-token equivalents. This omits prefix/scoring/attention costs.</p>
+<p>Doubling thought count leaves the corpus input count at10000 but doubles generated and updated tokens to16000, and the included equivalent count to approximately21333.33. It supplies more samples at more cost; it does not expose the model to more unique corpus tokens. Autoregressive generation and parallel training also have different hardware behavior, so even matching an estimated FLOP ledger would not imply equal runtime. The source’s 35.29 input-token ratio therefore cannot be read as a speedup.</p></details>
+
+<div class="exercise"><h3>Exercise 6: audit an experimental claim</h3>
+<p>You are told that combining curriculum, early reasoning and RLP yields a 60% improvement, and that a post-SFT score increase from26.62 to35.92 is “9.3% relative.” Design an experiment for the scientific assistant that can separate the three intervention effects. Correct the metric calculation, state how you would handle the unresolved AIME39% statement, and give one evaluation needed beyond next-token reward.</p></div>
+<details class="solution"><summary>Solution</summary>
+<p>Use a $2^3=8$-condition factorial design, with curriculum, early reasoning exposure and RLP each switched on/off. Define a common initial state and corpus universe. Curriculum on/off should preserve aggregate source exposures. Early-reasoning comparisons should specify whether the same unique examples are relocated between phases and how repeats are matched. Since RLP adds rollouts, report both token-matched and computation-matched versions, or explicitly choose one estimand and retain the other cost ledger. Use common later SFT/RL recipes and paired evaluations before and after them. Replicated training seeds are needed to distinguish stable effects from optimization variability.</p>
+<p>For each fixed metric, estimate main effects and interaction terms. A gain when all switches are on can be nonadditive; it cannot be inferred by multiplying improvements from unrelated studies. Recipe-selection runs and their validation cost should also be reported.</p>
+<p>The SFT difference is $35.92-26.62=9.30$ percentage points, with relative gain $100\cdot9.30/26.62\approx34.94\%$. For the AIME statement, retain its attributed status and report the verified table-specific32.92/17.92-point differences; do not invent a baseline or average to obtain39%. The source conflict is a limit on the quantitative claim.</p>
+<p>Finally evaluate intermediate scientific-step validity and final-answer correctness on held-out physical/quantitative tasks, with errors categorized by sign, units and unsupported assumptions. A next-token reward can increase likelihood of erroneous text. A separate evaluation should also detect regressions in ordinary-language competence. This makes the original practical objective reviewable without interpreting every generated thought as a faithful explanation.</p></details>
+</section>
+
+<section id="takeaways"><h2>34. What to carry into the next training decision</h2>
+<p>The scientific assistant’s recipe is now expressed in quantities that can be checked. Source stock and mixture weights determine expected exposures; a phase schedule preserves or changes their aggregate; finite optimization gives ordering a mechanism; early reasoning experiments test interaction with later training; and RLP supplies a sampled-action reward tied to observed-token evidence.</p>
+<p>The strongest mathematical conclusions are conditional identities: the exposure equation, scalar order difference, CE reward identity, Jensen bound and iid group correction. The strongest empirical conclusions are narrower: particular recipes improve particular reported task aggregates, sometimes with regressions and source discrepancies. The thought reward certifies neither truth nor a faithful explanation, and the common EMA term has no effect on the displayed centered advantage in exact arithmetic.</p>
+<p>The next experiment should name its fixed resource, its measured capability and the comparison it is intended to identify. With those three choices explicit, “learning better” becomes a question about a reproducible training intervention rather than a slogan attached to a model.</p></section>
+<!-- BOOK-CONTENT-END --></article><nav class="page-turn" aria-label="Chapter navigation"><a rel="prev" href="lecture-04-training-at-gpu-scale.html">Previous available chapter</a><a href="index.html">Lecture index</a><a rel="next" href="lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html">Next available chapter</a></nav></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

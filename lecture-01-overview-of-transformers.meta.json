@@ -7,7 +7,7 @@
   "speaker": "Steven Y. Feng and Karan Singh",
   "date": null,
   "date_boundary": "Spring 2026 course; exact recording day not asserted",
-  "status": "Independently reviewed and locally validated chapter; course completion gates pending",
+  "status": "Independently reviewed local reading chapter; course certification remains separate",
   "transcript_provenance": "local machine transcription; not publisher captions",
   "transcription_model": "Systran/faster-whisper-small.en",
   "audio_sha256": "a95e2f824335668708a1b26d1d3725b9e9500c8f69173b4df86655ba6aa85d36",
@@ -102,7 +102,7 @@
         30
       ],
       "lecture_material": "Self-attention learns query, key and value projections; the library analogy illustrates soft matching and accessing information.",
-      "research_extension": "Vaswani et al., PDF pp. 4\u20135: scaled dot-product attention and multi-head projections.",
+      "research_extension": "Vaswani et al., PDF pp. 4–5: scaled dot-product attention and multi-head projections.",
       "teaching_construction": "Original masked normalization proof, variance assumptions, softmax derivative, three-token fixture, leakage/wrong-denominator and equal-value counterexamples.",
       "evidence_class": "theorem: Finite masked probability normalization, variance under independence, softmax derivative; engineering check: Causal routing, forbidden denominator and equal-value ambiguity",
       "claim_provenance": [
@@ -126,7 +126,7 @@
         32
       ],
       "lecture_material": "Content-only attention lacks ordering; positional encodings or embeddings supply positions, and multiple attention heads enrich representations.",
-      "research_extension": "Vaswani et al., PDF pp. 4\u20136: multiple heads and positional encodings; permutation proof is original.",
+      "research_extension": "Vaswani et al., PDF pp. 4–6: multiple heads and positional encodings; permutation proof is original.",
       "teaching_construction": "Original permutation-equivariance proof and fixed-mask qualification, head-shape arithmetic and procedure-order counterexample.",
       "evidence_class": "theorem: Content-only unmasked permutation equivariance; definition: Position and multi-head dimensions",
       "claim_provenance": [
@@ -150,7 +150,7 @@
         33
       ],
       "lecture_material": "A full transformer architecture combines the components introduced in the overview. The speaker explicitly does not explain every block in detail.",
-      "research_extension": "Vaswani et al., PDF pp. 3\u20136: encoder/decoder architecture, feedforward layers, residuals and normalization; detailed formulas supplement the brief recording overview.",
+      "research_extension": "Vaswani et al., PDF pp. 3–6: encoder/decoder architecture, feedforward layers, residuals and normalization; detailed formulas supplement the brief recording overview.",
       "teaching_construction": "Original FFN dimensional explanation, residual cancellation counterexample and population-variance layer-normalization fixture; block-order distinctions.",
       "evidence_class": "definition: Encoder/decoder, FFN, residual and layer normalization; engineering check: Zero residual Jacobian and population-variance fixture",
       "claim_provenance": [
@@ -197,7 +197,7 @@
         40,
         57
       ],
-      "lecture_material": "Pretraining data matters; Baby Scale studies individual children\u2019s language input and reports different scaling behavior across grammar and semantic/world-knowledge tasks.",
+      "lecture_material": "Pretraining data matters; Baby Scale studies individual children’s language input and reports different scaling behavior across grammar and semantic/world-knowledge tasks.",
       "research_extension": "Feng, Tan and Frank, Baby Scale, PDF pp. 1, 3, 5: controlled child-input study and task-dependent scaling findings.",
       "teaching_construction": "Original held-out evaluation design for grammar versus correct maintenance procedure and separation of observational correlation from mechanism.",
       "evidence_class": "empirical result: Bounded Baby Scale setting; engineering check: Held-out design for the running case",
@@ -222,7 +222,7 @@
         66
       ],
       "lecture_material": "Controlled bilingual exposure experiments compare monolingual and bilingual training, mixing schedules and evaluations of language learning.",
-      "research_extension": "Zeng, Feng and Frank, PDF pp. 3\u20134, 6: word budgets, tokenizer conditions and Table 1 metric-specific differences; English sentence-switching PPL 5.26 versus random baseline 2.69.",
+      "research_extension": "Zeng, Feng and Frank, PDF pp. 3–4, 6: word budgets, tokenizer conditions and Table 1 metric-specific differences; English sentence-switching PPL 5.26 versus random baseline 2.69.",
       "teaching_construction": "Original word-budget exposure accounting and matched-comparison design for the bilingual maintenance case.",
       "evidence_class": "empirical result: Specific budget, tokenizer and metric comparisons; engineering check: Original exposure accounting",
       "claim_provenance": [
@@ -246,7 +246,7 @@
         72
       ],
       "lecture_material": "Retrieval supplies an external datastore at inference; the study asks how pretraining exposure and retrieval-store size interact under data budgets.",
-      "research_extension": "Singh et al., retained April v1 pp. 4\u20135 and August v2 pp. 1, 4, 6: datastore accounting and metric/model-regime-dependent conclusions; no universal retrieval benefit.",
+      "research_extension": "Singh et al., retained April v1 pp. 4–5 and August v2 pp. 1, 4, 6: datastore accounting and metric/model-regime-dependent conclusions; no universal retrieval benefit.",
       "teaching_construction": "Original convex allocation toy with explicit positive-domain assumptions, derivative, unique minimum and lower-bound constraint; failure modes of conflicting retrieved revisions.",
       "evidence_class": "empirical result: Dated v1/v2, metric-dependent result; theorem: Original constrained convex allocation toy under stated assumptions",
       "claim_provenance": [
@@ -270,7 +270,7 @@
         84
       ],
       "lecture_material": "A data curriculum is combined with progressive layer growth; the speakers explain staged training and synthesize their pretraining studies.",
-      "research_extension": "Singh, Band and Adeli, v1 PDF pp. 1, 3\u20134: staged layer growth, new-layer initialization/warmup and subsequent joint optimization.",
+      "research_extension": "Singh, Band and Adeli, v1 PDF pp. 1, 3–4: staged layer growth, new-layer initialization/warmup and subsequent joint optimization.",
       "teaching_construction": "Original stage-loss notation, layer-token arithmetic and four-condition experiment separating curriculum from growth.",
       "evidence_class": "empirical result: Progressive layer-scaling mechanism; engineering check: Original matched-control design and layer-token arithmetic",
       "claim_provenance": [
@@ -318,7 +318,7 @@
         97
       ],
       "lecture_material": "The overview distinguishes human/AI preference feedback, direct preference optimization, group-relative optimization and process versus outcome feedback.",
-      "research_extension": "Ouyang et al., pp. 1\u20132; Rafailov et al., pp. 3\u20134; Lee et al., p. 1; Shao et al., pp. 13\u201314; Lightman et al., p. 1: distinct feedback pipelines, DPO reference-policy objective, GRPO baseline and bounded process/outcome comparison.",
+      "research_extension": "Ouyang et al., pp. 1–2; Rafailov et al., pp. 3–4; Lee et al., p. 1; Shao et al., pp. 13–14; Lightman et al., p. 1: distinct feedback pipelines, DPO reference-policy objective, GRPO baseline and bounded process/outcome comparison.",
       "teaching_construction": "Original logistic derivative, numerical preference margin, group-normalization and zero-variance checks; lockout objective-mismatch example.",
       "evidence_class": "theorem: Bradley-Terry logistic derivative and DPO normalizer cancellation under source assumptions; engineering check: Original margin, group-zero variance and objective mismatch",
       "claim_provenance": [
@@ -390,7 +390,7 @@
         116
       ],
       "lecture_material": "BrainInterNet uses predefined brain networks, masked reconstruction and cross-attention to study resting-state fMRI predictability and network relationships.",
-      "research_extension": "Singh et al., BrainInterNet, PDF pp. 1, 3\u20134: network-guided masking and predictive cross-attention study; no physiological causal or prospective clinical certificate.",
+      "research_extension": "Singh et al., BrainInterNet, PDF pp. 1, 3–4: network-guided masking and predictive cross-attention study; no physiological causal or prospective clinical certificate.",
       "teaching_construction": "Original conditional squared-error decomposition and independent-noise fixture; separation of predictability, physiological causality and clinical certification.",
       "evidence_class": "empirical result: BrainInterNet network-guided predictive study; theorem: Conditional squared-error decomposition for finite second moment",
       "claim_provenance": [
@@ -438,7 +438,7 @@
         144
       ],
       "lecture_material": "Hallucination is discussed through a reference world, a visible view and a conflict policy; knowledge, prediction and planning/reward errors are distinguished.",
-      "research_extension": "Liu et al., retained February 2026 v2, PDF pp. 3\u20134: reference/view/conflict-policy framing and three truth statuses.",
+      "research_extension": "Liu et al., retained February 2026 v2, PDF pp. 3–4: reference/view/conflict-policy framing and three truth statuses.",
       "teaching_construction": "Original reference-status formalization with distinct notation, true/false/unknown maintenance examples and independent action-precondition gate.",
       "evidence_class": "definition: Reference/view/policy and three-valued evidence status; engineering check: Original finite evidence and action gate",
       "claim_provenance": [
@@ -510,7 +510,7 @@
         174
       ],
       "lecture_material": "JEPA predicts representations rather than directly reconstructing every observation; state-space models are introduced as another route for sequence modeling.",
-      "research_extension": "Assran et al., PDF p. 3; Gu and Dao, PDF pp. 3\u20134: representation prediction and asymmetric target training; fixed state-space equations versus selective input-dependent dynamics.",
+      "research_extension": "Assran et al., PDF p. 3; Gu and Dao, PDF pp. 3–4: representation prediction and asymmetric target training; fixed state-space equations versus selective input-dependent dynamics.",
       "teaching_construction": "Original latent-target objective and collapse caution, fixed-matrix state-space derivation and order-sensitive scalar recurrence.",
       "evidence_class": "definition: Latent-target prediction, state-space recurrence and selective dynamics; engineering check: Original order-sensitive finite state fixture",
       "claim_provenance": [
@@ -595,7 +595,7 @@
       "reason": "Next-speaker preview and course logistics omitted"
     }
   ],
-  "coverage_check": "Segments 1\u201315 omitted as administration; 16\u2013174 allocated once in substantive sections. Administrative ending within segment 174 locally omitted. Original sections have null intervals.",
+  "coverage_check": "Segments 1–15 omitted as administration; 16–174 allocated once in substantive sections. Administrative ending within segment 174 locally omitted. Original sections have null intervals.",
   "primary_source_audit": [
     {
       "id": "1706.03762",
@@ -1026,45 +1026,27 @@
   },
   "quality_passes": [
     {
-      "pass": "1-2",
-      "result": "Actual source files inspected; all 174 transcript segments read sequentially; matching slide text read; full substantive coverage mapped"
+      "pass": "1-6,6a,6c",
+      "result": "Complete within the chapter recorded source, visual, mathematical, code and exercise scopes"
     },
     {
-      "pass": "3-6",
-      "result": "Self-contained manuscript with first-use notation, explicit mathematical hinges, original fixtures and six complete solutions"
-    },
-    {
-      "pass": "6a",
-      "result": "12 specified official slide pages and four primary PDF page-3 diagrams rendered and inspected; no unviewed visual attestation"
-    },
-    {
-      "pass": "6c",
-      "result": "Claim-bearing portions of 25 retained public PDFs read; 26th Hiera source excluded; source drift recorded locally"
-    },
-    {
-      "pass": "6b",
-      "result": "Accepted by independent editor after bounded repairs; zero remaining blocking findings"
-    },
-    {
-      "pass": "7-8",
-      "result": "Independent prose and pedagogical parity review passed against CS230 chapter 9 and CS231N chapter 14"
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; exact reviewed body/code retained"
     },
     {
       "pass": "9",
-      "result": "Root reader, code, source, offline math/rendering, privacy and preservation validation passed; current scope and hashes recorded in validation-summary.json. Human screen-reader audit not performed."
+      "result": "Actual local reader/source/program/privacy evidence recorded separately in validation-summary.json; human screen-reader audit is not performed"
     }
   ],
   "gate6b": {
     "status": "accepted",
-    "round": 1,
+    "rounds": 1,
     "blocking_findings": 0,
-    "review_date": "2026-10-02",
-    "reviewer": "Separate inherited Codex agent",
-    "accepted_authored_body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
-    "reviewed_metadata_sha256": "1965a1e351be88cecffc56d973c3b8cc450998a4dffd16d5aecd768e3427e9e5",
-    "scope": "Full manuscript, all six solutions, code, source claim pages and provenance; independent prose and parity checks passed. Course completion is separate."
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
+    "accepted_metadata_sha256": "1965a1e351be88cecffc56d973c3b8cc450998a4dffd16d5aecd768e3427e9e5"
   },
-  "publication": "Not published",
+  "publication": "Not published; local reading edition",
   "permission_errors_current_author_task": {
     "permission_rejections": 0,
     "AbsolutePathBuf_errors": 0
@@ -1080,7 +1062,7 @@
     },
     {
       "id": "2603.29522",
-      "title": "Baby Scale: Investigating Models Trained on Individual Children\u2019s Language Input",
+      "title": "Baby Scale: Investigating Models Trained on Individual Children’s Language Input",
       "url": "https://arxiv.org/pdf/2603.29522v1",
       "version": "2603.29522v1",
       "sha256": "adba4d10b5616ab1d4e703d9c2e107be239e3105b9fecc33cb54d0e5acb4cd59",
@@ -1224,7 +1206,7 @@
     },
     {
       "id": "2305.20050",
-      "title": "Let\u2019s Verify Step by Step",
+      "title": "Let’s Verify Step by Step",
       "url": "https://arxiv.org/pdf/2305.20050v1",
       "version": "2305.20050v1",
       "sha256": "fbd170e2042c32950c3fe97d3a558d89e8a8dffaadc942e774ccb4b751abc123",
@@ -1240,7 +1222,7 @@
     },
     {
       "id": "2512.21577v2",
-      "title": "A Unified Definition of Hallucination: It\u2019s The World Model, Stupid!",
+      "title": "A Unified Definition of Hallucination: It’s The World Model, Stupid!",
       "url": "https://arxiv.org/pdf/2512.21577v2",
       "version": "2512.21577v2",
       "sha256": "99067c3d96f6a9a997df103563c2d08b30a6105bf81eec97a570ce49964b04df",

@@ -7,7 +7,7 @@
   "speaker": "Nouamane Tazi",
   "date": "2026-04-23",
   "date_boundary": "Official Spring2026 V6 schedule; historical software explicitly pinned before talk",
-  "status": "Independently reviewed chapter; local reader validation recorded separately; course completion pending",
+  "status": "Independently reviewed local reading chapter; course certification remains separate",
   "transcript_provenance": "local machine transcription; not publisher captions",
   "transcription_model": "Systran/faster-whisper-small.en",
   "audio_sha256": "efa6203b45d2fffaf5f7b224768bc96fed7d14f292a15d5308804f84e07d890a",
@@ -983,76 +983,27 @@
   },
   "quality_passes": [
     {
-      "pass": "1",
-      "status": "author complete",
-      "evidence": "Full132-segment sequential read and106-page text read; exact partition in coverage ledger"
-    },
-    {
-      "pass": "2",
-      "status": "author complete",
-      "evidence": "Continuous original HTML with recurring7B maintenance-training decision"
-    },
-    {
-      "pass": "3",
-      "status": "author complete",
-      "evidence": "Gradient, collective, state-byte, TP, pipeline, attention and energy derivations; first-use notation ledger"
-    },
-    {
-      "pass": "4",
-      "status": "author complete",
-      "evidence": "Pinned originals and dated software; exact supporting pages/lines"
-    },
-    {
-      "pass": "5",
-      "status": "author complete",
-      "evidence": "Original stdlib implementation, isolated execution and embedded parity"
-    },
-    {
-      "pass": "6",
-      "status": "author complete",
-      "evidence": "Six mixed fully solved derivation/computation/counterexample/design exercises"
-    },
-    {
-      "pass": "6a",
-      "status": "author complete with limits",
-      "evidence": "21 selected official slide pages,7 primary paper pages and DeepEP original dispatch visual inspected"
-    },
-    {
-      "pass": "6b",
-      "status": "pending independent science-editor"
-    },
-    {
-      "pass": "6c",
-      "status": "author complete",
-      "evidence": "Source ledger lists selected claim pages/lines; does not claim entire papers read"
-    },
-    {
-      "pass": "7",
-      "status": "author pass; independent editorial review pending",
-      "evidence": "Local first-use, consequence/assumption and prose pacing checks"
-    },
-    {
-      "pass": "8",
-      "status": "author parity pass; independent editorial review pending",
-      "evidence": "CS230ch9, CS231Nch14 and accepted CS25pilot read for calibration; intellectual work recorded privately"
-    },
-    {
-      "pass": "9",
-      "status": "pending root integration and book-wide validation"
+      "pass": "1-6,6a,6c",
+      "result": "Complete within the chapter recorded source, visual, mathematical, code and exercise scopes"
     },
     {
       "pass": "6b,7,8",
-      "result": "Different-agent editorial/prose/parity acceptance; reviewed body retained; source and finite-code limits remain explicit"
+      "result": "Different-agent editorial/prose/parity acceptance; exact reviewed body/code retained"
+    },
+    {
+      "pass": "9",
+      "result": "Actual local reader/source/program/privacy evidence recorded separately in validation-summary.json; human screen-reader audit is not performed"
     }
   ],
   "gate6b": {
     "status": "accepted",
+    "rounds": 1,
     "blocking_findings": 0,
     "independent_reviewer": "Different agent from chapter author",
     "accepted_body_sha256": "f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066",
     "accepted_metadata_sha256": "4351b6ba23472fcf0bacc7cb4625c9bb175b4c35dd7ce7a4dd818cd91d9dee56"
   },
-  "publication": "Not published; local author draft",
+  "publication": "Not published; local reading edition",
   "permission_errors_current_author_task": {
     "permission_rejections": 0,
     "AbsolutePathBuf": 0

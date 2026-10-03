@@ -7,7 +7,7 @@
   "speaker": "Andrew Lampinen",
   "date": "2026-05-07",
   "date_boundary": "Official deck page1 and course sequence.",
-  "status": "Independently reviewed chapter; local reader validation recorded separately; course completion pending",
+  "status": "Independently reviewed local reading chapter; course certification remains separate",
   "transcript_provenance": "local machine transcription; not publisher captions",
   "transcription_model": "Systran/faster-whisper-small.en",
   "audio_sha256": "7ea8b1191ad5f1eca1b4c596a08c7225339393303f50e28b40eb2ace278e8d89",
@@ -1005,27 +1005,24 @@
   "quality_passes": [
     {
       "pass": "1-6,6a,6c",
-      "result": "Author preparation/manuscript/math/code/exercises and listed source/visual checks performed; independent audit pending"
-    },
-    {
-      "pass": "7-8",
-      "result": "Author revisions applied; independent prose/parity evaluation pending"
-    },
-    {
-      "pass": "9",
-      "result": "Reader integration and book validation pending"
+      "result": "Complete within the chapter recorded source, visual, mathematical, code and exercise scopes"
     },
     {
       "pass": "6b,7,8",
-      "result": "Different-agent editorial/prose/parity acceptance; reviewed body retained; source and finite-code limits remain explicit"
+      "result": "Different-agent editorial/prose/parity acceptance; exact reviewed body/code retained"
+    },
+    {
+      "pass": "9",
+      "result": "Actual local reader/source/program/privacy evidence recorded separately in validation-summary.json; human screen-reader audit is not performed"
     }
   ],
   "gate6b": {
     "status": "accepted",
+    "rounds": 2,
     "blocking_findings": 0,
     "independent_reviewer": "Different agent from chapter author",
     "accepted_body_sha256": "28dddb9244837d888447519eef04b1ab853b767578f9fb4e3750b1809c3345d6",
     "accepted_metadata_sha256": "fbb7d27d6a1a344c13c0a523f549a8d7cf9415bfa46fc75157318d5c5fb86842"
   },
-  "publication": "Not published"
+  "publication": "Not published; local reading edition"
 }

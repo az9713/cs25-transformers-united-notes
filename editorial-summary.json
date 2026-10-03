@@ -1,0 +1,72 @@
+{
+  "course": "CS25: Transformers United V6, Spring 2026",
+  "chapter_count": 9,
+  "solutions": 54,
+  "independent_chapter_review": "All nine accepted by an agent different from the chapter author",
+  "independent_book_wide_review": "accepted",
+  "book_wide_scope": "Chapter connections, notation, assumptions, all worked-solution premises and integrated reader support; chapter acceptance is recorded separately",
+  "book_wide_report_sha256": "92f0e48647cd15d9077ac0f5fd1aa201eb57df58e17b42cdd548e47756d19ed7",
+  "chapters": [
+    {
+      "chapter": 1,
+      "body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
+      "code_sha256": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
+      "review_rounds": 1
+    },
+    {
+      "chapter": 2,
+      "body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
+      "code_sha256": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
+      "review_rounds": 1
+    },
+    {
+      "chapter": 3,
+      "body_sha256": "22b7065c80b65f9948b929f1cd12d0ec26b786575dc0ec75fd8434e34bc48a74",
+      "code_sha256": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
+      "review_rounds": 2
+    },
+    {
+      "chapter": 4,
+      "body_sha256": "f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066",
+      "code_sha256": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
+      "review_rounds": 1
+    },
+    {
+      "chapter": 5,
+      "body_sha256": "0df596f805e619d9ab5c88cb9088fb81010fdf48c48d3a75bfef1590c26bdf44",
+      "code_sha256": "6b8b59753ffd9294ea85bc872a87111fd6a60c923c46f222c2f824f172b6c1a1",
+      "review_rounds": 2
+    },
+    {
+      "chapter": 6,
+      "body_sha256": "28dddb9244837d888447519eef04b1ab853b767578f9fb4e3750b1809c3345d6",
+      "code_sha256": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
+      "review_rounds": 2
+    },
+    {
+      "chapter": 7,
+      "body_sha256": "9abc2ed39f5e6e18d87d23296d08af5a31cf79a6eb1fff27a33abf8be1511aa2",
+      "code_sha256": "20169e7f0da35c5ab1cad850e096be1a422654c193e6b23dc364fdeffa3270ee",
+      "review_rounds": 2
+    },
+    {
+      "chapter": 8,
+      "body_sha256": "0af6c23a34045a1cc032e32586da78bf5d12b216781af7c0748c5c70b61dae17",
+      "code_sha256": "b4cc81e740275bb6896d03a724bc08a2b543d4e715e1c819ca69d169ecabb492",
+      "review_rounds": 2
+    },
+    {
+      "chapter": 9,
+      "body_sha256": "bae9f43effc17f88c563b9be8e77ce619d895be7d426b2e19cde8464d172199c",
+      "code_sha256": "bdc724cb7a6da390cee898dd27eaec0653273873a292b22ce5b70abec78e16e5",
+      "review_rounds": 2
+    }
+  ],
+  "local_validation_evidence": [
+    "validation-summary.json",
+    "reader-validation.json"
+  ],
+  "human_keyboard_screen_reader_audit": "not performed",
+  "course_complete": false,
+  "publication": "not published"
+}

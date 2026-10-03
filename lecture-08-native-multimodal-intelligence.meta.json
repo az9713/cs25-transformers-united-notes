@@ -1,0 +1,1146 @@
+{
+  "video_id": "NDdc39KYqDU",
+  "title": "From Language Models to Native Multimodal Intelligence",
+  "chapter_order": 8,
+  "recording_lecture_number": 8,
+  "recording_title": "Stanford CS25: Transformers United V6 I From Language Models to Native Multimodal Intelligence",
+  "speaker": "Victoria Lin",
+  "date": "2026-05-21",
+  "date_boundary": "Actual official deck PDFpage1; public personal-view/source boundary retained",
+  "status": "Independently reviewed local reading chapter; course certification remains separate",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "audio_sha256": "29b613a1fc6188b82561265a7528199e079a491dda5a55fb4e4113d2983768c9",
+  "audio_duration_seconds": 3879.061,
+  "transcription_audio_duration_seconds": 3879.04,
+  "playlist_duration_seconds": 3880,
+  "transcript_sha256": "496489773067c9517ce8ec9847da5ebdd41b4f210679df5570bb2a74907a49aa",
+  "transcript_text_sha256": "3d6b77e4076f7d496012c4af2d405b85287e35f1c7783762817961d4071f3801",
+  "transcript_segment_count": 142,
+  "transcript_first_start_seconds": 4.78,
+  "transcript_last_end_seconds": 3869.2,
+  "slides": {
+    "lecture": 8,
+    "drive_id": "10Doblrt3Le_FpbVQoMP0DbuCIO3rtWPW",
+    "url": "https://drive.google.com/uc?export=download&id=10Doblrt3Le_FpbVQoMP0DbuCIO3rtWPW",
+    "bytes": 53071233,
+    "pages": 56,
+    "sha256": "5d9ffaa824d34cac89bcc71823e706fd5a8fe8839f1bb991f7a87c39d2563d6a",
+    "status": "acquired and extracted",
+    "pages_rendered_and_inspected": [
+      23,
+      28,
+      29,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      43,
+      45,
+      46,
+      53,
+      54
+    ],
+    "reading_status": "All56 page texts read;17 actual official slide stills viewed"
+  },
+  "sections": [
+    {
+      "section": "motivation",
+      "title": "1. Language is a powerful interface with a limited view 0:04",
+      "start": 4.78,
+      "end": 259.28,
+      "segments": [
+        1,
+        9
+      ],
+      "lecture_material": "Source framing and digital/physical multimodal motivation",
+      "teaching_construction": "Original maintenance case, perception/generation/action distinction",
+      "research_extension": null,
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Multimodal/native design descriptions"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Motivation and public-personal-view boundary"
+        }
+      ]
+    },
+    {
+      "section": "tokens",
+      "title": "2. A token is a sequence position, not necessarily a word ID 4:19",
+      "start": 259.54,
+      "end": 441.26,
+      "segments": [
+        10,
+        16
+      ],
+      "lecture_material": "Text/image/audio/video tokenization; dense tokens need not be discrete",
+      "teaching_construction": "Spatial-padding and independent-frame counts; explicit score-matrix memory bound",
+      "research_extension": null,
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Sequence positions versus discrete vocabulary indices"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Padded patch and independent-frame cardinalities"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "BF16 per-head score sizes, not total memory or kernel allocations"
+        }
+      ]
+    },
+    {
+      "section": "objectives",
+      "title": "3. Separate multimodal inputs from multimodal outputs 7:21",
+      "start": 441.3,
+      "end": 546.85,
+      "segments": [
+        17,
+        20
+      ],
+      "lecture_material": "Multimodal inputs versus multimodal outputs",
+      "teaching_construction": "Binary text-target gradient through a visual feature",
+      "research_extension": null,
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Conditioning and target-modality distinction"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Cross-entropy derivative through image feature"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite derivative and no encoder-freeze/stop-gradient assumption"
+        }
+      ]
+    },
+    {
+      "section": "transfer-tools",
+      "title": "4. Reuse language-model tools with new measurement contracts 9:06",
+      "start": 546.85,
+      "end": 701.12,
+      "segments": [
+        21,
+        26
+      ],
+      "lecture_material": "Prompting, reasoning, scaling and sparse experts across modalities",
+      "teaching_construction": "Maintenance plan errors and controlled scaling denominators",
+      "research_extension": "Transfusion v1pp7–9 and MoT v2 experimental setups",
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture/original",
+          "claim": "Distinct data/compute/representation interventions"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Scaling and transfer remain active questions"
+        }
+      ]
+    },
+    {
+      "section": "chameleon",
+      "title": "5. Chameleon makes pictures part of a discrete sequence 11:41",
+      "start": 701.12,
+      "end": 931.79,
+      "segments": [
+        27,
+        35
+      ],
+      "lecture_material": "Chameleon, VQ-VAE, interleaving and multi-task sequence factorization",
+      "teaching_construction": "Dimensions, discrete chain rule and observation/generation distinction",
+      "research_extension": "Chameleon v1pp4–8; VQ-VAE-2 v1p2",
+      "evidence_class": "definition; empirical result; theorem",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Discrete image codes, nearest prototypes and autoregressive sequence"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "Chameleon tokenizer architecture and stability observations"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Probability chain rule on discrete sequence"
+        }
+      ]
+    },
+    {
+      "section": "quantization",
+      "title": "6. Reconstruction quality and task sufficiency are different 15:31",
+      "start": 931.86,
+      "end": 1010.61,
+      "segments": [
+        36,
+        38
+      ],
+      "lecture_material": "Discrete representation and visual understanding/generation limitations",
+      "teaching_construction": "Opposite labels quantize to the same index; exact Bayes error",
+      "research_extension": "Chameleon v1p4 OCR reconstruction limitation",
+      "evidence_class": "theorem; definition; empirical result",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Noninjective quantizer task-label counterexample"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Task-relevant sufficiency differs from reconstruction"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "Tokenizer-specific OCR reconstruction limitation"
+        }
+      ]
+    },
+    {
+      "section": "transfusion",
+      "title": "7. Transfusion combines discrete text with continuous image generation 16:50",
+      "start": 1010.61,
+      "end": 1257.55,
+      "segments": [
+        39,
+        47
+      ],
+      "lecture_material": "Transfusion, latent images, diffusion, shared autoregressive sequence and representation tradeoffs",
+      "teaching_construction": "Conditional-mean MSE proof, Gaussian uncertainty oracle, causal image-block mask and multi-layer path argument",
+      "research_extension": "Transfusion v1pp4–9",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Noise construction, CE+diffusion objective, switching decoder and hybrid attention"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Squared-error decomposition and Gaussian conditional moments"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "No later-block path under the declared hybrid mask"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite mask prefix-invariance and same-image communication tests"
+        }
+      ]
+    },
+    {
+      "section": "mot",
+      "title": "8. Mixture-of-Transformers separates weights while sharing attention 20:57",
+      "start": 1257.55,
+      "end": 1465.12,
+      "segments": [
+        48,
+        54
+      ],
+      "lecture_material": "MoT modality-specific weights, deterministic routing and joint attention",
+      "teaching_construction": "Row-vector dimensions, global normalization, cross-modal toy fixture and original SVG",
+      "research_extension": "MoT v2pp6–9",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Modality-specific QKV/O/FFN/norm and global attention"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Declared attention dimensions and uniform-score cross-modal dependence"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Exact finite branch-value change fixture"
+        }
+      ]
+    },
+    {
+      "section": "mot-results",
+      "title": "9. Read efficiency claims with their actual denominators 24:25",
+      "start": 1465.12,
+      "end": 1644.75,
+      "segments": [
+        55,
+        61
+      ],
+      "lecture_material": "Model ladder and dense/MoE experiments",
+      "teaching_construction": "Explicit stored/active parameter count and global attention MAC model",
+      "research_extension": "MoT v2pp11–13,15–16,20–21,31–32",
+      "evidence_class": "theorem; engineering check; empirical result; definition",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Nongated FFN parameter and MAC algebra"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite cost fixture; no measured latency"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "55.8% checkpoint and 760M/1.4B image metric comparisons restricted to original setup"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Expert-choice evaluation causality confounds and timing infrastructure"
+        }
+      ]
+    },
+    {
+      "section": "freeze",
+      "title": "10. Freeze a text pathway with a carefully stated preservation claim 27:27",
+      "start": 1647.76,
+      "end": 1813.71,
+      "segments": [
+        62,
+        67
+      ],
+      "lecture_material": "Combining sparse experts and adding a frozen existing pathway",
+      "teaching_construction": "Pure-text invariance induction and mixed-context counterexample",
+      "research_extension": "MoT v2p28; LMFusion v4pp4–7",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Frozen text pathway and added image branch with joint attention"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Pure-text preservation with all traversed components/settings fixed"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Changed mixed-context outputs despite frozen text values"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Adaptation compute excludes original language pretraining"
+        }
+      ]
+    },
+    {
+      "section": "branch-meaning",
+      "title": "11. A visual input can belong to an understanding branch 30:13",
+      "start": 1813.71,
+      "end": 1896.53,
+      "segments": [
+        68,
+        70
+      ],
+      "lecture_material": "Q&A: output/task specialization versus input-image understanding",
+      "teaching_construction": "Evidence photo versus generated diagram; proposed matched representation test",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; definition",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Generation-focused specialization does not certify universal understanding gain"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Observed and generated visual provenance differ"
+        }
+      ]
+    },
+    {
+      "section": "bagel",
+      "title": "12. BAGEL uses two visual representations and two task branches 31:38",
+      "start": 1898.64,
+      "end": 2045.87,
+      "segments": [
+        71,
+        76
+      ],
+      "lecture_material": "BAGEL and thinking before image generation",
+      "teaching_construction": "Understanding versus generation route labels; source-specific mask differences",
+      "research_extension": "BAGEL v1pp3–6,12,19",
+      "evidence_class": "definition; empirical result; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Text+ViT understanding branch and VAE generation branch; rectified flow objective"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Clean/noisy/ViT context policy differs from simple toy mask"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "IntelligentBench44.9 to55.3 self-CoT under350-example automated-judge protocol"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Exact overlay proposal is not a reported benchmark"
+        }
+      ]
+    },
+    {
+      "section": "actions",
+      "title": "13. An action modality introduces dynamics and execution semantics 34:05",
+      "start": 2045.87,
+      "end": 2098.53,
+      "segments": [
+        77,
+        78
+      ],
+      "lecture_material": "pi0.7 action modality example",
+      "teaching_construction": "Conditional action chunks, sensing/dynamics and execution boundary",
+      "research_extension": "pi0.7 v1pp1–4",
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Backbone, action expert, context, subgoals and gradient boundary"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Conditional policy is not an executed outcome"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Action modalities motivate physical intelligence"
+        }
+      ]
+    },
+    {
+      "section": "directional-transfer",
+      "title": "14. Ask which direction of transfer an experiment tests 34:58",
+      "start": 2098.53,
+      "end": 2356.29,
+      "segments": [
+        79,
+        88
+      ],
+      "lecture_material": "Transfer directions and possible abstraction/loss/redundancy explanations",
+      "teaching_construction": "Local gradient-alignment expression and controlled maintenance ablation",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Directional transfer observations and causal hypotheses"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "First-order shared-gradient loss change with small-step differentiability assumption"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Proposed controlled revision-recognition experiment"
+        }
+      ]
+    },
+    {
+      "section": "scope",
+      "title": "15. Match unified and specialized systems to the application 39:16",
+      "start": 2356.29,
+      "end": 2514.9,
+      "segments": [
+        89,
+        94
+      ],
+      "lecture_material": "Digital/physical workloads, specialized systems and conclusion",
+      "teaching_construction": "Three application gates and exact document/diagram provenance",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; engineering check",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Unified and specialized model scope"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Information, conditional-behavior and application-outcome gates"
+        }
+      ]
+    },
+    {
+      "section": "joint-attention",
+      "title": "16. Shared attention supplies a conditional interface 42:05",
+      "start": 2525.49,
+      "end": 2655.5,
+      "segments": [
+        95,
+        98
+      ],
+      "lecture_material": "Q&A shared attention and conditional interaction",
+      "teaching_construction": "Shape versus learned compatibility and two complementary invariance tests",
+      "research_extension": "MoT v2p9; LMFusion v4p5",
+      "evidence_class": "definition; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary/lecture",
+          "claim": "Shared attention across independent branch parameters"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Route/order/mask/feature debugging contract"
+        }
+      ]
+    },
+    {
+      "section": "representations",
+      "title": "17. Predictive representations do not require reconstructing every detail 44:17",
+      "start": 2657.81,
+      "end": 2785.12,
+      "segments": [
+        99,
+        102
+      ],
+      "lecture_material": "JEPA, visual documents and physical representations",
+      "teaching_construction": "Task sufficiency and nuisance information; no merged JEPA causal objectives",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; definition",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Representation and task motivation"
+        },
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Target invariances need task-specific evidence"
+        }
+      ]
+    },
+    {
+      "section": "world",
+      "title": "18. Video generation and physical prediction have different tests 46:25",
+      "start": 2785.12,
+      "end": 2909.57,
+      "segments": [
+        103,
+        106
+      ],
+      "lecture_material": "Video generation, knowledge work and robot feedback",
+      "teaching_construction": "Prediction conditioned on observation/actions versus plausible sample",
+      "research_extension": null,
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Predictive distribution and generation-task boundary"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Video/robot research directions"
+        }
+      ]
+    },
+    {
+      "section": "ocr",
+      "title": "19. Rendered text forces a choice about exactness and invariance 48:29",
+      "start": 2909.57,
+      "end": 3210.26,
+      "segments": [
+        107,
+        118
+      ],
+      "lecture_material": "Rendered text, OCR, fonts/layout and scaling; speaker experiment limits",
+      "teaching_construction": "Many-to-one raster counterexample, trusted overlays and unresolved paper boundary",
+      "research_extension": null,
+      "evidence_class": "theorem; speaker judgment; engineering check",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Indistinguishable observations cannot determine lost exact character without extra information"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Rendered-text scaling discussion with explicitly limited experimentation"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Exact text/layout proposed evaluation; unnamed paper not certified"
+        }
+      ]
+    },
+    {
+      "section": "unified-representation",
+      "title": "20. One visual representation can face conflicting requirements 53:35",
+      "start": 3215.82,
+      "end": 3353.78,
+      "segments": [
+        119,
+        123
+      ],
+      "lecture_material": "Semantic and generative visual representations; unclear recent paper",
+      "teaching_construction": "Target-specific sufficiency and retained independent revision/detail bit",
+      "research_extension": null,
+      "evidence_class": "definition; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Semantic sufficiency need not imply reconstruction sufficiency"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Unified representation question remains open here"
+        }
+      ]
+    },
+    {
+      "section": "autoregression",
+      "title": "21. Next-token prediction is a successful objective, not a necessity proof 55:53",
+      "start": 3353.78,
+      "end": 3492.5,
+      "segments": [
+        124,
+        128
+      ],
+      "lecture_material": "AR objectives, latent structure and possible discrete diffusion alternatives",
+      "teaching_construction": "Exact probability factorization versus finite learned conditionals",
+      "research_extension": null,
+      "evidence_class": "theorem; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Discrete probability chain rule"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Successful sequence approaches do not prove necessity or universality"
+        }
+      ]
+    },
+    {
+      "section": "spatial",
+      "title": "22. Spatial reasoning needs a coordinate and task contract 58:13",
+      "start": 3493.55,
+      "end": 3582.48,
+      "segments": [
+        129,
+        131
+      ],
+      "lecture_material": "Spatial reasoning, VLA backbone and expertise limit",
+      "teaching_construction": "Coordinate contract and proposed known-view-transform evaluation",
+      "research_extension": null,
+      "evidence_class": "definition; engineering check; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Image, operator and component reference frames"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Proposed controlled annotation test"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Robotics expertise boundary retained"
+        }
+      ]
+    },
+    {
+      "section": "language-scaffold",
+      "title": "23. Language can scaffold reasoning without exhausting it 59:42",
+      "start": 3582.67,
+      "end": 3869.2,
+      "segments": [
+        132,
+        142
+      ],
+      "lecture_material": "Language scaffolding, data and UX constraints, pure visual reasoning possibility",
+      "teaching_construction": "Plan versus generated-output evaluation and alternative representation channels",
+      "research_extension": null,
+      "evidence_class": "speaker judgment; engineering check",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "origin": "lecture",
+          "claim": "Practical language scaffold without necessity claim"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Proposed plan/no-plan comparison with extra-compute accounting"
+        }
+      ]
+    },
+    {
+      "section": "interaction-extension",
+      "title": "24. Deck extension: real-time interaction adds a timing contract",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Dated official deck-only extension and original deterministic queueing/stale-result example",
+      "research_extension": "Official deck PDFpp53–54 and company May11,2026 system/micro-turn/limitations sections; absent from actual ASR",
+      "evidence_class": "product claim; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "product claim",
+          "origin": "dated primary company page",
+          "claim": "200ms micro-turns, asynchronous background model and research-preview limitations"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Deterministic serial backlog recursion for stated service/arrival times"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Stale-result and tail-latency application tests"
+        }
+      ]
+    },
+    {
+      "section": "lab",
+      "title": "25. Executable finite checks",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Original finite stdlib architecture checks and exact stdout",
+      "research_extension": null,
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "origin": "original executable",
+          "claim": "Mask, quantization, CE gradient, frozen conditioning, Gaussian oracle, parameter model and19 invalid failures"
+        }
+      ]
+    },
+    {
+      "section": "exercises",
+      "title": "26. Exercises and complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Six mixed exercises with full derivation/computation/counterexample/experimental-design solutions",
+      "research_extension": null,
+      "evidence_class": "theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Resource/cardinality algebra, Bayes and CE lower bounds, masks, Gaussian moments and frozen-path induction"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite numerical checks and bounded proposed ablation/timing design"
+        }
+      ]
+    },
+    {
+      "section": "references",
+      "title": "27. References and evidence boundaries",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Pinned checked originals and explicit evidence boundaries",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original evidence exposition",
+          "claim": "Claim pages, source versions and product/speaker/original separation"
+        }
+      ]
+    }
+  ],
+  "omitted_material": [],
+  "coverage_check": {
+    "all_segments_assigned_exactly_once": true,
+    "segments": 142,
+    "substantive_spine_sections": 23,
+    "original_sections": 4,
+    "numbering": "One-based inclusive metadata; private source map zero-based",
+    "endpoint_gap_seconds": 9.861
+  },
+  "primary_source_audit": [
+    {
+      "id": "ref-chameleon",
+      "url": "https://arxiv.org/abs/2405.09818v1",
+      "filename": "2405.09818v1.pdf",
+      "sha256": "60cc0caec7637ebd490e927f861500a9e191582f5babf1686d08ac454201ab6c",
+      "bytes": 25242519,
+      "page_count": 27,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "pages_rendered_and_inspected": [],
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant original PDF pages; no full-paper certificate",
+      "supports": "Chameleon Team, “Chameleon: Mixed-Modal Early-Fusion Foundation Models,” v1 (2024) . PDF pp. 4–8: discrete tokenizer, interleaved training, stability, and resource context. The tokenizer’s OCR limitation is specific to that model."
+    },
+    {
+      "id": "ref-vq",
+      "url": "https://arxiv.org/abs/1906.00446v1",
+      "filename": "1906.00446v1.pdf",
+      "sha256": "b85056f63b295e14b3e4b0c52066ff84c161f72fc035829b8fb8d547c6ed6852",
+      "bytes": 6893777,
+      "page_count": 15,
+      "pages_checked": [
+        2
+      ],
+      "pages_rendered_and_inspected": [],
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant original PDF pages; no full-paper certificate",
+      "supports": "Razavi, van den Oord, and Vinyals, “Generating Diverse High-Fidelity Images with VQ-VAE-2,” v1 (2019) . PDF p. 2: lossy nearest-codebook-vector representation. The binary-label collision is an original counterexample."
+    },
+    {
+      "id": "ref-transfusion",
+      "url": "https://arxiv.org/abs/2408.11039v1",
+      "filename": "2408.11039v1.pdf",
+      "sha256": "22fc9b47e2df5da239e61b3530f468597a4a1329c789e6587191824d61b6c10f",
+      "bytes": 14087563,
+      "page_count": 23,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "pages_rendered_and_inspected": [
+        5
+      ],
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant original PDF pages; no full-paper certificate",
+      "supports": "Zhou et al., “Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model,” v1 (2024) . PDF pp. 4–9: diffusion loss, continuous latent representations, hybrid mask, decoding, and controlled-comparison methods. Avoiding quantization does not remove VAE compression loss."
+    },
+    {
+      "id": "ref-mot",
+      "url": "https://arxiv.org/abs/2411.04996v2",
+      "filename": "2411.04996v2.pdf",
+      "sha256": "79eb51c94c39c824257c210b3d1975c4997e011b9cb3f1ee11aedd498c2f7af6",
+      "bytes": 15589871,
+      "page_count": 48,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        15,
+        16,
+        19,
+        20,
+        21,
+        25,
+        28,
+        31,
+        32
+      ],
+      "pages_rendered_and_inspected": [
+        8,
+        20,
+        33
+      ],
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant original PDF pages; no full-paper certificate",
+      "supports": "Liang et al., “Mixture-of-Transformers: A Sparse and Scalable Architecture for Multi-Modal Foundation Models,” v2 (2025) . PDF pp. 6–13, 15–16, 19–21, 25, 28, 31–32: global attention with modality-specific weights, comparator confounds, task-specific experiments, sparse combinations, and hardware-bound timing scope."
+    },
+    {
+      "id": "ref-lmfusion",
+      "url": "https://arxiv.org/abs/2412.15188v4",
+      "filename": "2412.15188v4.pdf",
+      "sha256": "6d7e33c78da27a528f1b7eb521aa67087882aa136b3170717aa490a40896077a",
+      "bytes": 20643338,
+      "page_count": 15,
+      "pages_checked": [
+        1,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages_rendered_and_inspected": [
+        7
+      ],
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant original PDF pages; no full-paper certificate",
+      "supports": "Shi et al., “LMFusion: Adapting Pretrained Language Models for Multimodal Generation,” v4 (2025) . PDF pp. 4–7: frozen text components, joint attention, adaptation data/cost boundary, and metrics. The earlier v1 was titled LlamaFusion."
+    },
+    {
+      "id": "ref-bagel",
+      "url": "https://arxiv.org/abs/2505.14683v1",
+      "filename": "2505.14683v1.pdf",
+      "sha256": "25aa8e2f05b4c9fbac9b46ee254a81b767834e7b4c1ac9e48026a27f08a3dd57",
+      "bytes": 30958988,
+      "page_count": 37,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        10,
+        11,
+        12,
+        13,
+        14,
+        16,
+        18,
+        19,
+        20,
+        23
+      ],
+      "pages_rendered_and_inspected": [
+        4,
+        19,
+        23
+      ],
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant original PDF pages; no full-paper certificate",
+      "supports": "Deng et al., “Emerging Properties in Unified Multimodal Pretraining,” v1 (2025) . PDF pp. 3–6, 10–13, 19: BAGEL branches, visual encoders, clean/noisy masking, objective balancing, and IntelligentBench’s CoT comparison. Automated-judge results are not a physical-reasoning certificate."
+    },
+    {
+      "id": "ref-pi",
+      "url": "https://arxiv.org/abs/2604.15483v1",
+      "filename": "2604.15483v1.pdf",
+      "sha256": "a1bcd510437860c37d6216f38eb3e0b1733879c8e777f6f287013d885b90d904",
+      "bytes": 15587221,
+      "page_count": 25,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "pages_rendered_and_inspected": [
+        4
+      ],
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant original PDF pages; no full-paper certificate",
+      "supports": "Physical Intelligence, “$\\pi_{0.7}$: a Steerable Generalist Robotic Foundation Model with Emergent Capabilities,” v1 (2026) . PDF pp. 1–4: action expert, observation/context architecture, gradient boundary, and proposed empirical scope. No new robot-control performance claim is made here."
+    },
+    {
+      "id": "ref-interaction",
+      "url": "https://thinkingmachines.ai/blog/interaction-models/",
+      "filename": null,
+      "sha256": null,
+      "bytes": null,
+      "cited_in_chapter": true,
+      "reading_status": "Primary original read through web; raw urllib server returned HTTP403",
+      "sections_checked": [
+        "System overview",
+        "The interaction model: micro-turns",
+        "Limitations and future work"
+      ],
+      "supports": "Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” May 11, 2026 . Official dated company description, system overview, micro-turn design, and limitations. This supports the separately marked deck extension; it is not independent validation of product capabilities or current availability.",
+      "evidence_class": "product claim"
+    }
+  ],
+  "references": [
+    {
+      "id": "ref-chameleon",
+      "title": "Chameleon Team, “Chameleon: Mixed-Modal Early-Fusion Foundation Models,” v1 (2024)",
+      "url": "https://arxiv.org/abs/2405.09818v1",
+      "supports": "Chameleon Team, “Chameleon: Mixed-Modal Early-Fusion Foundation Models,” v1 (2024) . PDF pp. 4–8: discrete tokenizer, interleaved training, stability, and resource context. The tokenizer’s OCR limitation is specific to that model.",
+      "sha256": "60cc0caec7637ebd490e927f861500a9e191582f5babf1686d08ac454201ab6c",
+      "version": "2405.09818v1"
+    },
+    {
+      "id": "ref-vq",
+      "title": "Razavi, van den Oord, and Vinyals, “Generating Diverse High-Fidelity Images with VQ-VAE-2,” v1 (2019)",
+      "url": "https://arxiv.org/abs/1906.00446v1",
+      "supports": "Razavi, van den Oord, and Vinyals, “Generating Diverse High-Fidelity Images with VQ-VAE-2,” v1 (2019) . PDF p. 2: lossy nearest-codebook-vector representation. The binary-label collision is an original counterexample.",
+      "sha256": "b85056f63b295e14b3e4b0c52066ff84c161f72fc035829b8fb8d547c6ed6852",
+      "version": "1906.00446v1"
+    },
+    {
+      "id": "ref-transfusion",
+      "title": "Zhou et al., “Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model,” v1 (2024)",
+      "url": "https://arxiv.org/abs/2408.11039v1",
+      "supports": "Zhou et al., “Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model,” v1 (2024) . PDF pp. 4–9: diffusion loss, continuous latent representations, hybrid mask, decoding, and controlled-comparison methods. Avoiding quantization does not remove VAE compression loss.",
+      "sha256": "22fc9b47e2df5da239e61b3530f468597a4a1329c789e6587191824d61b6c10f",
+      "version": "2408.11039v1"
+    },
+    {
+      "id": "ref-mot",
+      "title": "Liang et al., “Mixture-of-Transformers: A Sparse and Scalable Architecture for Multi-Modal Foundation Models,” v2 (2025)",
+      "url": "https://arxiv.org/abs/2411.04996v2",
+      "supports": "Liang et al., “Mixture-of-Transformers: A Sparse and Scalable Architecture for Multi-Modal Foundation Models,” v2 (2025) . PDF pp. 6–13, 15–16, 19–21, 25, 28, 31–32: global attention with modality-specific weights, comparator confounds, task-specific experiments, sparse combinations, and hardware-bound timing scope.",
+      "sha256": "79eb51c94c39c824257c210b3d1975c4997e011b9cb3f1ee11aedd498c2f7af6",
+      "version": "2411.04996v2"
+    },
+    {
+      "id": "ref-lmfusion",
+      "title": "Shi et al., “LMFusion: Adapting Pretrained Language Models for Multimodal Generation,” v4 (2025)",
+      "url": "https://arxiv.org/abs/2412.15188v4",
+      "supports": "Shi et al., “LMFusion: Adapting Pretrained Language Models for Multimodal Generation,” v4 (2025) . PDF pp. 4–7: frozen text components, joint attention, adaptation data/cost boundary, and metrics. The earlier v1 was titled LlamaFusion.",
+      "sha256": "6d7e33c78da27a528f1b7eb521aa67087882aa136b3170717aa490a40896077a",
+      "version": "2412.15188v4"
+    },
+    {
+      "id": "ref-bagel",
+      "title": "Deng et al., “Emerging Properties in Unified Multimodal Pretraining,” v1 (2025)",
+      "url": "https://arxiv.org/abs/2505.14683v1",
+      "supports": "Deng et al., “Emerging Properties in Unified Multimodal Pretraining,” v1 (2025) . PDF pp. 3–6, 10–13, 19: BAGEL branches, visual encoders, clean/noisy masking, objective balancing, and IntelligentBench’s CoT comparison. Automated-judge results are not a physical-reasoning certificate.",
+      "sha256": "25aa8e2f05b4c9fbac9b46ee254a81b767834e7b4c1ac9e48026a27f08a3dd57",
+      "version": "2505.14683v1"
+    },
+    {
+      "id": "ref-pi",
+      "title": "Physical Intelligence, “$\\pi_{0.7}$: a Steerable Generalist Robotic Foundation Model with Emergent Capabilities,” v1 (2026)",
+      "url": "https://arxiv.org/abs/2604.15483v1",
+      "supports": "Physical Intelligence, “$\\pi_{0.7}$: a Steerable Generalist Robotic Foundation Model with Emergent Capabilities,” v1 (2026) . PDF pp. 1–4: action expert, observation/context architecture, gradient boundary, and proposed empirical scope. No new robot-control performance claim is made here.",
+      "sha256": "a1bcd510437860c37d6216f38eb3e0b1733879c8e777f6f287013d885b90d904",
+      "version": "2604.15483v1"
+    },
+    {
+      "id": "ref-interaction",
+      "title": "Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” May 11, 2026",
+      "url": "https://thinkingmachines.ai/blog/interaction-models/",
+      "supports": "Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” May 11, 2026 . Official dated company description, system overview, micro-turn design, and limitations. This supports the separately marked deck extension; it is not independent validation of product capabilities or current availability.",
+      "sha256": null,
+      "version": "May11,2026; DOI10.64434/tml.20260511"
+    }
+  ],
+  "prose_word_count_without_math_code_svg": 9145,
+  "exercise_count": 6,
+  "source_version_boundaries": [
+    "LMFusion v1 had name LlamaFusion; name-correct prelecturev4 cited",
+    "BAGEL rectified flow and understanding/generation routing not interchangeable with DDPM or file-type routing",
+    "Company micro-turn material is official deck-only dated extension, null transcript span",
+    "Unknown Q&A papers remain unidentified; hypotheses/speaker judgments not empirical results"
+  ],
+  "original_code": {
+    "filename": "chapter08.py",
+    "sha256": "b4cc81e740275bb6896d03a724bc08a2b543d4e715e1c819ca69d169ecabb492",
+    "dependencies": "Python standard library only",
+    "embedded_byte_identity": true,
+    "stdout": "patches: image=1024, video12=12288, padded17x17=4\none-head BF16 scores: image=4.500 MiB, video=312.500 MiB\nmask: image-local future allowed; future text/image blocked; prefix invariant\nquantization: opposite task labels collide at code indices [0, 0]; Bayes error=0.500\nprototype lookup: overflow and rounded-distance false ties avoided; true ties use first index\ntext-only target: CE=0.313262, image-feature gradient=-0.268941\nfrozen text: pure=2.000 unchanged; mixed=2.000->6.000; image attention mass=0.500\nGaussian denoising oracle: predicted noise=1.732051, irreducible MSE=0.250000\ntoy MoT: stored=1024 parameters, active projection/FFN=10240 MACs, global attention=6400 MACs\ninvalid inputs rejected: 19; all finite architecture checks passed\n",
+    "checks": [
+      "Spatial padding/frame cardinality",
+      "Hybrid mask positive and negative communication",
+      "Quantization collision/Bayes boundary and exact-float prototype lookup extremes",
+      "Text CE feature gradient finite difference",
+      "Frozen puretext versus changed mixedcontext",
+      "Analytic Gaussian conditional-noise oracle",
+      "Stored/active MAC model",
+      "19 invalid input failures"
+    ]
+  },
+  "quality_passes": [
+    {
+      "pass": "1-6,6a,6c",
+      "result": "Complete within the chapter recorded source, visual, mathematical, code and exercise scopes"
+    },
+    {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; exact reviewed body/code retained"
+    },
+    {
+      "pass": "9",
+      "result": "Actual local reader/source/program/privacy evidence recorded separately in validation-summary.json; human screen-reader audit is not performed"
+    }
+  ],
+  "gate6b": {
+    "status": "accepted",
+    "rounds": 2,
+    "blocking_findings": 0,
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "0af6c23a34045a1cc032e32586da78bf5d12b216781af7c0748c5c70b61dae17",
+    "accepted_metadata_sha256": "80bd02a34f7677b8264c277f06608c8f6f6f5f73bfe80aa96cdf2617e80ab0ad"
+  },
+  "author_allocation": "Inherited available Codex agent; author checks do not constitute independent acceptance",
+  "publication": "Not published; local reading edition",
+  "permission_errors_current_author_task": {
+    "permission_rejections": 0,
+    "AbsolutePathBuf": 0
+  }
+}

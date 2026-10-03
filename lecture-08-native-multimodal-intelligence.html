@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><meta name="book-content-sha256" content="0af6c23a34045a1cc032e32586da78bf5d12b216781af7c0748c5c70b61dae17"><title>From Language Models to Native Multimodal Intelligence · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout"><aside class="toc" id="chapter-toc" aria-label="On this page"><h2>On this page</h2></aside><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><!-- BOOK-CONTENT-START -->
+<div class="chapter-kicker">Chapter 8 · Victoria Lin · May 21, 2026</div>
+<h1>From Language Models to Native Multimodal Intelligence</h1>
+<p class="lead">A common transformer can connect words, pictures, sound, and actions without giving them identical representations or training objectives. The central design problem is to preserve the information each task needs while letting the modalities condition one another.</p>
+<p class="source-note">This chapter follows Victoria Lin’s CS25 V6 lecture and its question period. Lin identifies the talk as public material and personal views. The original models cited below establish particular architectures and experiments; the maintenance case, proofs, cost calculations, program, and exercises are added teaching constructions. Approximate timestamps follow a local machine transcript, not publisher captions. The interaction-model discussion is a separately marked extension from the official deck.</p>
+
+<section id="motivation"><h2>1. Language is a powerful interface with a limited view <span class="timestamp">0:04</span></h2>
+<p>A language model can manipulate a description of the world while missing what the description leaves out. A manual may say that a connector has a retaining clip; a photograph shows whether the clip is bent. A transcript records words but may discard hesitation, emphasis, or a warning sound. The motivation for multimodal modeling is to use these observations directly, rather than require a human to convert all of them into prose before the model can reason about them.</p>
+<p>Carry a maintenance assistant through the chapter. An operator supplies a manual revision, a photo of a component, and a spoken question. The assistant must identify the relevant part, answer using the correct revision, and optionally draw an annotated diagram. These are three distinct outputs: a claim about the observed component, a grounded textual answer, and a generated visual explanation. An attractive diagram can be wrong about the part; a correct caption does not establish that its arrows are correctly placed.</p>
+<p>Call a model <em>multimodal</em> when it processes more than one kind of signal. Call a generative model <em>native multimodal</em> here when the modalities participate in the model’s joint sequence processing and generation design, rather than being treated only as a separate service reached through a textual command. This is a design description, not a single standardized certification. An image encoder attached to a language model can be useful without generating images; an early-fusion model can still contain modality-specific encoders, embeddings, and output heads.</p>
+<p>Lin distinguishes digital-world applications from perception and control in the physical world. The maintenance case straddles that boundary: documents and diagrams are digital, but the component’s condition is physical. The observation must retain provenance, time, and uncertainty. Seeing a part through a camera is evidence about the scene, not authorization to operate machinery. Adding an action output changes the application contract as well as the tensor format.</p></section>
+
+<section id="tokens"><h2>2. A token is a sequence position, not necessarily a word ID <span class="timestamp">4:19</span></h2>
+<p>For text, a tokenizer often maps a string to discrete vocabulary indices. Looking up each index yields an embedding in $\mathbb R^d$, where $d$ is the transformer’s hidden width. An image can instead be split into patches and each patch mapped to a dense vector. A continuous patch vector is a token in the sequence-processing sense even though it has no unique vocabulary index. The transformer consumes a matrix $X\in\mathbb R^{n\times d}$ of $n$ vectors; the route by which each row was produced remains modality-specific.</p>
+<p>For a deliberately simple spatial tokenizer, pad an image of height $H$ and width $W$ to multiples of patch side $p$. Its count is $n_I=\lceil H/p\rceil\lceil W/p\rceil$. Treating $F$ video frames independently gives $Fn_I$ positions. This is an accounting model with no temporal compression, crops, thumbnails, boundary tokens, or pooling. At $512\times512$ and $p=16$, one image gives $1024$ positions. Twelve frames give $12{,}288$. Changing the tokenizer changes these numbers; “a video token” does not identify a universal duration or pixel area.</p>
+<p>Suppose the manual and question use $512$ text positions. With one image, $n=1536$; with twelve frames, $n=12{,}800$. Explicitly storing one attention score matrix in two-byte elements costs $2n^2$ bytes: $4.5$ MiB and $312.5$ MiB respectively, where $1$ MiB is $2^{20}$ bytes. These are per-head, per-example matrix sizes, not total activation memory or a statement that an efficient attention kernel materializes the matrix. Streaming attention can avoid that storage while still doing work on the permitted query–key pairs.</p>
+<p>Audio representations may preserve waveform details, a time-frequency transform, semantic content, speaker identity, or combinations of them. A sequence of phonetic or semantic codes is not equivalent to a sequence that retains prosody and environmental sounds. The engineering question is what information survives the front end. If the maintenance assistant needs to distinguish a rattling bearing from normal operation, transcribing the operator’s words alone may discard the signal that matters.</p></section>
+
+<section id="objectives"><h2>3. Separate multimodal inputs from multimodal outputs <span class="timestamp">7:21</span></h2>
+<p>A model that receives a photograph and emits a caption has multimodal inputs and text outputs. It can train with a text cross-entropy objective even though the conditioning context contains image features. Writing $y_t$ for the discrete target word and $c$ for the observed image and previous text, the negative log likelihood is $-\log p_\theta(y_t\mid c,y_{&lt;t})$. There is no requirement to reconstruct the image merely because it occurs in the context.</p>
+<p>That does not imply that the image encoder receives no training signal. Consider an original scalar illustration: an image encoder produces $u$, the text head’s binary logit is $z=au$, and the target is $y\in\{0,1\}$. With $\sigma(z)=1/(1+e^{-z})$, the text loss is $\ell=-y\log\sigma(z)-(1-y)\log(1-\sigma(z))$. Differentiation gives $\partial\ell/\partial u=a(\sigma(au)-y)$. At $a=u=y=1$, the loss is $0.313262$ nats and this derivative is $-0.268941$. A loss on a text target can therefore teach an image feature through the conditioning path. Freezing that encoder or explicitly stopping its gradient would change the conclusion.</p>
+<p>To generate an image, the system also needs a distribution over an image representation and a mechanism to decode it. It might generate discrete image codes autoregressively, predict noise in a continuous latent image, or use another continuous generative objective. Speech output similarly needs an acoustic representation and a decoder, not just a textual transcript of the intended utterance. “Text-only loss” and “text-only input” must stay separate in an architecture description.</p>
+<p>For the assistant, a captioning test evaluates only part of the desired behavior. A correct label for the component does not establish that the model can draw its retaining clip, preserve a warning label, or render the manual’s exact revision identifier. Conversely, image-generation quality does not establish factual correctness. Lin’s contemporary product examples illustrate the expanding output space; the chapter’s technical claims concern the checked architectures, without treating a product name as evidence of all capabilities.</p></section>
+
+<section id="transfer-tools"><h2>4. Reuse language-model tools with new measurement contracts <span class="timestamp">9:06</span></h2>
+<p>Prompting, in-context examples, intermediate reasoning, data scaling, and sparse experts extend naturally to multimodal systems. Their meanings nevertheless change with the output. An image can show an exemplar arrangement, not just describe it. A prompt can contain a photo that fixes the scene and words that specify the edit. Intermediate text can resolve an ambiguous request before generation, but it can also introduce a mistaken interpretation that the image renderer faithfully follows.</p>
+<p>In the maintenance case, a textual plan might state “label the left connector and preserve the serial number.” That plan is useful only if “left” is anchored to the displayed orientation and the model locates the correct connector. Evaluate the interpretation and the generated diagram separately. A fluent plan is observable output; it is not a privileged account of the model’s internal mechanism. If the plan gets a part identity wrong, longer reasoning alone may amplify the wrong condition.</p>
+<p>Likewise, a scaling comparison must specify what grows. More text tokens, more images, larger image resolution, more frames, and more total transformer parameters are different interventions. Equal token counts can contain very different numbers of examples. Sampling at a fixed image-to-text position ratio while reducing positions per image lets a model see more images; this changes the information exposure even when nominal token budgets match.</p>
+<p>Lin treats multimodal scaling and cross-modal transfer as active research questions. It would be too strong to say that no scaling studies exist: Transfusion and MoT contain explicit controlled comparisons. It would also be too strong to infer a universal law from those studies. Record the representation, objective, active and stored parameters, data mixture, resolution, sequence length, and evaluation direction. The next sections use this discipline to distinguish three architectural choices.</p></section>
+
+<section id="chameleon"><h2>5. Chameleon makes pictures part of a discrete sequence <span class="timestamp">11:41</span></h2>
+<p>Chameleon trains a mixed-modal autoregressive transformer from scratch. Images are encoded into discrete codes and interleaved with text. A shared output vocabulary allows the model to predict the next text or image code, so captions, images, and mixed documents use the same sequence factorization. <a href="#ref-chameleon">Chameleon v1, PDF pp. 4–8</a>, records the original tokenizer, training mixture, and stability modifications. Its $512\times512$ images become $1024$ discrete codes from an $8192$-entry image codebook; those codes are part of a larger vocabulary.</p>
+<p>Vector quantization makes this conversion precise. An encoder produces a latent vector $z\in\mathbb R^r$, and a codebook contains prototypes $e_1,\ldots,e_K\in\mathbb R^r$. Choose $k(z)=\arg\min_j\|z-e_j\|_2$ with a specified tie rule, transmit index $k$, and let the decoder use $e_k$. A grid of such indices becomes an ordered sequence. The original VQ-VAE-2 account explicitly treats this as potentially lossy communication. <a href="#ref-vq">Its v1 PDF p. 2</a> establishes the nearest-prototype operation; the finite examples here do not reproduce its trained encoder or decoder.</p>
+<p>The autoregressive probability factorization is $p_\theta(s_{1:n})=\prod_{i=1}^n p_\theta(s_i\mid s_{&lt;i})$ for discrete sequence $s$. The representation gives a vocabulary-based likelihood and ordinary next-token decoding, but it also imposes an ordering over image codes. That ordering is a modeling choice, not a statement that the physical image is naturally read as a sentence. At generation time, the code sequence must be decoded into pixels.</p>
+<p>In the assistant, interleaving would allow “here is the relevant clip” followed by an image and an explanation. Training examples with both orders matter: text before image teaches image generation conditioned on text; image before text teaches description conditioned on an image. A single mathematical factorization supports both, but neither direction appears automatically without data and optimization. Chameleon’s training also required attention/output stability interventions. Sharing the sequence interface is not the same as making optimization trivial.</p></section>
+
+<section id="quantization"><h2>6. Reconstruction quality and task sufficiency are different <span class="timestamp">15:31</span></h2>
+<p>Quantization can erase distinctions. Let a scalar latent take values $0.1$ and $0.2$, each with probability $1/2$, and let the codebook be $\{0,1\}$. Both values map to code $0$. Assign task label $Y=0$ to the first and $Y=1$ to the second. Any deterministic classifier that sees only that code returns the same answer for both, so its error is at least $1/2$. Randomization cannot improve the expected error: conditioned on the shared code the labels remain equally likely. An encoder that preserves the original scalar permits a perfect threshold classifier.</p>
+<p>This is an information-loss counterexample, not a general ranking of continuous and discrete models. A learned discrete representation can preserve the distinctions a task needs; a continuous low-dimensional representation can also discard them. The test is whether the retained representation is sufficient for the target. Formally, a representation $Z$ loses no target-relevant information relative to observation $X$ when $p(Y\mid X)=p(Y\mid Z)$ on the evaluated distribution. This does not demand pixel-perfect reconstruction.</p>
+<p>A maintenance photograph can lose a tiny digit while remaining visually convincing. In the opposite direction, a semantic encoder can preserve the part identity while discarding the exact surface texture needed for realistic reconstruction. These are useful tradeoffs for different objectives. Chameleon’s paper explicitly records weaknesses in reconstructing text-heavy images; that is a measured limitation of its tokenizer, not proof that every discrete tokenizer fails OCR.</p>
+<p>Lin connects discretization to generation efficiency and visual understanding. Preserve that motivation without declaring that quantization alone causes every performance gap. Decoder quality, latent resolution, stability changes, training data, and optimization all vary in real systems. A controlled comparison can reduce confounding; a toy collision proves only the narrower proposition that a noninjective map can destroy a particular label distinction.</p></section>
+
+<section id="transfusion"><h2>7. Transfusion combines discrete text with continuous image generation <span class="timestamp">16:50</span></h2>
+<p>Transfusion uses a common transformer with cross-entropy for discrete text and a diffusion objective for continuous image latents. A pretrained variational autoencoder maps pixels to a compact latent tensor; patch projections map that tensor into transformer vectors. Calling the latents continuous means that the model avoids a codebook quantization step. It does not mean that the VAE preserves every pixel detail or that compression is lossless.</p>
+<p>Use $\tau$ for diffusion time, reserving sequence position $i$ for token order. A standard forward noise construction in <a href="#ref-transfusion">Transfusion v1, PDF pp. 4–6</a>, is $x_\tau=\sqrt{\bar\alpha_\tau}x_0+\sqrt{1-\bar\alpha_\tau}\epsilon$, with $\epsilon\sim\mathcal N(0,I)$ and $0&lt;\bar\alpha_\tau&lt;1$. Here $x_0\in\mathbb R^r$ is the clean latent image and $\bar\alpha_\tau$ is a scalar noise-schedule coefficient. A model predicts the added noise from the corrupted image, diffusion time, and preceding multimodal context $c$.</p>
+<p>The denoising loss has the form $L_I=\mathbb E\|\epsilon-\epsilon_\theta(x_\tau,\tau,c)\|_2^2$. Text positions use $L_T=-\mathbb E\log p_\theta(y_i\mid c,y_{&lt;i})$. Combining them as $L=L_T+\lambda L_I$ introduces a balancing coefficient $\lambda$, not a unit-free guarantee of balanced learning. Per-token, per-image, and per-latent-coordinate reductions affect the relative gradient scale. The paper computes text loss per token and diffusion loss per image; its selected coefficient belongs to that implementation.</p>
+<p>Generation switches modes. After a beginning-of-image marker, the decoder inserts a noisy latent image and repeatedly predicts denoising updates. It replaces the image’s current noisy state rather than appending every diffusion step as a new visible image. After the image is complete, an end marker returns the sequence to text generation. The assistant can thus generate an image between two passages of prose without treating every latent coordinate as a vocabulary class. The reverse-process sampler, noise schedule, and image decoder are essential pieces; the finite program below implements none of them.</p>
+
+<div id="diffusion-proof"><h3>Denoising predicts a conditional mean, not a unique hidden truth</h3>
+<p>For any square-integrable random noise vector $E$ and observed conditioning variable $U$, let $m(U)=\mathbb E[E\mid U]$. Expand the squared error for a square-integrable deterministic predictor $f(U)$:</p>
+<div class="equation">$$\mathbb E\|E-f(U)\|^2=\mathbb E\|E-m(U)\|^2+\mathbb E\|m(U)-f(U)\|^2.$$</div>
+<p>The cross term vanishes because $\mathbb E[E-m(U)\mid U]=0$. Therefore $m$ minimizes mean squared error, with irreducible residual uncertainty unless the observation determines the noise. This original derivation explains the objective; it does not show that a finite neural network learns the optimum or that taking one conditional mean generates the desired image distribution.</p>
+<p>For an analytic scalar boundary check, take independent $x_0,\epsilon\sim\mathcal N(0,1)$ and $x_\tau=\sqrt\alpha x_0+\sqrt{1-\alpha}\epsilon$. Joint Gaussian conditioning gives $\mathbb E[\epsilon\mid x_\tau]=\sqrt{1-\alpha}\,x_\tau$ and conditional variance $\alpha$. At $\alpha=1/4$ and observed $x_\tau=2$, the optimal noise prediction is $\sqrt3\approx1.732051$, and residual MSE is $1/4$. The noisy observation still admits multiple clean states. The diagram generator’s uncertainty cannot be eliminated merely by changing a loss label from cross-entropy to MSE.</p></div>
+
+<div id="mask"><h3>Permit image-local bidirectionality without seeing future context</h3>
+<p>Images benefit from attention across patches of the same image. The Transfusion mask allows an image patch to attend to all patches in its own image, while maintaining causal order between that image and the surrounding text or other images. Let $b(i)$ be an image-block identifier when position $i$ is an image patch and be undefined for text. Permit key $j$ for query $i$ when $j\le i$ or when both positions belong to the same image block. The blocks must each be contiguous in this simplified representation. Beginning/end markers need their own implementation policy and are omitted from the finite fixture.</p>
+<p>For positions $[T,I_0,I_0,T,I_1,I_1,T]$, query position $1$ can read patch $2$ in the same image even though $2&gt;1$. It cannot read the later text at $3$ or later image $I_1$. The text at $3$ can read the first image but not the second. This is global causal block order with local bidirectionality; it is not unrestricted attention over all image patches in the document.</p>
+<p>The same property must survive multiple layers. No position in an earlier text/image block is allowed to obtain information from a later block, including through an intermediate position. Since every allowed cross-block edge points to the current or an earlier block, composing layers cannot create a path from a later block into an earlier one. A mistaken mask that gives all image patches bidirectional access breaks this argument. It could make a training caption exploit an image that the model has not generated yet.</p>
+<p>For the assistant, a prior reference image can condition a generated diagram. The generated diagram cannot secretly read the answer text that follows it. The finite program changes later-block values and verifies that the earlier prefix is unchanged. It also verifies a positive case: same-image patches can communicate. Testing only that a forbidden entry is zero would miss an implementation that accidentally blocks all useful attention.</p></div></section>
+
+<section id="mot"><h2>8. Mixture-of-Transformers separates weights while sharing attention <span class="timestamp">20:57</span></h2>
+<figure><div class="table-wrap"><svg style="min-width:680px" viewBox="0 0 800 270" role="img" aria-labelledby="mot-figure-title mot-figure-description" xmlns="http://www.w3.org/2000/svg"><title id="mot-figure-title">Modality-specific projections with shared attention</title><desc id="mot-figure-description">Text and image positions use different query, key and value matrices. Their projected rows are restored to sequence order before a single attention operation over permitted keys. Output projection and feed-forward processing again select the position's branch.</desc><defs><marker id="mot-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs><g fill="none" stroke="currentColor" stroke-width="2"><rect x="15" y="25" width="220" height="70" rx="10"/><rect x="15" y="170" width="220" height="70" rx="10"/><rect x="300" y="85" width="200" height="105" rx="10"/><rect x="565" y="85" width="220" height="105" rx="10"/><path d="M235 60 L275 60 L275 120 L300 120 M235 205 L275 205 L275 155 L300 155 M500 137 L565 137" marker-end="url(#mot-arrow)"/></g><g fill="currentColor" text-anchor="middle" font-family="sans-serif" font-size="18"><text x="125" y="52">Text-position Q/K/V</text><text x="125" y="80">text branch weights</text><text x="125" y="197">Image-position Q/K/V</text><text x="125" y="225">image branch weights</text><text x="400" y="114">Restore row order</text><text x="400" y="142">Global attention</text><text x="400" y="170">across permitted keys</text><text x="675" y="119">Select output branch</text><text x="675" y="147">projection + FFN</text><text x="675" y="175">for each position</text></g></svg></div><figcaption>Original teaching schematic. Branch-specific matrices connect through the shared attention sum; the route labels and key mask remain explicit. This two-branch diagram omits residuals and normalization, which the original architecture also makes branch-specific.</figcaption></figure>
+<p>Mixture-of-Transformers, or MoT, selects modality-specific transformer parameters deterministically. For row vector $x_i\in\mathbb R^{1\times d}$ and assigned branch $m_i$, define $q_i=x_iW_Q^{m_i}$, $k_i=x_iW_K^{m_i}$, and $v_i=x_iW_V^{m_i}$. With $W_Q^m,W_K^m\in\mathbb R^{d\times d_k}$ and $W_V^m\in\mathbb R^{d\times d_v}$, restoring the original position order yields $Q,K\in\mathbb R^{n\times d_k}$ and $V\in\mathbb R^{n\times d_v}$.</p>
+<div class="equation">$$A_{ij}=\frac{\exp(q_i k_j^{\mathsf T}/\sqrt{d_k})}{\sum_{u\in J_i}\exp(q_i k_u^{\mathsf T}/\sqrt{d_k})},\quad j\in J_i;\qquad o_i=\Big(\sum_{j\in J_i} A_{ij}v_j\Big)W_O^{m_i},$$</div>
+<p>Here $J_i$ is the permitted-key set, $A_{ij}=0$ outside it, and $W_O^m\in\mathbb R^{d_v\times d}$. The normalization covers all permitted keys across modalities. The subsequent feed-forward network and normalization parameters are also branch-specific. <a href="#ref-mot">MoT v2, PDF pp. 6–9</a>, establishes this sequence: group positions, apply branch-specific projections, restore order, perform global attention, and apply branch-specific output/FFN processing.</p>
+<p>The important communication happens in the attention sum. A text query can assign positive weight to image keys and use their values even when its own projection matrices are separate. With all scalar query–key scores zero, the permitted attention weights are uniform. In the fixture $[T,I,I,T]$, the last text position assigns half its attention mass to the image positions. Changing the image branch’s values changes that text output. Separate matrices have not isolated the modalities.</p>
+<p>Deterministic branch selection is distinct from a learned mixture-of-experts router that chooses experts based on token content. One can combine both: choose an output/task branch and use sparse experts inside it. The label supplied to the route is part of the architecture’s contract. Confusing it with a vocabulary index, input file type, or learned semantic cluster produces misleading diagrams and parameter counts.</p></section>
+
+<section id="mot-results"><h2>9. Read efficiency claims with their actual denominators <span class="timestamp">24:25</span></h2>
+<p>MoT can have more stored parameters than a dense model while applying only one branch to each position. Under an original simplified contract with square $d\times d$ Q/K/V/O matrices and a nongated FFN $d\to h\to d$, one branch stores $P_b=4d^2+2dh$ parameters, ignoring biases and normalization. $M$ branches store $MP_b$, while projection/FFN multiplication uses $nP_b$ multiply-accumulate terms for $n$ positions if every position uses exactly one branch of the same width. The full global attention adds approximately $2n^2d$ such terms for square head totals. A multiply-accumulate count is not a FLOP count or measured time.</p>
+<p>At $d=8,h=16,M=2,n=20$, stored parameters are $1024$, active projection/FFN work is $10{,}240$ MACs, and the two attention matrix products cost $6400$ MACs. Doubling stored branch capacity has not doubled this arithmetic. It can still increase optimizer state, parameter transfer, memory fragmentation, and branch-dispatch overhead. Imbalanced modality counts can leave small matrix multiplications underutilized. Reuse Chapter 4’s distinction between mathematical work, communication, and exposed wall-clock cost.</p>
+<p>In the paper’s controlled Chameleon 7B setting, MoT matches dense validation losses at a $55.8\%$ training checkpoint. In the Transfusion setting, its $760$M active model gives better reported image metrics than the $1.4$B dense baseline with about half the FLOPs: Figure 11 records FID $21.145$ versus $24.688$ and caption CIDEr $0.320$ versus $0.286$. These are study-specific comparisons, not a guarantee for the maintenance workload. <a href="#ref-mot">PDF pp. 11–13 and 20–21</a> give the setups; its expert-choice comparator has recorded evaluation-causality confounds.</p>
+<p>Speech experiments extend the architecture, using a particular semantic tokenizer and training mixture. Lower speech-token loss is evidence for that distribution, not a measurement of acoustic fidelity or a warning-sound detector. Hardware matters too: the paper’s wall-clock study uses A100 instances and a specific training setup. The chapter does not convert its FLOP ratios into universal latency savings. Compare complete systems using the assistant’s actual resolution, input mixture, accuracy targets, and latency distribution.</p></section>
+
+<section id="freeze"><h2>10. Freeze a text pathway with a carefully stated preservation claim <span class="timestamp">27:27</span></h2>
+<p>Adding a modality need not require discarding a pretrained language model. LMFusion introduces parallel image-specific transformer modules and trains those while freezing the existing text-specific components. The shared attention operation still connects text and images. <a href="#ref-lmfusion">LMFusion v4, PDF pp. 4–7</a>, lists the frozen text embedding, Q/K/V/O, normalization/FFN path, and language head. The paper’s first version used the name LlamaFusion; the pinned later version matches the lecture’s LMFusion name.</p>
+<p>There is a precise preservation statement. For a pure-text input, suppose its tokenizer, embeddings, positional scheme, masks, every traversed layer, output head, and evaluation settings are identical before and after adding the image branch. Suppose the branch is not traversed for that input. Then the pure-text function is unchanged. The proof is induction on layers: the input states are equal; applying the same deterministic layer to equal states yields equal next states; the same output head yields equal logits. Dropout, different numerical kernels, or modified shared components can weaken bitwise equality, so specify evaluation and numerical tolerance.</p>
+<p>That theorem says nothing about mixed-context outputs. A text query can read image values from the newly trained branch. In the scalar fixture, frozen text values are $1$ and $3$. Pure-text causal attention gives the final value $2$ both before and after an image-branch change. In $[T,I,I,T]$, image values $2,2$ give final mean $2$; changing them to $10,10$ gives $6$. The text parameters stayed fixed while its mixed-context output changed. This is desirable cross-modal adaptation, not a violation of the pure-text statement.</p>
+<p>For the assistant, test legacy manual-only behavior separately from photo-conditioned behavior. A general benchmark’s unchanged text score does not establish equality for every deployment prompt, and improved caption CIDEr does not establish correct revision handling. The LMFusion comparison also reuses substantial prior text pretraining: its adaptation FLOPs exclude that earlier investment. “Half the FLOPs” needs that lifecycle boundary, the image-data comparison, and the exact reported metric.</p></section>
+
+<section id="branch-meaning"><h2>11. A visual input can belong to an understanding branch <span class="timestamp">30:13</span></h2>
+<p>The question period clarifies an ambiguity in the preceding story: the useful specialization is often by output task, not simply the type of the input file. An image supplied for captioning and an image being generated are both visual data, yet their representations and objectives need different capabilities. The former should preserve semantic evidence for answering; the latter must support producing pixels, including texture and geometry.</p>
+<p>Therefore do not infer that all image positions must route to the “image generation” parameters. The lecture’s discussion of separating branches principally emphasizes generation efficiency. It does not establish that this alone improves every visual-understanding task. A task may use semantic visual features in an understanding branch and continuous noised latents in a generation branch. The next architecture makes that distinction explicit.</p>
+<p>For the maintenance assistant, the incoming component photograph belongs to the evidence pathway. A generated annotated diagram belongs to a prediction pathway. Even when both eventually enter the same attention space, their provenance should remain distinct. If the model later treats its own diagram as evidence that the original component has a particular clip, it can create a self-confirming error. Keep the observed image, the generated illustration, and the cited manual separately identifiable.</p>
+<p>One practical experiment is to hold the language backbone and data fixed while comparing visual features specialized for semantics, reconstruction, or both. Measure exact part recognition and exact text reading independently of generated-image appearance. That design is an original proposed test, not an experiment reported by Lin. Its purpose is to turn a naming ambiguity into falsifiable architectural alternatives.</p></section>
+
+<section id="bagel"><h2>12. BAGEL uses two visual representations and two task branches <span class="timestamp">31:38</span></h2>
+<p>BAGEL’s MoT design routes text and semantic ViT image tokens through an understanding expert, and VAE tokens through a generation expert. Both use shared multimodal self-attention. Its semantic encoder is initialized from SigLIP2; its generation representation uses a frozen VAE. Its visual generation objective uses rectified flow, so it should not be described as implementing exactly the Transfusion DDPM objective just because both operate on continuous latents. <a href="#ref-bagel">BAGEL v1, PDF pp. 3–6</a>, identifies these branches, encoders, and objectives.</p>
+<p>This distinction also changes masking and context management. BAGEL can represent an image using clean VAE tokens, noisy VAE tokens for the generation loss, and ViT tokens for understanding. Its generalized causal policy governs which version subsequent outputs may see. The simple one-block fixture earlier explains Transfusion-style image-local attention; it is not a complete implementation of BAGEL’s clean/noisy copies, image grouping, or diffusion-forcing strategy. Reusing the toy mask without those labels would lose part of the real contract.</p>
+<p>Intermediate text can help generation. BAGEL reports IntelligentBench scores $44.9$ without its self-generated CoT and $55.3$ with it. The benchmark has $350$ image-editing examples and uses an automated model judge; the paper’s other systems sometimes answer only subsets. This supports a bounded result about those evaluated outputs and grading rules. It does not establish that every textual reasoning trace is correct, that improved editing is the same as physical reasoning, or that the effect isolates one mechanism. <a href="#ref-bagel">PDF pp. 12 and 19</a> provide the metric and comparison.</p>
+<p>In the assistant, use a generated plan to specify the desired labels and edits, then check the resulting diagram against the observed photograph and manual. Preserve exact revision numbers in a trusted overlay when required rather than assume a generative image renderer is an exact typesetting engine. That is an engineering choice informed by the task’s error costs. A single model interface can unite understanding and generation without removing the need to evaluate them separately.</p></section>
+
+<section id="actions"><h2>13. An action modality introduces dynamics and execution semantics <span class="timestamp">34:05</span></h2>
+<p>Lin’s robotics example is $\pi_{0.7}$. The original paper combines a vision-language backbone, observation history, an action expert, richer textual context, episode metadata, and subgoal images. An action chunk is a short sequence of future control commands; observing the environment and executing a shorter portion of that chunk creates a feedback loop. A token that denotes a desired motor command is not the same thing as an actuator executing it successfully.</p>
+<p>The original <a href="#ref-pi">$\pi_{0.7}$ v1 PDF pp. 3–4</a> also records a training detail that prevents a loose analogy: the action expert uses a continuous flow-based objective while the vision-language backbone receives a discrete-token training signal, and action-expert gradients are blocked from flowing into the backbone under its knowledge-insulation recipe. Attending to backbone states does not imply that every loss updates every component. Its generated subgoal images come from an associated image model, rather than proving that the action expert itself is an all-purpose image generator.</p>
+<p>For an illustrative policy, write $a_{t:t+H}\sim\pi_\theta(\cdot\mid o_{t-T:t},C_t)$, where $o$ is observation history, $C_t$ is task/context information, and $H$ is the action horizon. This is a conditional behavior description. The physical outcome also depends on state transitions, sensing error, delay, contact dynamics, and the executed horizon. A high-quality imagined subgoal can be unreachable or unsafe under the current state.</p>
+<p>The assistant in this chapter supplies information and diagrams. Extending it to control would require explicit action authority, limits, fresh observations, and outcome checks. The research example establishes a concrete architecture and selected empirical tasks, not a universal reliability or safety certificate. Lin’s limited robotics discussion should not be expanded into detailed performance numbers that the lecture does not examine.</p></section>
+
+<section id="directional-transfer"><h2>14. Ask which direction of transfer an experiment tests <span class="timestamp">34:58</span></h2>
+<p>Training a model to generate images and training it to interpret images are related interventions, but transfer need not be symmetric. Lin describes stronger evidence for understanding features helping generation than for an automatic understanding benefit from generation training. Preserve this as a qualified assessment of current observations. It is not a theorem that image generation can never improve perception, nor a promise that any understanding loss improves generated images.</p>
+<p>Let $U(\theta)$ denote a selected understanding metric and $G(\theta)$ a selected generation metric. Comparing a jointly trained model $\theta_{UG}$ with an understanding-only model $\theta_U$ tests a generation-to-understanding intervention only if the backbone, understanding-data exposure, compute accounting, and evaluation are controlled sufficiently to interpret $U(\theta_{UG})-U(\theta_U)$. Comparing it with a generation-only model instead tests a different direction. A positive joint-model score on both benchmarks is not by itself evidence that the tasks improved each other.</p>
+<p>Loss gradients make the issue concrete. For a shared parameter vector, $g_U=\nabla L_U$ and $g_G=\nabla L_G$ can align or oppose. A small gradient step $\Delta\theta=-\eta(g_U+\lambda g_G)$ changes the understanding loss to first order by $-\eta(\|g_U\|^2+\lambda g_U^{\mathsf T}g_G)$. If the inner product is sufficiently negative, the generation gradient can raise the understanding loss locally. This is a differentiable local approximation under small $\eta$, not a prediction of long training dynamics. Separate parameter branches change where such interference occurs; shared attention and embeddings can still couple the tasks.</p>
+<p>For the assistant, an ablation needs difficult part-identification examples, not just captions that can be guessed from context. Test manual-only, photo-only, and combined inputs; hold out exact component instances; distinguish OCR correctness from semantic part recognition. Lin’s explanations involving abstraction, redundant sensory input, and loss differences are hypotheses to investigate. A training curve cannot identify which of them caused a directional transfer pattern.</p></section>
+
+<section id="scope"><h2>15. Match unified and specialized systems to the application <span class="timestamp">39:16</span></h2>
+<p>A unified model makes shared context and interleaved generation convenient. A specialized perception module, document parser, or exact renderer can offer useful guarantees and cost advantages for a constrained workflow. The choice depends on the workload’s information and error requirements. “Native” is not a sufficient answer to whether a particular implementation is suitable for a maintenance tool.</p>
+<p>Consider a revision table. If the application needs exact values, a parser can retain a table structure and source identifiers while a multimodal model helps interpret the accompanying diagram. If the application needs a generated illustration, a renderer can preserve checked labels from that table. Joint attention may improve the model’s handling of the multimodal request, but the application still needs to distinguish extracted facts from proposed visual content.</p>
+<p>Lin’s conclusion connects broad digital applications with the richer sensory and action demands of the physical world. General context processing supports many tasks, yet domains can have special observability, latency, and verification constraints. A model that interprets one photograph has not demonstrated persistent tracking; a model that generates a plausible future frame has not demonstrated a calibrated dynamics predictor.</p>
+<p>Use three gates for the assistant. First, information retention: can the front end preserve serial digits, orientation, and defect cues? Second, conditional behavior: can the model use the correct manual and observation without future-context leakage? Third, application outcome: are the answers and diagrams accurate enough under the actual error costs? This hierarchy prevents a generation benchmark from substituting for a perception test or a deployment check.</p></section>
+
+<section id="joint-attention"><h2>16. Shared attention supplies a conditional interface <span class="timestamp">42:05</span></h2>
+<p>An audience question asks how separately parameterized pathways interact. The answer is the global attention computation, not hidden communication between independent standalone models. The branch-specific projections produce queries, keys, and values in compatible spaces; the normalized attention sum then mixes permitted values from the common sequence. The model must learn useful compatibility between these representations.</p>
+<p>Dimension agreement is necessary and insufficient. Giving text queries and image keys the same $d_k$ makes their dot product legal. It does not ensure that the dot product measures part relevance or that the image values encode the evidence the language head needs. Initialization, training objectives, data ordering, and optimization determine the learned interface. Sharing the arithmetic creates a channel through which useful information can flow; it does not certify the content of that channel.</p>
+<p>Global attention is also conditional. Changing a preceding photograph can change later text even if every text-specific weight is frozen. Changing a forbidden future photograph should not change the earlier prefix under the stated mask. These two facts are complementary. The first tests that the application can use visual evidence; the second tests that its training and generation use only available evidence.</p>
+<p>A failure investigation should inspect the route labels, restoration of sequence order, key mask, feature dimensions, and retained context before assuming that a bigger model is needed. A batch reorder bug can make a text query read the wrong image; a mask bug can produce unrealistically good validation. Both satisfy superficial tensor-shape checks. Exact finite fixtures are useful because their expected outputs can be derived independently.</p></section>
+
+<section id="representations"><h2>17. Predictive representations do not require reconstructing every detail <span class="timestamp">44:17</span></h2>
+<p>The question period raises JEPA-style representations and asks which signals matter for digital and physical tasks. A representation-learning objective that predicts a latent target differs from a model that reconstructs pixels or emits vocabulary tokens. Those alternatives choose different targets and invariances. The chapter does not collapse them into a single causal or generative objective; Chapter 2’s distinctions remain necessary.</p>
+<p>For document work, text rendering and layout may carry essential information: the superscript in a formula, a table column boundary, or a warning label. For some physical tasks, object position and motion can matter more than the exact printed font. These are tendencies of particular tasks, not a strict division of the world. A robot reading a medication label needs exact text; a digital design task may require physical geometry.</p>
+<p>The maintenance case tests sufficiency directly. If a representation retains component identity but erases a small revision suffix, it may be adequate for a generic caption and inadequate for answering the operator’s question. If it retains the suffix but loses connector orientation, it may succeed at OCR and fail at annotation. One representation should not be judged solely by the task that its training objective already favors.</p>
+<p>Predicting a latent target can suppress nuisance variability. It can also suppress information that a later task needs. The target construction, masking or intervention policy, and downstream evaluation decide which conclusion is supported. Without the identity and methods of a particular representation paper, preserve the audience’s question and Lin’s conceptual response rather than invent a precise empirical citation.</p></section>
+
+<section id="world"><h2>18. Video generation and physical prediction have different tests <span class="timestamp">46:25</span></h2>
+<p>Audience questions connect video models to office work, robotics, and representations of the world. A generated future frame can be useful for visualization or as a subgoal, yet a plausible sequence is not automatically a calibrated forecast. The distinction matters when an application will act on what the model predicts.</p>
+<p>Write a predictive distribution $p_\theta(o_{t+1}\mid o_{\le t},a_{\le t})$ for future observations conditional on past observations and actions. A video generator conditioned only on an initial scene and textual prompt may solve a different statistical problem. Actions, camera pose, occlusions, and unobserved state can all affect future pixels. If multiple futures are possible, evaluating a single sample by visual plausibility does not test the probability assigned to each outcome.</p>
+<p>For the assistant, a diagram showing how a latch might move is an explanatory hypothesis. To establish how this particular latch will move, the application needs the current state, geometry, and appropriate physical evidence. Training on videos may improve relevant representations, but the improvement needs a measured downstream task and a suitable baseline.</p>
+<p>Feedback creates additional opportunities: a control system observes what happened after its action and can revise its estimate. That is a different data regime from passive videos and a different execution regime from producing an illustration. Lin’s discussion suggests research directions rather than an established universal transition from video generation to physical intelligence.</p></section>
+
+<section id="ocr"><h2>19. Rendered text forces a choice about exactness and invariance <span class="timestamp">48:29</span></h2>
+<p>The audience asks whether text in images can bypass a separate textual tokenization pathway. Rendered words contain language plus font, spacing, placement, and rasterization. Converting them to text discards some visual structure; retaining pixels makes the language content expensive to recover and vulnerable to visual resolution limits. The right representation depends on whether exact spelling, layout, appearance, or all three matter.</p>
+<p>For an original thought experiment, render the strings “revision 1” and “revision l” in a font where the final glyphs become indistinguishable at the camera’s resolution. No downstream model can determine which original string produced that identical raster without extra information. More reasoning does not invert a many-to-one observation map. Increasing resolution, changing the observation, or supplying trustworthy metadata changes the information available; changing the loss cannot restore a distinction that was never observed.</p>
+<p>Conversely, a plain transcription can lose the table structure that disambiguates a numerical entry. Preserve visual layout or an explicit document representation when that structure matters. An exact label overlay in the generated maintenance diagram can avoid asking a pixel generator to render a crucial identifier. That makes the application’s reliability requirements explicit, without concluding that visual text generation is useless.</p>
+<p>Lin mentions a recent rendered-text research example and discusses scaling in response, while noting limits to her own experimentation. The available transcript does not identify that paper reliably. Its alleged result is therefore not promoted into a named, verified research finding here. The conceptual issue is retained: compare representation choices using matched data and exact text/layout tests, then account for their differing sequence lengths and compute.</p></section>
+
+<section id="unified-representation"><h2>20. One visual representation can face conflicting requirements <span class="timestamp">53:35</span></h2>
+<p>A question asks whether one image representation can jointly support understanding and generation. It can in principle: a sufficiently informative representation may support multiple decoders and tasks. The hard issue is which finite-capacity representation and training objective retain the relevant information efficiently. “Understanding” is not one scalar property; identifying an object, reading a label, locating a defect, and reconstructing texture demand different distinctions.</p>
+<p>Let a task require a semantic label $Y$ and a renderer require visual detail $R$. A representation $Z$ sufficient for $Y$ may satisfy $p(Y\mid X)=p(Y\mid Z)$ while failing the analogous condition for $R$. Add an independent nuisance texture bit to the quantization example: a semantic encoder may intentionally discard it. That improves invariance for a classifier yet removes a degree of freedom for reconstructing the original image. A generative decoder can sample plausible texture without knowing the observed texture.</p>
+<p>BAGEL’s two encoders are one concrete response to this tradeoff, not a proof that a single representation is impossible. A joint representation might preserve more information at increased sequence cost. A task-specific bottleneck might be sufficient for the maintenance assistant’s labels but not its desired diagram. Evaluate the error and resource costs together.</p>
+<p>The transcript refers to another recent unified-representation paper with an unclear group name. Without a reliable identity, it remains an unresolved mention. No claim about that paper’s architecture or numbers is added. This boundary avoids using a plausible-sounding citation to close a question the actual source does not resolve.</p></section>
+
+<section id="autoregression"><h2>21. Next-token prediction is a successful objective, not a necessity proof <span class="timestamp">55:53</span></h2>
+<p>The audience asks whether autoregression learns the structural relationships that multimodal reasoning needs, and whether alternatives such as discrete diffusion can be useful. A probability factorization gives an objective for matching a data distribution. It does not uniquely determine the internal representation that optimization will learn. Two models can have similar likelihoods while differing on a downstream task outside the evaluated distribution.</p>
+<p>The chain rule itself is exact: for discrete variables with well-defined conditional probabilities, $p(s_{1:n})=\prod_i p(s_i\mid s_{&lt;i})$. What is approximate is the learned model of those conditionals. A chosen sequence order makes some dependencies easier to express than others, and finite model capacity, training data, and sampling influence the result. The chain rule does not prove that serial generation is the only viable mechanism for all modalities.</p>
+<p>Discrete diffusion or continuous denoising can introduce different generation schedules and objectives. Compare them using matched representations and tasks, not by equating the words “diffusion” and “understanding.” A model can generate multiple positions in parallel without having learned the exact geometric constraints the assistant needs. An autoregressive model can learn useful relationships without providing an explicit symbolic scene graph.</p>
+<p>Lin argues for the practical success of current sequence approaches while allowing that alternatives remain possible. The chapter takes that as an empirical engineering stance. It does not claim that token prediction is either sufficient for every form of intelligence or fundamentally incapable of physical reasoning.</p></section>
+
+<section id="spatial"><h2>22. Spatial reasoning needs a coordinate and task contract <span class="timestamp">58:13</span></h2>
+<p>The discussion turns to spatial reasoning and vision-language-action backbones. A correct spatial answer needs a reference frame. “The left connector” may mean image-left, operator-left, or a component’s labeled left side. Rotating the photograph changes image coordinates while preserving part identity. A model must represent the relationship relevant to the instruction rather than substitute a familiar caption.</p>
+<p>For the maintenance case, establish a displayed image coordinate system and an orientation convention. Test whether the assistant points to the same physical connector after a known image rotation, with the instruction adjusted appropriately. That is an original controlled evaluation: hold the part fixed, transform the view, and measure the predicted annotation. Separately test occlusion and ambiguous perspective. A perfect result on one transform does not establish three-dimensional reasoning.</p>
+<p>A robot adds embodiment and action coordinates. Its camera frame, gripper frame, and actuator commands need compatible transformations and current observations. A textual assertion about spatial relationships does not by itself supply a control policy. An image-generation benchmark likewise does not establish physically accurate action trajectories.</p>
+<p>Lin states an expertise boundary in the robotics question. Preserve that restraint: the lecture motivates spatial and action extensions, while the checked $\pi_{0.7}$ paper supplies a concrete example. Further control-theoretic claims require their own sources and empirical checks.</p></section>
+
+<section id="language-scaffold"><h2>23. Language can scaffold reasoning without exhausting it <span class="timestamp">59:42</span></h2>
+<p>The closing exchange asks whether models could reason visually without a language intermediary. Lin connects the present usefulness of language to compressed human knowledge, available training data, and the interfaces people use to specify problems. These are practical reasons to use textual reasoning. They are not a proof that a model’s reasoning must be linguistic.</p>
+<p>In the assistant, text states an exact revision and requested edit compactly. A picture conveys connector geometry that would be cumbersome to describe. A useful intermediate representation might mix text, latent visual states, and structured coordinates. Requiring every internal relation to become a sentence could introduce a bottleneck; requiring only pixels could make exact symbolic constraints difficult to preserve. The application can exploit both channels while testing their information separately.</p>
+<p>Current supervision can make a textual scaffold the easiest route to a reliable result. That path can be evaluated: compare no-plan generation with plan-conditioned generation; score the plan’s interpretation and the final visual independently; control added compute and prompt expansion. BAGEL’s reported improvement motivates such an experiment, but does not establish the same effect in maintenance diagrams or identify the model’s internal reasoning mechanism.</p>
+<p>The lecture ends with an open research program. Preserve the difference between an architecture that can process a signal, a trained model that performs selected tasks, and a system that reliably uses the signal in a consequential workflow. The next sections make the narrow mathematical and engineering claims executable and ask the reader to test the boundaries.</p></section>
+
+<section id="interaction-extension"><h2>24. Deck extension: real-time interaction adds a timing contract</h2>
+<p class="source-note">The official deck’s PDF pp. 53–54 introduce Thinking Machines Lab’s interaction models; this material is absent from the available transcript’s substantive sequence. The following dated company description is a deck extension, not a reconstructed spoken passage.</p>
+<p>The company’s <a href="#ref-interaction">May 11, 2026 original</a> describes $200$ ms input/output micro-turns and an asynchronous background model for longer work. It presents a research preview, with connectivity and long-context limitations. These are attributed product claims. A micro-turn duration is a scheduling unit, not a demonstrated bound on end-to-end response latency or task correctness.</p>
+<p>For an original queueing model, let chunks arrive every $\Delta=0.2$ seconds and require deterministic serial service time $s$. With no overlap, backlog evolves as $B_{k+1}=\max(0,B_k+s-\Delta)$, starting at $B_0=0$. If $s=0.24$ seconds, backlog grows by $0.04$ seconds per chunk, giving $2$ seconds after $50$ chunks. At $s=0.16$, this deterministic idealized backlog stays zero, but real network delay and service variance can still create queues. For bounded backlog in this constant-service regime, $s$ must not exceed $\Delta$; at equality, the stated zero initial backlog remains zero. A strict margin supplies capacity for variability but is not a tail-latency guarantee.</p>
+<p>The assistant must also reject stale results. If an operator changes the manual revision while a background task is preparing a diagram, its returned result should carry the revision and observation identifiers it used. A timely but stale diagram can be worse than a slower correct response. This is an original application constraint: shared multimodal context improves access, while explicit version and timestamp handling remain necessary.</p></section>
+
+<section id="lab"><h2>25. Executable finite checks</h2>
+<p>Save the following as <a href="chapter08.py">chapter08.py</a> and run <code>python chapter08.py</code> with Python 3.10 or later. It uses only the standard library. It checks a contiguous-block attention policy, useful cross-modal attention, text-loss gradients, quantization information loss, a frozen-text counterexample, Gaussian denoising regression, and a declared parameter/cost model. It does not train a transformer, sample a diffusion process, perform OCR, or reproduce a paper’s benchmark.</p>
+<p>The patch count includes right/bottom padding and independent frames. The scalar attention uses $d_k=d_v=1$, so its score scaling is one. The cost model uses nongated FFNs; real SwiGLU, normalization, biases, grouped-query attention, and encoders change the count. Invalid-input rejection is part of the example’s contract. Assertions on finite results are useful diagnostics, with exact real-arithmetic proofs supplied separately above.</p>
+<pre><code id="chapter08-code" class="language-python">&quot;&quot;&quot;Finite multimodal architecture checks; no trained model or diffusion sampler.
+
+Run with Python 3.10+ and the standard library. Dimensions and costs describe
+the explicit toy contracts below, not any cited model&#x27;s complete implementation.
+&quot;&quot;&quot;
+import math
+from fractions import Fraction
+
+
+def positive_integer(value, name):
+    if isinstance(value, bool) or not isinstance(value, int) or value &lt;= 0:
+        raise ValueError(name + &#x27; must be a positive integer&#x27;)
+    return value
+
+
+def finite(value, name):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(name + &#x27; must be a finite real number&#x27;)
+    if not math.isfinite(value):
+        raise ValueError(name + &#x27; must be a finite real number&#x27;)
+    return float(value)
+
+
+def patches(height, width, patch, frames=1):
+    &quot;&quot;&quot;Independent frames, spatial right/bottom padding, no special tokens.&quot;&quot;&quot;
+    height = positive_integer(height, &#x27;height&#x27;)
+    width = positive_integer(width, &#x27;width&#x27;)
+    patch = positive_integer(patch, &#x27;patch&#x27;)
+    frames = positive_integer(frames, &#x27;frames&#x27;)
+    return ((height + patch - 1) // patch) * ((width + patch - 1) // patch) * frames
+
+
+def hybrid_mask(blocks):
+    &quot;&quot;&quot;None = text; each integer identifies ONE contiguous image block.
+
+    Text attends causally. Image patches also attend within their image block.
+    No packed independent examples, special tokens or duplicated clean/noisy
+    copies are represented by this toy mask.
+    &quot;&quot;&quot;
+    if not isinstance(blocks, (list, tuple)) or not blocks:
+        raise ValueError(&#x27;blocks must be a nonempty sequence&#x27;)
+    seen, previous = set(), None
+    for block in blocks:
+        if block is not None:
+            if isinstance(block, bool) or not isinstance(block, int) or block &lt; 0:
+                raise ValueError(&#x27;image block IDs must be nonnegative integers&#x27;)
+            if block != previous:
+                if block in seen:
+                    raise ValueError(&#x27;each image block must be contiguous&#x27;)
+                seen.add(block)
+        previous = block
+    return [[j &lt;= i or (block is not None and block == blocks[j])
+             for j in range(len(blocks))] for i, block in enumerate(blocks)]
+
+
+def softmax(values):
+    if not isinstance(values, (list, tuple)) or not values:
+        raise ValueError(&#x27;softmax needs a nonempty sequence&#x27;)
+    values = [finite(x, &#x27;score&#x27;) for x in values]
+    maximum = max(values)
+    weights = [math.exp(x - maximum) for x in values]
+    normalizer = math.fsum(weights)
+    return [x / normalizer for x in weights]
+
+
+def attend(queries, keys, values, mask):
+    &quot;&quot;&quot;One scalar head (d_k=d_v=1); arbitrary finite Q/K/V projections.&quot;&quot;&quot;
+    if not queries or not (len(queries) == len(keys) == len(values) == len(mask)):
+        raise ValueError(&#x27;Q/K/V/mask lengths must match and be nonzero&#x27;)
+    n = len(queries)
+    queries = [finite(x, &#x27;query&#x27;) for x in queries]
+    keys = [finite(x, &#x27;key&#x27;) for x in keys]
+    values = [finite(x, &#x27;value&#x27;) for x in values]
+    outputs, weights = [], []
+    for i, row in enumerate(mask):
+        if len(row) != n or any(type(x) is not bool for x in row) or not any(row):
+            raise ValueError(&#x27;mask rows need n booleans and a permitted key&#x27;)
+        indices = [j for j, permitted in enumerate(row) if permitted]
+        local = softmax([queries[i] * keys[j] for j in indices])
+        full = [0.0] * n
+        for j, weight in zip(indices, local):
+            full[j] = weight
+        weights.append(full)
+        outputs.append(math.fsum(weight * values[j] for j, weight in zip(indices, local)))
+    return outputs, weights
+
+
+def quantize(value, codebook):
+    &quot;&quot;&quot;Nearest scalar prototype; true ties select the lowest codebook index.
+
+    Compare exact rational distances of the validated binary floats. Ordinary
+    float subtraction can overflow or round distinct distances to a false tie.
+    This finite teaching lookup prioritizes correctness over lookup throughput.
+    &quot;&quot;&quot;
+    value = finite(value, &#x27;value&#x27;)
+    if not isinstance(codebook, (list, tuple)) or not codebook:
+        raise ValueError(&#x27;codebook must be a nonempty sequence&#x27;)
+    codebook = [finite(x, &#x27;prototype&#x27;) for x in codebook]
+    exact_value = Fraction(value)
+    return min(range(len(codebook)),
+               key=lambda i: abs(exact_value - Fraction(codebook[i])))
+
+
+def binary_text_loss(feature, coefficient, target):
+    &quot;&quot;&quot;One TEXT target logit a*u; u may have come from an image encoder.
+
+    Returns stable binary cross entropy and its derivative with respect to u.
+    There is no image reconstruction loss here.
+    &quot;&quot;&quot;
+    feature = finite(feature, &#x27;feature&#x27;)
+    coefficient = finite(coefficient, &#x27;coefficient&#x27;)
+    if type(target) is not int or target not in (0, 1):
+        raise ValueError(&#x27;target must be integer 0 or 1&#x27;)
+    logit = finite(feature * coefficient, &#x27;logit&#x27;)
+    probability = (1 / (1 + math.exp(-logit)) if logit &gt;= 0
+                   else math.exp(logit) / (1 + math.exp(logit)))
+    loss = max(logit, 0) - target * logit + math.log1p(math.exp(-abs(logit)))
+    return loss, coefficient * (probability - target)
+
+
+def gaussian_noise_predictor(noisy_value, alpha, clean_variance):
+    &quot;&quot;&quot;Analytic E[epsilon|x_tau] for independent zero-mean scalar Gaussians.
+
+    epsilon has variance 1; clean x_0 has the supplied positive variance.
+    x_tau = sqrt(alpha)*x_0 + sqrt(1-alpha)*epsilon.
+    This is a denoising-regression oracle, NOT a reverse-process sampler.
+    &quot;&quot;&quot;
+    noisy_value = finite(noisy_value, &#x27;noisy_value&#x27;)
+    alpha = finite(alpha, &#x27;alpha&#x27;)
+    clean_variance = finite(clean_variance, &#x27;clean_variance&#x27;)
+    if not 0 &lt; alpha &lt; 1 or clean_variance &lt;= 0:
+        raise ValueError(&#x27;need 0 &lt; alpha &lt; 1 and clean_variance &gt; 0&#x27;)
+    variance = alpha * clean_variance + 1 - alpha
+    coefficient = math.sqrt(1 - alpha) / variance
+    residual_mse = alpha * clean_variance / variance
+    return coefficient * noisy_value, residual_mse
+
+
+def parameter_cost(width, hidden, modalities, tokens):
+    &quot;&quot;&quot;Square Q/K/V/O + NON-GATED two-matrix FFN; biases/norms omitted.
+
+    All modalities use the same widths; exactly one branch per token.
+    Counts matrix multiply-accumulate terms, not FLOPs or measured latency.
+    &quot;&quot;&quot;
+    for value, name in [(width, &#x27;width&#x27;), (hidden, &#x27;hidden&#x27;),
+                        (modalities, &#x27;modalities&#x27;), (tokens, &#x27;tokens&#x27;)]:
+        positive_integer(value, name)
+    branch = 4 * width * width + 2 * width * hidden
+    return branch * modalities, branch * tokens, 2 * tokens * tokens * width
+
+
+def invalid_contracts():
+    tests = [lambda: patches(0, 10, 2), lambda: patches(True, 10, 2),
+             lambda: patches(10, 10, 2.5), lambda: patches(10, 10, 2, -1),
+             lambda: hybrid_mask([]), lambda: hybrid_mask([0, None, 0]),
+             lambda: hybrid_mask([True]), lambda: softmax([math.inf]),
+             lambda: softmax([]), lambda: quantize(1, []),
+             lambda: quantize(math.nan, [0]),
+             lambda: binary_text_loss(1, 1, True),
+             lambda: binary_text_loss(1e308, 1e308, 1),
+             lambda: gaussian_noise_predictor(1, 0, 1),
+             lambda: gaussian_noise_predictor(1, 1, 1),
+             lambda: gaussian_noise_predictor(1, .5, 0),
+             lambda: parameter_cost(8, 16, 0, 20),
+             lambda: attend([0], [0], [], [[True]]),
+             lambda: attend([0], [0], [1], [[False]])]
+    for test in tests:
+        try:
+            test()
+        except ValueError:
+            continue
+        raise AssertionError(&#x27;invalid input accepted&#x27;)
+    return len(tests)
+
+
+def main():
+    image = patches(512, 512, 16)
+    video = patches(512, 512, 16, 12)
+    n_image, n_video = 512 + image, 512 + video
+    print(f&#x27;patches: image={image}, video12={video}, padded17x17={patches(17,17,16)}&#x27;)
+    print(f&#x27;one-head BF16 scores: image={2*n_image*n_image/2**20:.3f} MiB, &#x27;
+          f&#x27;video={2*n_video*n_video/2**20:.3f} MiB&#x27;)
+    blocks = [None, 0, 0, None, 1, 1, None]
+    mask = hybrid_mask(blocks)
+    assert mask[1][2] and not mask[1][3] and not mask[1][4]
+    assert mask[4][5] and not mask[3][4]
+    changed = [1, 2, 4, 8, 16, 32, 64]
+    baseline, _ = attend([0]*7, [0]*7, changed, mask)
+    changed[4:7] = [1000, 2000, 4000]
+    altered, _ = attend([0]*7, [0]*7, changed, mask)
+    assert baseline[:4] == altered[:4]
+    print(&#x27;mask: image-local future allowed; future text/image blocked; prefix invariant&#x27;)
+    indices = [quantize(x, [0, 1]) for x in [.1, .2]]
+    assert indices == [0, 0]
+    print(f&#x27;quantization: opposite task labels collide at code indices {indices}; Bayes error=0.500&#x27;)
+    assert quantize(1e308, [-1e308, -9e307]) == 1
+    assert quantize(-1e308, [1, 0]) == 1
+    assert quantize(.5, [0, 1]) == 0
+    print(&#x27;prototype lookup: overflow and rounded-distance false ties avoided; true ties use first index&#x27;)
+    loss, gradient = binary_text_loss(1, 1, 1)
+    step = 1e-6
+    difference = (binary_text_loss(1+step, 1, 1)[0]
+                  - binary_text_loss(1-step, 1, 1)[0])/(2*step)
+    assert abs(gradient - difference) &lt; 1e-8
+    print(f&#x27;text-only target: CE={loss:.6f}, image-feature gradient={gradient:.6f}&#x27;)
+    pure_mask = hybrid_mask([None, None])
+    pure_before, _ = attend([0,0], [0,0], [1,3], pure_mask)
+    pure_after, _ = attend([0,0], [0,0], [1,3], pure_mask)
+    mixed_mask = hybrid_mask([None,0,0,None])
+    before, weights = attend([0]*4, [0]*4, [1,2,2,3], mixed_mask)
+    after, _ = attend([0]*4, [0]*4, [1,10,10,3], mixed_mask)
+    assert pure_before == pure_after and before[-1] != after[-1]
+    print(f&#x27;frozen text: pure={pure_before[-1]:.3f} unchanged; &#x27;
+          f&#x27;mixed={before[-1]:.3f}-&gt;{after[-1]:.3f}; image attention mass={weights[-1][1]+weights[-1][2]:.3f}&#x27;)
+    prediction, mse = gaussian_noise_predictor(2, .25, 1)
+    print(f&#x27;Gaussian denoising oracle: predicted noise={prediction:.6f}, irreducible MSE={mse:.6f}&#x27;)
+    stored, active, attention = parameter_cost(8,16,2,20)
+    print(f&#x27;toy MoT: stored={stored} parameters, active projection/FFN={active} MACs, &#x27;
+          f&#x27;global attention={attention} MACs&#x27;)
+    print(f&#x27;invalid inputs rejected: {invalid_contracts()}; all finite architecture checks passed&#x27;)
+
+
+if __name__ == &#x27;__main__&#x27;:
+    main()
+</code></pre>
+<h3>Exact output</h3><pre><code id="chapter08-output" class="language-text">patches: image=1024, video12=12288, padded17x17=4
+one-head BF16 scores: image=4.500 MiB, video=312.500 MiB
+mask: image-local future allowed; future text/image blocked; prefix invariant
+quantization: opposite task labels collide at code indices [0, 0]; Bayes error=0.500
+prototype lookup: overflow and rounded-distance false ties avoided; true ties use first index
+text-only target: CE=0.313262, image-feature gradient=-0.268941
+frozen text: pure=2.000 unchanged; mixed=2.000-&gt;6.000; image attention mass=0.500
+Gaussian denoising oracle: predicted noise=1.732051, irreducible MSE=0.250000
+toy MoT: stored=1024 parameters, active projection/FFN=10240 MACs, global attention=6400 MACs
+invalid inputs rejected: 19; all finite architecture checks passed
+</code></pre>
+<p>Read the prefix-invariance result carefully. It checks that changing values in later image/text blocks leaves earlier outputs unchanged under this mask and fixed Q/K. The mask’s directed-block argument establishes the stronger multi-layer causal boundary. The numerical fixture also supplies a positive communication case. Neither result certifies an arbitrary model implementation with batching, cached states, padding masks, or duplicated clean/noisy image representations.</p></section>
+
+<section id="exercises"><h2>26. Exercises and complete solutions</h2>
+<div class="exercise"><h3>1. Account for image and video context</h3><p>An image is $513\times769$ pixels. A tokenizer pads the bottom/right to multiples of $16$, uses independent frames, and inserts two boundary positions per image. A prompt has $600$ text positions. Find the sequence length for one image and for eight frames. Compute an explicitly materialized one-head score matrix in BF16. Then explain what this calculation does and does not say about an efficient attention implementation.</p>
+<details class="solution"><summary>Solution</summary><p>The padded grid is $\lceil513/16\rceil\times\lceil769/16\rceil=33\times49=1617$ patch positions. Including two boundaries gives $1619$ per frame. One image gives $n=600+1619=2219$. Eight independent frames give $n=600+8(1619)=13{,}552$. Squaring gives $2219^2=4{,}923{,}961$ and $13{,}552^2=183{,}656{,}704$. At two bytes per element, the matrices occupy $9{,}847{,}922$ bytes ($9.39171$ MiB) and $367{,}313{,}408$ bytes ($350.29736$ MiB).</p><p>The ratio is approximately $37.30$, not eight, because the complete sequence length is squared and includes the fixed text prefix. This is per head and per example, with no batch or layer multiplier. It assumes dense explicit storage and ignores gradients, Q/K/V, feed-forward states, and temporary buffers. An efficient attention kernel can avoid storing this matrix while still processing permitted pairs. Temporal compression or fewer visual positions changes both the sequence count and arithmetic. Boundary positions were stated explicitly here; the lab’s simpler count omits them.</p></details></div>
+<div class="exercise"><h3>2. Prove a representation can preserve semantics and lose exactness</h3><p>Four observations occur uniformly: $(C,R)\in\{0,1\}^2$, where $C$ is component type and $R$ is a revision bit. An encoder retains only $Z=C$. Determine the minimum error for predicting $C$, for predicting $R$, and for reconstructing the exact pair. Give the cross-entropy lower bound for the lost revision bit and explain the maintenance implication.</p>
+<details class="solution"><summary>Solution</summary><p>Predicting $C$ from $Z$ has zero error because the representation equals the target. Conditional on either value of $Z$, the bit $R$ is uniform. Thus its minimum classification error is $1/2$. Any deterministic reconstruction picks one revision for each component type and succeeds on two of the four pairs, so its exact-pair error is also $1/2$. Randomization cannot improve either result because the conditional probabilities remain $1/2$.</p><p>For a model assigning revision probability $q$ to $R=1$, expected conditional negative log likelihood is $-\tfrac12\log q-\tfrac12\log(1-q)$. Differentiation gives $-1/(2q)+1/[2(1-q)]$, which vanishes at $q=1/2$; the second derivative is positive. The minimum is $\log2$ nats. Assigning zero probability to either observed bit gives infinite loss. The encoder is sufficient for component type and insufficient for exact revision. Excellent component recognition cannot justify a revision-specific answer. Preserve that bit in another channel or obtain a new observation; do not infer that more downstream reasoning can recover it from $Z$ alone.</p></details></div>
+<div class="exercise"><h3>3. Repair an attention mask and its leakage test</h3><p>For $[T,I_0,I_0,T,I_1,I_1,T]$, a programmer allows every image query to read every image key, regardless of block. Identify a forbidden edge. With scalar zero Q/K scores and values $[1,2,4,8,16,32,64]$, compute the correct output at query $1$. Show how the faulty edge policy can make an earlier output depend on a future image. Explain why a test that only changes future values with zero image value projection could miss the bug.</p>
+<details class="solution"><summary>Solution</summary><p>Query $1$ belongs to image $I_0$. It may read indices $0,1,2$, including the later patch $2$ in its own block, but cannot read $4$ or $5$ in $I_1$. The correct uniform-attention output is $(1+2+4)/3=7/3$. The faulty policy lets it read $0,1,2,4,5$, giving $(1+2+4+16+32)/5=11$.</p><p>If future image values become $160,320$, the correct output remains $7/3$, while the faulty output becomes $(1+2+4+160+320)/5=97.4$. This is a direct future-image dependency. A useful test needs nonzero distinguishable values on the forbidden positions. If the image value projection happens to output zero for both versions, the leaked attention may have no effect in that fixture. Therefore inspect the permitted-edge set and test both forbidden changes and permitted communication. In multiple layers, a future-block edge can contaminate states that later appear causally legitimate; the block-order argument, not a single fortunate output, supplies the general boundary.</p></details></div>
+<div class="exercise"><h3>4. Derive a weighted objective and its uncertainty boundary</h3><p>A batch has $100$ text targets with summed cross-entropy $80$ nats and $20$ images, each with $16$ latent coordinates, whose total noise-prediction squared error is $160$. Define text mean per target and image mean per coordinate. With $\lambda=2$, compute the combined loss. Then compute it if image loss is instead a mean of per-image summed errors. Finally derive the optimal noise predictor and residual MSE for independent $x_0\sim\mathcal N(0,4)$, $\epsilon\sim\mathcal N(0,1)$, $x_\tau=\sqrt{1/4}x_0+\sqrt{3/4}\epsilon$.</p>
+<details class="solution"><summary>Solution</summary><p>The text mean is $80/100=0.8$. The image coordinate mean is $160/(20\times16)=0.5$. Therefore $L=0.8+2(0.5)=1.8$. With per-image summed errors, $L_I=160/20=8$ and $L=0.8+2(8)=16.8$. Neither is intrinsically the correct reduction. The coefficient must be understood with its declared reduction; the second image gradient contribution is sixteen times the first at the same $\lambda$. This illustrates why copying a coefficient from another implementation can change learning substantially.</p><p>Here $\operatorname{Var}(x_\tau)=(1/4)4+3/4=7/4$ and $\operatorname{Cov}(\epsilon,x_\tau)=\sqrt3/2$. The Gaussian conditional mean is $\mathbb E[\epsilon\mid x_\tau]=(2\sqrt3/7)x_\tau$. Its conditional variance is $1-(3/4)/(7/4)=4/7$. By the squared-error decomposition, that conditional mean is optimal and $4/7$ is the irreducible MSE. It is larger than the lab’s $1/4$ because the clean prior variance here is four rather than one. This analytic predictor is not a sampler and does not claim a trained model attains the bound.</p></details></div>
+<div class="exercise"><h3>5. Count active work and delimit frozen behavior</h3><p>A toy layer has $d=32$, nongated FFN width $h=64$, three modality branches, and $n=100$ positions. Ignore biases and norms. Count stored Q/K/V/O+FFN parameters, active projection/FFN MACs, and dense-attention MACs. State sufficient conditions for pure-text function preservation after training only a new branch. Construct a mixed-context counterexample with frozen text values $1,3$ and two image values changed from $2,2$ to $10,10$.</p>
+<details class="solution"><summary>Solution</summary><p>Each branch has $4(32)^2+2(32)(64)=8192$ parameters. Three branches store $24{,}576$. Exactly one branch of the same width per position gives $100(8192)=819{,}200$ projection/FFN MACs. Global QK and AV products give $2(100)^2(32)=640{,}000$ MACs. Stored parameters triple relative to one branch while these active arithmetic counts remain the same. There is no inference that memory, communication, routing overhead, or wall-clock time remains unchanged.</p><p>Pure-text preservation follows when the tokenizer, position scheme, masks, input embeddings, all traversed layers, normalization, head, and deterministic evaluation settings remain fixed, and the new branch is not traversed. Layerwise induction gives equal states and logits. If a shared normalization or head is updated, those sufficient conditions fail. For the mixed sequence $[T,I,I,T]$ with zero scalar scores and all previous positions allowed, the final text output changes from $(1+2+2+3)/4=2$ to $(1+10+10+3)/4=6$. The text parameters are unchanged, but conditioning values are different. This is why a frozen-text claim must specify pure-text inputs.</p></details></div>
+<div class="exercise"><h3>6. Design a transfer experiment and a timing gate</h3><p>You want to know whether diagram-generation training improves the assistant’s revision recognition. Specify a controlled ablation, the primary metric, and a failure that would make a positive score uninterpretable. The interactive system receives one chunk every $0.2$ seconds and needs $0.24$ seconds of serial service per chunk. Find the deterministic backlog after $50$ chunks. Explain why a $200$ ms model unit and a faster mean service time are insufficient to certify the application.</p>
+<details class="solution"><summary>Solution</summary><p>Start from the same pretrained checkpoint and compare revision-recognition training alone with the same training plus a declared generation objective. Match understanding-data exposure, component split, and hyperparameter selection; record the added compute and representation changes. One option holds total compute fixed and reports the resulting exposure difference explicitly; a second holds understanding exposure fixed and reports extra generation cost. Neither comparison can silently claim both are fixed when they are not.</p><p>Use exact revision accuracy on held-out component instances as the primary metric, with OCR/part-identification submetrics and uncertainty or abstention rates. Evaluate manual-only, photo-only, and combined inputs. Prevent train/test duplicate images, revision metadata leakage, and captions that directly reveal the answer. A positive score from extra understanding examples, a changed tokenizer, or contaminated test images cannot identify generation-to-understanding transfer. Generated-image quality should be reported separately.</p><p>Starting from zero, the specified backlog recursion adds $0.24-0.20=0.04$ seconds per chunk, so after $50$ chunks it is $2$ seconds. This excludes initial chunk collection and other delays. A $200$ ms unit does not bound end-to-end latency; network delay, scheduling, service variance, background completion, and output buffering matter. Even with mean service below $0.2$, bursts or heavy tails can violate response deadlines. Test tail latency and stale-result rejection using manual revision/observation identifiers. A timely response about the wrong revision fails the application despite satisfying a throughput target.</p></details></div>
+</section>
+
+<section id="references"><h2>27. References and evidence boundaries</h2>
+<p>These references identify the original versions actually checked for the chapter’s claims. Page numbers below are PDF page numbers. The lecture supplies the topic sequence and attributed judgments; the finite mathematics, cost models, and examples are original teaching additions. Selected figures were inspected as stills; no claim is made about listening accuracy, unviewed animations, or reproducing training benchmarks.</p>
+<ol>
+<li id="ref-chameleon"><a href="https://arxiv.org/abs/2405.09818v1">Chameleon Team, “Chameleon: Mixed-Modal Early-Fusion Foundation Models,” v1 (2024)</a>. PDF pp. 4–8: discrete tokenizer, interleaved training, stability, and resource context. The tokenizer’s OCR limitation is specific to that model.</li>
+<li id="ref-vq"><a href="https://arxiv.org/abs/1906.00446v1">Razavi, van den Oord, and Vinyals, “Generating Diverse High-Fidelity Images with VQ-VAE-2,” v1 (2019)</a>. PDF p. 2: lossy nearest-codebook-vector representation. The binary-label collision is an original counterexample.</li>
+<li id="ref-transfusion"><a href="https://arxiv.org/abs/2408.11039v1">Zhou et al., “Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model,” v1 (2024)</a>. PDF pp. 4–9: diffusion loss, continuous latent representations, hybrid mask, decoding, and controlled-comparison methods. Avoiding quantization does not remove VAE compression loss.</li>
+<li id="ref-mot"><a href="https://arxiv.org/abs/2411.04996v2">Liang et al., “Mixture-of-Transformers: A Sparse and Scalable Architecture for Multi-Modal Foundation Models,” v2 (2025)</a>. PDF pp. 6–13, 15–16, 19–21, 25, 28, 31–32: global attention with modality-specific weights, comparator confounds, task-specific experiments, sparse combinations, and hardware-bound timing scope.</li>
+<li id="ref-lmfusion"><a href="https://arxiv.org/abs/2412.15188v4">Shi et al., “LMFusion: Adapting Pretrained Language Models for Multimodal Generation,” v4 (2025)</a>. PDF pp. 4–7: frozen text components, joint attention, adaptation data/cost boundary, and metrics. The earlier v1 was titled LlamaFusion.</li>
+<li id="ref-bagel"><a href="https://arxiv.org/abs/2505.14683v1">Deng et al., “Emerging Properties in Unified Multimodal Pretraining,” v1 (2025)</a>. PDF pp. 3–6, 10–13, 19: BAGEL branches, visual encoders, clean/noisy masking, objective balancing, and IntelligentBench’s CoT comparison. Automated-judge results are not a physical-reasoning certificate.</li>
+<li id="ref-pi"><a href="https://arxiv.org/abs/2604.15483v1">Physical Intelligence, “$\pi_{0.7}$: a Steerable Generalist Robotic Foundation Model with Emergent Capabilities,” v1 (2026)</a>. PDF pp. 1–4: action expert, observation/context architecture, gradient boundary, and proposed empirical scope. No new robot-control performance claim is made here.</li>
+<li id="ref-interaction"><a href="https://thinkingmachines.ai/blog/interaction-models/">Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” May 11, 2026</a>. Official dated company description, system overview, micro-turn design, and limitations. This supports the separately marked deck extension; it is not independent validation of product capabilities or current availability.</li>
+</ol>
+<p><a href="https://www.youtube.com/watch?v=NDdc39KYqDU">Source lecture: Victoria Lin, CS25 V6, “From Language Models to Native Multimodal Intelligence”</a>. The official deck supplies the date and clarifies names and diagrams. Two unclear research mentions in the question period remain unidentified rather than being assigned guessed citations. The deck’s research-grant administration is omitted from the teaching spine.</p></section>
+<!-- BOOK-CONTENT-END --></article><nav class="page-turn" aria-label="Chapter navigation"><a rel="prev" href="lecture-07-ai-agents-for-science-and-medicine.html">Previous available chapter</a><a href="index.html">Lecture index</a><a rel="next" href="lecture-09-serving-transformers-lessons-from-production-inference.html">Next available chapter</a></nav></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

@@ -1,13 +1,13 @@
 {
   "course": "CS25",
-  "checked_at_utc": "2026-10-03T01:49:44.987408+00:00",
+  "checked_at_utc": "2026-10-03T04:24:11.137731+00:00",
   "scope": "Reader mechanics only; human screen-reader audit not performed",
   "static": {
     "status": "passed",
-    "html_files": 10,
-    "local_links_checked": 125,
-    "timestamps_checked": 101,
-    "chapter_pages_with_dollar_math": 5,
+    "html_files": 14,
+    "local_links_checked": 242,
+    "timestamps_checked": 181,
+    "chapter_pages_with_dollar_math": 9,
     "failures": [],
     "warnings": []
   },
@@ -106,6 +106,24 @@
       },
       {
         "mathErrors": 0,
+        "mathNodes": 367,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 367,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
         "mathNodes": 234,
         "horizontalOverflow": false,
         "controls": true,
@@ -120,6 +138,60 @@
         "controls": true,
         "emptyToc": false,
         "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 147,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-07-ai-agents-for-science-and-medicine.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 147,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-07-ai-agents-for-science-and-medicine.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 271,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-08-native-multimodal-intelligence.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 271,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-08-native-multimodal-intelligence.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 197,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 197,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-09-serving-transformers-lessons-from-production-inference.html",
         "viewport": 390
       },
       {
@@ -142,7 +214,7 @@
       },
       {
         "mathErrors": 0,
-        "mathNodes": 0,
+        "mathNodes": 2,
         "horizontalOverflow": false,
         "controls": true,
         "emptyToc": false,
@@ -151,7 +223,7 @@
       },
       {
         "mathErrors": 0,
-        "mathNodes": 0,
+        "mathNodes": 2,
         "horizontalOverflow": false,
         "controls": true,
         "emptyToc": false,

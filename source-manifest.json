@@ -5,7 +5,7 @@
   "playlist": "PLoROMvodv4rPZxxeUFvQHCkZJsaEBdDZj",
   "format": "HTML",
   "publication": "local only",
-  "status": "9/9 sources acquired and audited; chapter1 reviewed and locally validated; chapters2/3/6 author drafts under or awaiting separate review; chapter4 author checks in progress; chapters5/7-9 not yet drafted; course completion gates pending",
+  "status": "All nine chapters independently reviewed; book-wide editorial acceptance and local validation evidence recorded separately. Required human keyboard and screen-reader audit not performed. Local only; not published.",
   "lectures": [
     {
       "id": "bHSDPgZYie0",
@@ -13,7 +13,7 @@
       "duration": 4606,
       "url": "https://www.youtube.com/watch?v=bHSDPgZYie0",
       "chapter_order": 1,
-      "chapter_status": "reviewed and locally validated",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -56,7 +56,7 @@
       "duration": 4263,
       "url": "https://www.youtube.com/watch?v=GBd7iuJkW08",
       "chapter_order": 2,
-      "chapter_status": "reviewed and locally validated",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -99,7 +99,7 @@
       "duration": 4628,
       "url": "https://www.youtube.com/watch?v=OyimE74UMF8",
       "chapter_order": 3,
-      "chapter_status": "reviewed and locally validated",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -138,7 +138,7 @@
       "duration": 3708,
       "url": "https://www.youtube.com/watch?v=I5BKi32IEa8",
       "chapter_order": 4,
-      "chapter_status": "reviewed and locally validated",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -181,7 +181,7 @@
       "duration": 3477,
       "url": "https://www.youtube.com/watch?v=e_H_tkpCAK4",
       "chapter_order": 5,
-      "chapter_status": "source preparation and private author draft in progress",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -220,7 +220,7 @@
       "duration": 4350,
       "url": "https://www.youtube.com/watch?v=dJtHauhRasc",
       "chapter_order": 6,
-      "chapter_status": "reviewed and locally validated",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -263,7 +263,7 @@
       "duration": 3993,
       "url": "https://www.youtube.com/watch?v=jFdH7n6BAl0",
       "chapter_order": 7,
-      "chapter_status": "source preparation and private author draft in progress",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -302,7 +302,7 @@
       "duration": 3880,
       "url": "https://www.youtube.com/watch?v=NDdc39KYqDU",
       "chapter_order": 8,
-      "chapter_status": "source preparation and private author draft in progress",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -345,7 +345,7 @@
       "duration": 4951,
       "url": "https://www.youtube.com/watch?v=ZUdIsRZhWXI",
       "chapter_order": 9,
-      "chapter_status": "not drafted",
+      "chapter_status": "independently reviewed; local validation recorded separately",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -393,5 +393,6 @@
     "raw_sources_in_repository": false,
     "transcripts_acquired": 9
   },
-  "course_title": "Transformers United V6"
+  "course_title": "Transformers United V6",
+  "source_review_status": "All nine recording audio/TXT/JSON identities and source readiness verified. All nine chapters independently accepted for editorial/prose/parity gates; book-wide editorial review accepted. Local validation evidence states its actual scope and file hashes in validation-summary.json and reader-validation.json. Required human keyboard and screen-reader audit not performed. Local only; not published."
 }

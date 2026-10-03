@@ -1,6 +1,6 @@
 {
   "course": "CS25",
-  "checked_at_utc": "2026-10-03T01:49:44.987408+00:00",
+  "checked_at_utc": "2026-10-03T04:24:11.137731+00:00",
   "scope": "Actual current files, source identities, embedded programs, reader mechanics, privacy and preservation; editorial acceptance is separate",
   "status": "passed",
   "course_complete": false,
@@ -9,7 +9,7 @@
       "file": "lecture-01-overview-of-transformers.html",
       "html_sha256": "df00dae6be07a4ab37ebb8088637aaab263a7c80cf7c3c1a5aefb9e1b75f0aee",
       "authored_body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
-      "metadata_sha256": "8b6a7d93d8a812535d8237c1974464201115619ed660f9923a10aa8ccd6e6ac4",
+      "metadata_sha256": "72d511ffb39ed91b2f46a71ae5a66a34d5a35492bd96e32833292164c631ea1c",
       "programs": [
         {
           "code_sha256": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
@@ -25,7 +25,7 @@
       "file": "lecture-02-representation-learning-and-world-modeling.html",
       "html_sha256": "e0768338ae46661d12c81218b5f04d1f96451b3851469cf3397e908096b32899",
       "authored_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
-      "metadata_sha256": "3710d2ed4e3c1c8f0bee2b36fd95d6cb6d2e3f171116006158d66469ea6209cc",
+      "metadata_sha256": "c42146e7e9132fcb7deaa70ed56eee0dcc1348443c2c3d361a023f98823079ef",
       "programs": [
         {
           "code_sha256": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
@@ -41,7 +41,7 @@
       "file": "lecture-03-state-space-models-and-transformers.html",
       "html_sha256": "3dde530d1a7be1f67ecbb4306c7b0d7cac6a63138b8a1f04816f5e79cbd259ef",
       "authored_body_sha256": "22b7065c80b65f9948b929f1cd12d0ec26b786575dc0ec75fd8434e34bc48a74",
-      "metadata_sha256": "2f5285f6d9a36b3456c8c481919e790c9745a5814b51c3c6b150063d81147260",
+      "metadata_sha256": "ec7d4dc302da3d852bdbf415cfeac0f3a2ad5469dfede8482e3a3e285c2df74c",
       "programs": [
         {
           "code_sha256": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
@@ -55,9 +55,9 @@
     },
     {
       "file": "lecture-04-training-at-gpu-scale.html",
-      "html_sha256": "3c7e768a9336a8296ab3c396d5be66dfc2481193e52ab7ecfed043acd8b7a198",
+      "html_sha256": "bbd7a02406a7f248a298dcba2f0c9b44819b16843c220310008bc0165498f00c",
       "authored_body_sha256": "f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066",
-      "metadata_sha256": "f3ac305807b2b01eb49ab9d8e08c0f5526dd8b37c9666c04af011d0552c55e0f",
+      "metadata_sha256": "50196793dc4ff2bf41b42519a46184c6d833c4921310bb05de5097edc2c5b871",
       "programs": [
         {
           "code_sha256": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
@@ -70,16 +70,80 @@
       "solutions": 6
     },
     {
+      "file": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+      "html_sha256": "f7ca2746235dc17665fef8f7ad33b39acfc217df27669a51869373ef62b1eebf",
+      "authored_body_sha256": "0df596f805e619d9ab5c88cb9088fb81010fdf48c48d3a75bfef1590c26bdf44",
+      "metadata_sha256": "9566b6a9e510247c5f978a910606091665ea7926a8a63e86fa6fd80975f5edbe",
+      "programs": [
+        {
+          "code_sha256": "6b8b59753ffd9294ea85bc872a87111fd6a60c923c46f222c2f824f172b6c1a1",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "expected source epochs: [0.75, 3.0, 1.0]\ncurriculum endpoints: 0.500000 / 0.375000\nlog-gain rewards: [1.098612, 0.0, -0.693147]\ncorrected advantages: [1.445186, -0.202733, -1.242453]\ncommon-baseline cancellation: passed\nexpected reward / marginal bound: 0.202733 / 0.559616\nsigned clipped objectives: 2.400000 / -1.600000\ninput / generated / training-equivalent tokens: 10000 / 8000 / 10666.666667\nAll finite mathematical checks and 24 invalid-input checks passed.\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
       "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
-      "html_sha256": "b760ffc669c747b4b075c139e4d19d11d9c0968793fd539f08ffc5553944a3be",
+      "html_sha256": "f25787469e102d7ff821b91c35767783da26366e8ff42a82d946fa2897b1607b",
       "authored_body_sha256": "28dddb9244837d888447519eef04b1ab853b767578f9fb4e3750b1809c3345d6",
-      "metadata_sha256": "1fbfc80797340042ed4daa9444de4f8eab19bebf3c16b61a159db0fbaaa25182",
+      "metadata_sha256": "e9ff352feab56f103efeda5e77c1e0c7e1f31ab4e9c3dd54d7693ea79947b6b8",
       "programs": [
         {
           "code_sha256": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
           "status": "passed",
           "printed_output_matches": true,
           "stdout": "inverse explicit lookup: ['pump']\none-round deduction: True\nrestricted NLL: 0.693147 -> 0.000000 nats\nconditional evidence accuracy: 0.76\ncandidate coverage: 0.300 distinct; 0.271 replacement\nAll chapter 6 finite-fixture and input checks passed.\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
+      "file": "lecture-07-ai-agents-for-science-and-medicine.html",
+      "html_sha256": "9e55c6041975e57c4bd75f77174a61ace7d638cb94536fd4b07127bd460ebec6",
+      "authored_body_sha256": "9abc2ed39f5e6e18d87d23296d08af5a31cf79a6eb1fff27a33abf8be1511aa2",
+      "metadata_sha256": "bb2d19f9bb907ae2c1a7a3e436459f52e60d657ca4e2528ea1be8fe5d36780eb",
+      "programs": [
+        {
+          "code_sha256": "20169e7f0da35c5ab1cad850e096be1a422654c193e6b23dc364fdeffa3270ee",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "two Elo wins: 1230.530498, 1169.469502; second expectation 0.545922\n20 wins for stipulated false proposal: 1365.435144 > 1034.564856\none positive: 0.470588; two conditionally independent: 0.876712\nexperiment value: gross 0.400000; net 0.100000\n10 correlated reviews: variance ratio 0.820000; effective count 1.219512\n100 independent null tests: false-any 0.994079\nHill midpoint viability 0.600000; absolute half at 12.909944\nsame marker 50: per-cell 0.500000 or 1.000000\n14 extreme/endpoint assertions passed\n33 invalid-input checks passed\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
+      "file": "lecture-08-native-multimodal-intelligence.html",
+      "html_sha256": "40ee9d9d977417e886d132b5e0c9e070b8fadb48c93bdd929cb6c0dd292fb07c",
+      "authored_body_sha256": "0af6c23a34045a1cc032e32586da78bf5d12b216781af7c0748c5c70b61dae17",
+      "metadata_sha256": "e60b62dc111b4edcddc744ed8402bcb0a4aab184a814611998cada25f852373d",
+      "programs": [
+        {
+          "code_sha256": "b4cc81e740275bb6896d03a724bc08a2b543d4e715e1c819ca69d169ecabb492",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "patches: image=1024, video12=12288, padded17x17=4\none-head BF16 scores: image=4.500 MiB, video=312.500 MiB\nmask: image-local future allowed; future text/image blocked; prefix invariant\nquantization: opposite task labels collide at code indices [0, 0]; Bayes error=0.500\nprototype lookup: overflow and rounded-distance false ties avoided; true ties use first index\ntext-only target: CE=0.313262, image-feature gradient=-0.268941\nfrozen text: pure=2.000 unchanged; mixed=2.000->6.000; image attention mass=0.500\nGaussian denoising oracle: predicted noise=1.732051, irreducible MSE=0.250000\ntoy MoT: stored=1024 parameters, active projection/FFN=10240 MACs, global attention=6400 MACs\ninvalid inputs rejected: 19; all finite architecture checks passed\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
+      "file": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+      "html_sha256": "6efadf57fbd2a77c54ae2314f3af5e875893d811ac8b1cc2dfe8857352ef673f",
+      "authored_body_sha256": "bae9f43effc17f88c563b9be8e77ce619d895be7d426b2e19cde8464d172199c",
+      "metadata_sha256": "1bfe2aec3daf2e5ec6c69614bc39a2f5ba7e0b03746027278a1d9097fb8692dd",
+      "programs": [
+        {
+          "code_sha256": "bdc724cb7a6da390cee898dd27eaec0653273873a292b22ce5b70abec78e16e5",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "Trace TTFT/TPOT/TTLT: 0.400000 0.166667 0.900000\nTrace p50/p95 gap: 0.020000000000000018 0.46\nFCFS smooth/burst response means: 0.750000 1.875000\nM/M/1 means at loads .5/.9/.99: 0.500000 2.500000 25.000000\nKV exact/paged bytes: 6291456 8388608\nKV fourfold query-head substitution error: 4.0\nRoofline decode/prefill seconds: 0.008000 0.080000\nWeight-only halving, original weight fraction .6: 1.428571\nSpeculative accepted/rejection/residual: (0.2, 0.3, 0.1) 0.400000 (1.0, 0.0, 0.0)\nSpeculative corrected output: (0.6, 0.3, 0.1)\nBlock k=4, draft cost .1, acceptance 0: 0.714286\nBlock k=4, draft cost .1, acceptance 0.5: 1.383929\nBlock k=4, draft cost .1, acceptance 0.8: 2.401143\nBlock k=4, draft cost .1, acceptance 1: 3.571429\nBoundary cases and 18 invalid-input cases passed.\n"
         }
       ],
       "exercises": 6,
@@ -135,10 +199,10 @@
   ],
   "static": {
     "status": "passed",
-    "html_files": 10,
-    "local_links_checked": 125,
-    "timestamps_checked": 101,
-    "chapter_pages_with_dollar_math": 5,
+    "html_files": 14,
+    "local_links_checked": 242,
+    "timestamps_checked": 181,
+    "chapter_pages_with_dollar_math": 9,
     "failures": [],
     "warnings": []
   },
@@ -237,6 +301,24 @@
       },
       {
         "mathErrors": 0,
+        "mathNodes": 367,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 367,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
         "mathNodes": 234,
         "horizontalOverflow": false,
         "controls": true,
@@ -251,6 +333,60 @@
         "controls": true,
         "emptyToc": false,
         "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 147,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-07-ai-agents-for-science-and-medicine.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 147,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-07-ai-agents-for-science-and-medicine.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 271,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-08-native-multimodal-intelligence.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 271,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-08-native-multimodal-intelligence.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 197,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-09-serving-transformers-lessons-from-production-inference.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 197,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-09-serving-transformers-lessons-from-production-inference.html",
         "viewport": 390
       },
       {
@@ -273,7 +409,7 @@
       },
       {
         "mathErrors": 0,
-        "mathNodes": 0,
+        "mathNodes": 2,
         "horizontalOverflow": false,
         "controls": true,
         "emptyToc": false,
@@ -282,7 +418,7 @@
       },
       {
         "mathErrors": 0,
-        "mathNodes": 0,
+        "mathNodes": 2,
         "horizontalOverflow": false,
         "controls": true,
         "emptyToc": false,
@@ -316,47 +452,60 @@
     "status": "passed",
     "js_python_parity_cases": 24,
     "native_controls_and_invalid_input": "passed",
-    "code_sha256": "8a41261967eb66e76513362e3b821e4a16fae47de027174381a8835c7e0ebdea",
-    "stdout": "Chapter 1:\ncausal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\nChapter 2:\nslot updates: 4.000000 8.000000\nmasked slot 0: 1.000000 0.600000 0.700000 0.800000\nfuture slot 1: 5.300000\nrisk with/without X: 2.500000 2.500000\ncollapsed prediction loss: 0.000000\ncollapsed CF discrepancy: 0.154818\ntwo-point CF discrepancy: 0.004386\nbounded actions: a=1.000000 a=1.000000\nterminal state/cost: 2.000000 1.500000\nchecks: passed\nChapter 3:\nserial / scan / unrolled states: [2.0, 2.0, 7.0, 4.5]\nconstant-input coefficients: 0.5 0.25\nselected positions: [0, 2] ; expanded: [2.0, 2.0, 5.0, 5.0]\nequal byte-normalized losses: 1.000000 bits/byte\noff-diagonal ratio loss: 0.960000\nUTF-8 bytes for one code point: 2\nfinite recall requirement: 520 bits > 512 state bits\nAll recurrence, causality and 18 input checks passed.\nChapter 4:\ncollective adjoint inner products: 100.0 = 100.0\nAG then RS: [[2.0, 4.0], [6.0, 8.0]]; not identity\nglobal mean: weighted=5.0, mean-of-means=4.0\ncolumn TP output=[[19.0, 22.0], [43.0, 50.0]]; dX=[[11.0, 15.0], [11.0, 15.0]]; dW=[[4.0, 4.0], [6.0, 6.0]]\nsequence-local gamma gradients=[[2, -3], [-5, 7]]; sum=[-3.0, 4.0]\nonline attention=3.060390192; flat/reversed agree\n7B model state GB at R=8: 112.00, 38.50, 26.25, 14.00\nAFAB p=4 m=8: makespan=22, utilization=0.727273\nexpert loads=[4, 2, 1, 1]; max/mean=2.0\ninvalid-input contracts: 25 rejected\nChapter 6:\ninverse explicit lookup: ['pump']\none-round deduction: True\nrestricted NLL: 0.693147 -> 0.000000 nats\nconditional evidence accuracy: 0.76\ncandidate coverage: 0.300 distinct; 0.271 replacement\nAll chapter 6 finite-fixture and input checks passed.\nAll 5 reviewed chapter programs passed their finite checks.\n"
+    "code_sha256": "5386782cdb8cbab88da68958f4415e05d7d6e606d60554cf8325d2d88c39a5f1",
+    "stdout": "Chapter 1:\ncausal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\nChapter 2:\nslot updates: 4.000000 8.000000\nmasked slot 0: 1.000000 0.600000 0.700000 0.800000\nfuture slot 1: 5.300000\nrisk with/without X: 2.500000 2.500000\ncollapsed prediction loss: 0.000000\ncollapsed CF discrepancy: 0.154818\ntwo-point CF discrepancy: 0.004386\nbounded actions: a=1.000000 a=1.000000\nterminal state/cost: 2.000000 1.500000\nchecks: passed\nChapter 3:\nserial / scan / unrolled states: [2.0, 2.0, 7.0, 4.5]\nconstant-input coefficients: 0.5 0.25\nselected positions: [0, 2] ; expanded: [2.0, 2.0, 5.0, 5.0]\nequal byte-normalized losses: 1.000000 bits/byte\noff-diagonal ratio loss: 0.960000\nUTF-8 bytes for one code point: 2\nfinite recall requirement: 520 bits > 512 state bits\nAll recurrence, causality and 18 input checks passed.\nChapter 4:\ncollective adjoint inner products: 100.0 = 100.0\nAG then RS: [[2.0, 4.0], [6.0, 8.0]]; not identity\nglobal mean: weighted=5.0, mean-of-means=4.0\ncolumn TP output=[[19.0, 22.0], [43.0, 50.0]]; dX=[[11.0, 15.0], [11.0, 15.0]]; dW=[[4.0, 4.0], [6.0, 6.0]]\nsequence-local gamma gradients=[[2, -3], [-5, 7]]; sum=[-3.0, 4.0]\nonline attention=3.060390192; flat/reversed agree\n7B model state GB at R=8: 112.00, 38.50, 26.25, 14.00\nAFAB p=4 m=8: makespan=22, utilization=0.727273\nexpert loads=[4, 2, 1, 1]; max/mean=2.0\ninvalid-input contracts: 25 rejected\nChapter 5:\nexpected source epochs: [0.75, 3.0, 1.0]\ncurriculum endpoints: 0.500000 / 0.375000\nlog-gain rewards: [1.098612, 0.0, -0.693147]\ncorrected advantages: [1.445186, -0.202733, -1.242453]\ncommon-baseline cancellation: passed\nexpected reward / marginal bound: 0.202733 / 0.559616\nsigned clipped objectives: 2.400000 / -1.600000\ninput / generated / training-equivalent tokens: 10000 / 8000 / 10666.666667\nAll finite mathematical checks and 24 invalid-input checks passed.\nChapter 6:\ninverse explicit lookup: ['pump']\none-round deduction: True\nrestricted NLL: 0.693147 -> 0.000000 nats\nconditional evidence accuracy: 0.76\ncandidate coverage: 0.300 distinct; 0.271 replacement\nAll chapter 6 finite-fixture and input checks passed.\nChapter 7:\ntwo Elo wins: 1230.530498, 1169.469502; second expectation 0.545922\n20 wins for stipulated false proposal: 1365.435144 > 1034.564856\none positive: 0.470588; two conditionally independent: 0.876712\nexperiment value: gross 0.400000; net 0.100000\n10 correlated reviews: variance ratio 0.820000; effective count 1.219512\n100 independent null tests: false-any 0.994079\nHill midpoint viability 0.600000; absolute half at 12.909944\nsame marker 50: per-cell 0.500000 or 1.000000\n14 extreme/endpoint assertions passed\n33 invalid-input checks passed\nChapter 8:\npatches: image=1024, video12=12288, padded17x17=4\none-head BF16 scores: image=4.500 MiB, video=312.500 MiB\nmask: image-local future allowed; future text/image blocked; prefix invariant\nquantization: opposite task labels collide at code indices [0, 0]; Bayes error=0.500\nprototype lookup: overflow and rounded-distance false ties avoided; true ties use first index\ntext-only target: CE=0.313262, image-feature gradient=-0.268941\nfrozen text: pure=2.000 unchanged; mixed=2.000->6.000; image attention mass=0.500\nGaussian denoising oracle: predicted noise=1.732051, irreducible MSE=0.250000\ntoy MoT: stored=1024 parameters, active projection/FFN=10240 MACs, global attention=6400 MACs\ninvalid inputs rejected: 19; all finite architecture checks passed\nChapter 9:\nTrace TTFT/TPOT/TTLT: 0.400000 0.166667 0.900000\nTrace p50/p95 gap: 0.020000000000000018 0.46\nFCFS smooth/burst response means: 0.750000 1.875000\nM/M/1 means at loads .5/.9/.99: 0.500000 2.500000 25.000000\nKV exact/paged bytes: 6291456 8388608\nKV fourfold query-head substitution error: 4.0\nRoofline decode/prefill seconds: 0.008000 0.080000\nWeight-only halving, original weight fraction .6: 1.428571\nSpeculative accepted/rejection/residual: (0.2, 0.3, 0.1) 0.400000 (1.0, 0.0, 0.0)\nSpeculative corrected output: (0.6, 0.3, 0.1)\nBlock k=4, draft cost .1, acceptance 0: 0.714286\nBlock k=4, draft cost .1, acceptance 0.5: 1.383929\nBlock k=4, draft cost .1, acceptance 0.8: 2.401143\nBlock k=4, draft cost .1, acceptance 1: 3.571429\nBoundary cases and 18 invalid-input cases passed.\nAll 9 reviewed chapter programs passed their finite checks.\n"
   },
   "privacy": {
     "status": "passed",
-    "files_checked": 35
+    "files_checked": 48
   },
   "artifacts_sha256": {
-    "chapter02.py": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
-    "chapter03.py": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
-    "chapter04.py": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
-    "chapter06.py": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
-    "lecture-02-representation-learning-and-world-modeling.html": "e0768338ae46661d12c81218b5f04d1f96451b3851469cf3397e908096b32899",
-    "lecture-02-representation-learning-and-world-modeling.meta.json": "3710d2ed4e3c1c8f0bee2b36fd95d6cb6d2e3f171116006158d66469ea6209cc",
-    "lecture-03-state-space-models-and-transformers.html": "3dde530d1a7be1f67ecbb4306c7b0d7cac6a63138b8a1f04816f5e79cbd259ef",
-    "lecture-03-state-space-models-and-transformers.meta.json": "2f5285f6d9a36b3456c8c481919e790c9745a5814b51c3c6b150063d81147260",
-    "lecture-04-training-at-gpu-scale.html": "3c7e768a9336a8296ab3c396d5be66dfc2481193e52ab7ecfed043acd8b7a198",
-    "lecture-04-training-at-gpu-scale.meta.json": "f3ac305807b2b01eb49ab9d8e08c0f5526dd8b37c9666c04af011d0552c55e0f",
-    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html": "b760ffc669c747b4b075c139e4d19d11d9c0968793fd539f08ffc5553944a3be",
-    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.meta.json": "1fbfc80797340042ed4daa9444de4f8eab19bebf3c16b61a159db0fbaaa25182",
+    "chapter05.py": "6b8b59753ffd9294ea85bc872a87111fd6a60c923c46f222c2f824f172b6c1a1",
+    "chapter07.py": "20169e7f0da35c5ab1cad850e096be1a422654c193e6b23dc364fdeffa3270ee",
+    "chapter08.py": "b4cc81e740275bb6896d03a724bc08a2b543d4e715e1c819ca69d169ecabb492",
+    "chapter09.py": "bdc724cb7a6da390cee898dd27eaec0653273873a292b22ce5b70abec78e16e5",
+    "editorial-summary.json": "5e111e77f0737fb9e602334b664554857ae6adcd635b77f8afcca6eefc7bd553",
+    "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html": "f7ca2746235dc17665fef8f7ad33b39acfc217df27669a51869373ef62b1eebf",
+    "lecture-05-from-next-token-prediction-to-next-generation-intelligence.meta.json": "9566b6a9e510247c5f978a910606091665ea7926a8a63e86fa6fd80975f5edbe",
+    "lecture-07-ai-agents-for-science-and-medicine.html": "9e55c6041975e57c4bd75f77174a61ace7d638cb94536fd4b07127bd460ebec6",
+    "lecture-07-ai-agents-for-science-and-medicine.meta.json": "bb2d19f9bb907ae2c1a7a3e436459f52e60d657ca4e2528ea1be8fe5d36780eb",
+    "lecture-08-native-multimodal-intelligence.html": "40ee9d9d977417e886d132b5e0c9e070b8fadb48c93bdd929cb6c0dd292fb07c",
+    "lecture-08-native-multimodal-intelligence.meta.json": "e60b62dc111b4edcddc744ed8402bcb0a4aab184a814611998cada25f852373d",
+    "lecture-09-serving-transformers-lessons-from-production-inference.html": "6efadf57fbd2a77c54ae2314f3af5e875893d811ac8b1cc2dfe8857352ef673f",
+    "lecture-09-serving-transformers-lessons-from-production-inference.meta.json": "1bfe2aec3daf2e5ec6c69614bc39a2f5ba7e0b03746027278a1d9097fb8692dd",
     ".gitattributes": "c3f9fe541cd8d6ca6ae2a5a0ec1e340681dd2208264c8dcaa107415cc7972f6e",
     ".gitignore": "dea959feab84d9e515447340b5668c754a40eb8ce3406a4fc3b4c24149cb1e5d",
-    "README.md": "b724355a59bd97c5718decedd70a91ae2ad463bfe4c32016aa50eca6d395761a",
+    "README.md": "e06adfe258e593e67f8cda16c049f648e220ca91829d153d735ee52e202ac12d",
     "assets/book.css": "3a626f4bac6ee017ff33edf20ee09cb6121fe94bfffe4b3b602f8cdff017d3de",
     "assets/book.js": "7a7c3ba2766e09ceae27bd5f960fa43c33289c647d800de4d1b3777533aaaad7",
     "assets/lab.js": "fd913ee2019f35da5a8900fbfb8c642299ea6ec7f38646e9f8ea3278f44fa543",
     "assets/mathjax-LICENSE": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
     "assets/mathjax-tex-svg.js": "d4295dc33744836935c1399feece5159577b34c5c8ffb9f1c6324cd82e03a882",
-    "assets/preview-mobile.png": "f11d4fbabf2d1200cd5dd1e3dd86f136ee91faa3ea93a323988d13d6ec09c13b",
-    "assets/preview.png": "605e7064eabb847252007b7d95218a8aca4436f49b26f80112af75d01c1aa73e",
-    "book-overview.html": "2d47a1e4710b1ebc10a3b1577875e0785995d0c44adf5e61ab6bd3f634a8a380",
+    "assets/preview-mobile.png": "c62a3b84a7c5e04883ea3dd077d5434eed9a721324660dbd07acb845c0b530e4",
+    "assets/preview.png": "0121e29e3d0117124a45d4f5120ef60f996fe4b66d2b4fbd91f1a3396daa43ce",
+    "book-overview.html": "b49063fb260eb2417bf978c7af6b47fd4c5a92f0c5646b58bab3690f03db55b3",
     "chapter01.py": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
-    "index.html": "b35b9e089bc00ed5934d305ea0ecf11ceb3b0df913aa023500b44be3b04df32c",
+    "chapter02.py": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
+    "chapter03.py": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
+    "chapter04.py": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
+    "chapter06.py": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
+    "index.html": "569d0b469a37229bc9cc230871ebe6116d73b7a863042e5d9a1cd595ef1dd81c",
     "lecture-01-overview-of-transformers.html": "df00dae6be07a4ab37ebb8088637aaab263a7c80cf7c3c1a5aefb9e1b75f0aee",
-    "lecture-01-overview-of-transformers.meta.json": "8b6a7d93d8a812535d8237c1974464201115619ed660f9923a10aa8ccd6e6ac4",
-    "numerical-lab.html": "52ca0ae025e67a93f9502129ee869fb3fe6fe1c66f67e4356d8358ed62db8b08",
-    "numerical_lab.py": "8a41261967eb66e76513362e3b821e4a16fae47de027174381a8835c7e0ebdea",
-    "references.html": "3eafc65c599aaa3f489b20fb0ec56b539510f3e9187ef5836d9ed41b97ab16a7",
-    "source-manifest.json": "aa93fb8440971753cbcd243fcf2467796270a91c7126956a49cc2b58605e53c1",
-    "source-map.html": "505829017b3b97f3f59f749248eeecb91bdab184bc282416bb3cfb343747f0dd",
-    "source-map.json": "b8e0612de7da333ec941bc269725e1c27f40f804433c7a3dca8a2f69cd1afb97"
+    "lecture-01-overview-of-transformers.meta.json": "72d511ffb39ed91b2f46a71ae5a66a34d5a35492bd96e32833292164c631ea1c",
+    "lecture-02-representation-learning-and-world-modeling.html": "e0768338ae46661d12c81218b5f04d1f96451b3851469cf3397e908096b32899",
+    "lecture-02-representation-learning-and-world-modeling.meta.json": "c42146e7e9132fcb7deaa70ed56eee0dcc1348443c2c3d361a023f98823079ef",
+    "lecture-03-state-space-models-and-transformers.html": "3dde530d1a7be1f67ecbb4306c7b0d7cac6a63138b8a1f04816f5e79cbd259ef",
+    "lecture-03-state-space-models-and-transformers.meta.json": "ec7d4dc302da3d852bdbf415cfeac0f3a2ad5469dfede8482e3a3e285c2df74c",
+    "lecture-04-training-at-gpu-scale.html": "bbd7a02406a7f248a298dcba2f0c9b44819b16843c220310008bc0165498f00c",
+    "lecture-04-training-at-gpu-scale.meta.json": "50196793dc4ff2bf41b42519a46184c6d833c4921310bb05de5097edc2c5b871",
+    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html": "f25787469e102d7ff821b91c35767783da26366e8ff42a82d946fa2897b1607b",
+    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.meta.json": "e9ff352feab56f103efeda5e77c1e0c7e1f31ab4e9c3dd54d7693ea79947b6b8",
+    "numerical-lab.html": "45757965d763f501d4a3c968bfb9c5f843f845c06f15e6a2e4bff9aa257ae18f",
+    "numerical_lab.py": "5386782cdb8cbab88da68958f4415e05d7d6e606d60554cf8325d2d88c39a5f1",
+    "references.html": "be230da237a9f8d9cd50f21d20990dbca23a9ed1ca1c1e61a6d0df39f9ce9cdb",
+    "source-manifest.json": "2d6b341047e021c29781422f535a7aff39f66f8f22e3bd97f193b575a1569683",
+    "source-map.html": "92df5c57d01e2114ce8880d90f8a0f309daefd058596689a94b65fdee35817c6",
+    "source-map.json": "829c13cc3134f3a026900094b223b582f72533264b8c6cf8387060754086da3f"
   },
   "human_screen_reader_audit": "not performed",
   "publication": "not published",

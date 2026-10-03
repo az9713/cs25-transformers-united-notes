@@ -1,0 +1,1361 @@
+{
+  "video_id": "e_H_tkpCAK4",
+  "title": "From Next-Token Prediction to Next-Generation Intelligence",
+  "chapter_order": 5,
+  "recording_lecture_number": 5,
+  "recording_title": "Stanford CS25: Transformers United V6 I From Next-Token Prediction to Next-Generation Intelligence",
+  "speaker": "Shrimai Prabhumoye",
+  "date": "2026-04-30",
+  "date_boundary": "Official CS25 Spring2026 schedule; lecture title adds The Future of Pretraining.",
+  "status": "Independently reviewed local reading chapter; course certification remains separate",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "audio_sha256": "e1be7a407856d9640ad8dc13936a4b7ac08fb01c4c8e3f3b60257d5d8b71526f",
+  "audio_duration_seconds": 3476.281,
+  "transcription_audio_duration_seconds": 3476.271,
+  "playlist_duration_seconds": 3477,
+  "transcript_sha256": "7c8d598cdb3205cbfa39f2b4234d803e77d758dc7c719dff8114b8b991feadd1",
+  "transcript_text_sha256": "2aac786679a25a45755e2c4535a29abfa56e92c0066e1804dbebcffe480c2289",
+  "transcript_segment_count": 140,
+  "transcript_first_start_seconds": 4.66,
+  "transcript_last_end_seconds": 3468.5,
+  "slides": {
+    "lecture": 5,
+    "status": "unavailable",
+    "reason": "Official link duplicates lecture 4 slide file; not accepted as lecture 5 source"
+  },
+  "sections": [
+    {
+      "section": "case",
+      "title": "A scientific assistant with a fixed learning budget",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Scientific continuation case; exposure and computation ledgers; prerequisites.",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Scientific continuation case; exposure and computation ledgers; prerequisites.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    },
+    {
+      "section": "recipe",
+      "title": "1. Four levers in a training recipe",
+      "start": 76.66,
+      "end": 210.03,
+      "segments": [
+        3,
+        7
+      ],
+      "lecture_material": "Data, architecture, algorithms and collaboration; named projects and distinction among pretraining/CPT/SFT/RL.",
+      "teaching_construction": "Token/LLM and training-operation first-use definitions; model objective boundary.",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Data, architecture, algorithms and collaboration; named projects and distinction among pretraining/CPT/SFT/RL.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Token/LLM and training-operation first-use definitions; model objective boundary.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    },
+    {
+      "section": "learners",
+      "title": "2. Four learners, three interventions",
+      "start": 210.03,
+      "end": 394.06,
+      "segments": [
+        8,
+        14
+      ],
+      "lecture_material": "Pascal/Volta/Ampere/Hopper learning-strategy analogy.",
+      "teaching_construction": "Separate interventions and consequential experimental comparisons.",
+      "research_extension": null,
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Pascal/Volta/Ampere/Hopper learning-strategy analogy.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Separate interventions and consequential experimental comparisons.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    },
+    {
+      "section": "stock",
+      "title": "3. A finite stock is a motivation, not a deadline",
+      "start": 394.06,
+      "end": 461.65,
+      "segments": [
+        15,
+        17
+      ],
+      "lecture_material": "Human-text resource constraint and reported exhaustion forecast.",
+      "teaching_construction": "Unique stock versus effective stock versus processed tokens; fixed local budget.",
+      "research_extension": "Historical Epoch public-human-text forecast is conditional; exact lecture95% wording not independently established.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Human-text resource constraint and reported exhaustion forecast.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Unique stock versus effective stock versus processed tokens; fixed local budget.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Historical Epoch public-human-text forecast is conditional; exact lecture95% wording not independently established.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "blend",
+      "title": "4. Source weights and repeated exposure",
+      "start": 463.22,
+      "end": 571.44,
+      "segments": [
+        18,
+        22
+      ],
+      "lecture_material": "Quality classifiers, epoch analysis and source blending.",
+      "teaching_construction": "Expected epoch identity, source/sampling domains and(.75,3,1) fixture.",
+      "research_extension": "Two-Phase quality/epoch blend construction is empirical recipe selection.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Quality classifiers, epoch analysis and source blending.",
+          "origin": "Recording"
+        },
+        {
+          "class": "theorem",
+          "claim": "Expected epoch identity under the specified token mixture and source sizes.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Expected epochs(.75,3,1), natural weights(.8,.1,.1) and repeat/budget arithmetic.",
+          "origin": "Original fixture"
+        },
+        {
+          "class": "definition",
+          "claim": "Two-Phase quality/epoch blend construction is tested recipe selection.",
+          "origin": "Pinned Two-Phase v1"
+        }
+      ]
+    },
+    {
+      "section": "curriculum",
+      "title": "5. Two phases can preserve the total mixture",
+      "start": 571.44,
+      "end": 710.83,
+      "segments": [
+        23,
+        28
+      ],
+      "lecture_material": "Diversity early, selected quality late; random-order and natural-distribution comparisons.",
+      "teaching_construction": "Two-phase conservation identity and same-exposure numerical case.",
+      "research_extension": "Two-Phase baseline and curated-diversity conventions.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Diversity early/selected quality late and baseline comparison conventions.",
+          "origin": "Recording and pinned Two-Phase v1"
+        },
+        {
+          "class": "theorem",
+          "claim": "Two-phase aggregate weight and exposure conservation identity.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Phase exposures(480,60,60)+(120,240,40) preserve earlier aggregate.",
+          "origin": "Original fixture"
+        }
+      ]
+    },
+    {
+      "section": "order-proof",
+      "title": "6. Why identical data can lead to different endpoints",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Exact finite scalar order difference and same strongly convex minimizer limit;0.5/0.375check.",
+      "research_extension": null,
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Two equal-rate scalar updates differ by eta-squared times target difference; shared strongly convex optimum is(a+b)/2.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Endpoints.5/.375 and difference.125 for supplied targets/rate/state.",
+          "origin": "Original fixture"
+        }
+      ]
+    },
+    {
+      "section": "two-phase-results",
+      "title": "7. Isolating selection from order in the reported results",
+      "start": 711.09,
+      "end": 761.84,
+      "segments": [
+        29,
+        30
+      ],
+      "lecture_material": "Reported17% total and3.4% order gains; repeat/phase-duration discussion.",
+      "teaching_construction": "Percentage points versus relative change;7.69/1.74-point calculations and horizon implications.",
+      "research_extension": "Two-Phase Table4 and epoch/phase-duration reported outcomes; overall aggregates individual tasks.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Reported17% total and3.4% order gains; repeat/phase-duration discussion.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Percentage points versus relative change;7.69/1.74-point calculations and horizon implications.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Two-Phase Table4 and epoch/phase-duration reported outcomes; overall aggregates individual tasks.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "early-reasoning",
+      "title": "8. Introduce reasoning examples before SFT?",
+      "start": 762.64,
+      "end": 917.14,
+      "segments": [
+        31,
+        37
+      ],
+      "lecture_material": "SHQ/LDQ/LMQ and introducing reasoning traces before SFT.",
+      "teaching_construction": "Training-operation composition and confounding boundaries.",
+      "research_extension": "Front-Loading8B/1T/80:20 setup, corpus composition and stage protocols.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "SHQ/LDQ/LMQ, reasoning traces and early exposure proposal.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Front-Loading8B/1T/80:20 protocols, corpus composition, model operations and confounded experimental labels.",
+          "origin": "Pinned Front-Loading v1 and original teaching"
+        }
+      ]
+    },
+    {
+      "section": "evaluation",
+      "title": "9. Measure the advantage within each training stage",
+      "start": 918.9,
+      "end": 1045.22,
+      "segments": [
+        38,
+        42
+      ],
+      "lecture_material": "Base and SFT comparisons, general reasoning/math/code evaluations.",
+      "teaching_construction": "Within-stage8.35/9.30-point arithmetic; changed-suite inference limit;Pass@1 definition.",
+      "research_extension": "Front-Loading Tables1/2 reported aggregates and distinct evaluation protocols.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Base and SFT comparisons, general reasoning/math/code evaluations.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Within-stage8.35/9.30-point arithmetic; changed-suite inference limit;Pass@1 definition.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Front-Loading Tables1/2 reported aggregates and distinct evaluation protocols.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "latent",
+      "title": "10. A benefit can become visible after a later intervention",
+      "start": 1045.22,
+      "end": 1134.1,
+      "segments": [
+        43,
+        46
+      ],
+      "lecture_material": "Latent benefit of narrow reasoning data after SFT.",
+      "teaching_construction": "Aggregate equality does not imply functional identity or reveal mechanism;4.25-point arithmetic.",
+      "research_extension": "Front-Loading Tables1/4 LDQ/LMQ scores.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Latent benefit of narrow reasoning data after SFT.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Aggregate equality does not imply functional identity or reveal mechanism;4.25-point arithmetic.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Front-Loading Tables1/4 LDQ/LMQ scores.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "catchup",
+      "title": "11. What the catch-up and RL comparisons establish",
+      "start": 1134.1,
+      "end": 1340.43,
+      "segments": [
+        47,
+        54
+      ],
+      "lecture_material": "SFT catch-up attempt, fixed-data-budget assertion and RL comparison.",
+      "teaching_construction": "Bounded catch-up conclusion; table-local metric arithmetic and conflict audit.",
+      "research_extension": "Front-Loading Tables3/4 and appendix aggregate discrepancies; unsupported12% and39.32number retained as attributed.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "SFT catch-up attempt, fixed-data-budget assertion and RL comparison.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Bounded catch-up conclusion; table-local metric arithmetic and conflict audit.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Front-Loading Tables3/4 and appendix aggregate discrepancies; unsupported12% and39.32number retained as attributed.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "quality",
+      "title": "12. Quality labels, long traces and domain limits",
+      "start": 1340.66,
+      "end": 1505.26,
+      "segments": [
+        55,
+        61
+      ],
+      "lecture_material": "Q&A on reasoning traces, dataset quality, STEM/code/math and domain scope.",
+      "teaching_construction": "Separate length, step validity, teacher/domain and provenance axes.",
+      "research_extension": "Front-Loading long-trace filter also changes domain composition.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Q&A on reasoning traces, dataset quality, STEM/code/math and domain scope.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Separate length, step validity, teacher/domain and provenance axes.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Front-Loading long-trace filter also changes domain composition.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "recipe-search",
+      "title": "13. Recipe search spends a second budget",
+      "start": 1505.3,
+      "end": 1673.42,
+      "segments": [
+        62,
+        67
+      ],
+      "lecture_material": "Epoch ablations/manual blend decisions and reported reverse-order failure.",
+      "teaching_construction": "Development-compute ledger, validation selection and reverse-ablation attribution limit.",
+      "research_extension": null,
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Epoch ablations/manual blend decisions and reported reverse-order failure.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Development-compute ledger, validation selection and reverse-ablation attribution limit.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    },
+    {
+      "section": "active-learning",
+      "title": "14. Generated thoughts change the training interaction",
+      "start": 1674.16,
+      "end": 1888.88,
+      "segments": [
+        68,
+        77
+      ],
+      "lecture_material": "Leo/Bolt analogy and reward-guided intermediate exploration.",
+      "teaching_construction": "NTP continuous-loss definition and sampled-action distinction.",
+      "research_extension": null,
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Leo/Bolt analogy and reward-guided intermediate exploration.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "NTP continuous-loss definition and sampled-action distinction.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    },
+    {
+      "section": "causal-thought",
+      "title": "15. Separate the prefix, the thought and the held-out token",
+      "start": 1890.13,
+      "end": 1998.86,
+      "segments": [
+        78,
+        81
+      ],
+      "lecture_material": "Photosynthesis example, prefix/thought/observed next-token interaction.",
+      "teaching_construction": "Original Joule-heating case; vocabulary/policy/scorer roles and fixed-state conditional-independence boundary.",
+      "research_extension": "RLP §§2.1–2.2/Algorithm1 causal generation followed by observed-token scoring.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Photosynthesis example, prefix/thought/observed next-token interaction.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Original Joule-heating case; vocabulary/policy/scorer roles and fixed-state conditional-independence boundary.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP §§2.1–2.2/Algorithm1 causal generation followed by observed-token scoring.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "reward",
+      "title": "16. A log-evidence reward and its numerical meaning",
+      "start": 2000.53,
+      "end": 2149.55,
+      "segments": [
+        82,
+        87
+      ],
+      "lecture_material": "Continuous likelihood improvement versus no-think comparator.",
+      "teaching_construction": "Positive-log-gain iff higher observed probability; three-probability reward fixture; truth/MI distinction.",
+      "research_extension": "RLP observed-token log-likelihood-ratio reward.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Observed-token log-likelihood ratio versus no-think comparator.",
+          "origin": "Recording and pinned RLP v2"
+        },
+        {
+          "class": "theorem",
+          "claim": "Strictly positive log reward iff higher observed-token probability.",
+          "origin": "Original elementary proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Three-probability log3/0/minuslog2 fixture.",
+          "origin": "Original fixture"
+        },
+        {
+          "class": "definition",
+          "claim": "Observed likelihood is distinct from logical validity and true mutual information.",
+          "origin": "Original scope"
+        }
+      ]
+    },
+    {
+      "section": "ce-proof",
+      "title": "17. Expected reward equals a cross-entropy difference",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "CE identity derivation and KL/Bayes ceiling under fixed-state prefix-only sampling; binary expected-reward check.",
+      "research_extension": "RLP Proposition1 and proof: expected reward is a CE difference.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "CE difference, KL/Bayes expected-loss ceiling and zero true conditional MI under fixed-model prefix-only thought sampling.",
+          "origin": "Original derivation; CE identity also pinned RLP Proposition1"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Binary expected gain.130812nats and negative second-token sample.",
+          "origin": "Original fixture"
+        }
+      ]
+    },
+    {
+      "section": "marginal-proof",
+      "title": "18. Sampled thoughts and the marginalized predictor",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Finite-thought Jensen proof, equality conditions and0.202733/0.559616check; no monotonic optimizer guarantee.",
+      "research_extension": "RLP Proposition2 and appendix8.3 marginalized-predictor relation.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Finite positive-support marginalized predictor/Jensen inequality and equality condition.",
+          "origin": "Original derivation; pinned RLP Proposition2"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Expected sampled reward.202733 and marginal gain.559616.",
+          "origin": "Original fixture"
+        },
+        {
+          "class": "definition",
+          "claim": "More general expectations need integrability; bound alone supplies no monotonic optimizer guarantee.",
+          "origin": "Original mathematical scope"
+        }
+      ]
+    },
+    {
+      "section": "ema",
+      "title": "19. A moving no-think comparator",
+      "start": 2149.55,
+      "end": 2187.49,
+      "segments": [
+        88,
+        89
+      ],
+      "lecture_material": "EMA comparator and proposed reward-hacking/stability motivation.",
+      "teaching_construction": "Parameter-space versus probability-space average;2.002 and693-step numerical checks.",
+      "research_extension": "RLP EMA parameter update, initialization and decay.999.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "EMA comparator and proposed reward-hacking/stability motivation.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Parameter-space versus probability-space average;2.002 and693-step numerical checks.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP EMA parameter update, initialization and decay.999.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "policy-hinge",
+      "title": "20. Which gradient is actually applied?",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Fixed-scorer score-function derivation, zero expected score and full-shared-objective versus semigradient distinction.",
+      "research_extension": "RLP §2.4/Algorithm1 detached reward, gradients on thought tokens, no standard NTP term.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Fixed-scorer score-function derivation, zero expected score and full-shared-objective versus semigradient distinction.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP §2.4/Algorithm1 detached reward, gradients on thought tokens, no standard NTP term.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "group-proof",
+      "title": "21. Inclusive group centering and its correction",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Iid frozen on-policy correction proof and explicit limits; harmful-positive and all-equal examples.",
+      "research_extension": "RLP equation7 G/(G-1)-corrected inclusive mean advantage.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Corrected inclusive group mean formula and relative-advantage meaning.",
+          "origin": "Pinned RLP equation7 and original teaching"
+        },
+        {
+          "class": "theorem",
+          "claim": "Correction removes shrinkage for iid on-policy frozen-reward unnormalized sequence estimator; other modifications outside proof.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Three-reward advantage vector, harmful-positive and all-equal examples.",
+          "origin": "Original fixtures"
+        }
+      ]
+    },
+    {
+      "section": "baseline-cancellation",
+      "title": "22. The common EMA term cancels",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Common-baseline cancellation through corrected advantages and detached clipping; empirical-mechanism nonidentification.",
+      "research_extension": "RLP equation7 baseline term and TableS6 reported EMA outcomes remain unresolved mechanistically.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Common-baseline cancellation through corrected advantages and detached clipping; empirical-mechanism nonidentification.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP equation7 baseline term and TableS6 reported EMA outcomes remain unresolved mechanistically.",
+          "origin": "Pinned primary research"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Source-algorithm audit finds common baseline cancels; TableS6 supplies no checked reconciliation.",
+          "origin": "Original proof/source audit"
+        }
+      ]
+    },
+    {
+      "section": "clipping",
+      "title": "23. Per-token clipping is a surrogate objective",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Signed2.4/−1.6 scalar checks and hard-trust-region/unbiasedness limits.",
+      "research_extension": "RLP equation8 token importance ratios, signed minimum and per-thought length mean.",
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Signed2.4/−1.6 scalar checks and hard-trust-region/unbiasedness limits.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP equation8 token importance ratios, signed minimum and per-thought length mean.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "qwen",
+      "title": "24. The Qwen experiment and post-training persistence",
+      "start": 2187.49,
+      "end": 2322.45,
+      "segments": [
+        90,
+        95
+      ],
+      "lecture_material": "Qwen RLP/CPT/base and post-training persistence comparisons.",
+      "teaching_construction": "Table-local5.71/5.18/3.17-point and18.83/16.79/8.06% calculations; absolute gap shrinks.",
+      "research_extension": "RLP Table1 Qwen3-1.7B setup and outcomes.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Qwen RLP/CPT/base and post-training persistence comparisons.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Table-local5.71/5.18/3.17-point and18.83/16.79/8.06% calculations; absolute gap shrinks.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table1 Qwen3-1.7B setup and outcomes.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "compute",
+      "title": "25. Input tokens, generated tokens, FLOPs and time",
+      "start": 2324.85,
+      "end": 2414.83,
+      "segments": [
+        96,
+        99
+      ],
+      "lecture_material": "Token-matched versus FLOP-matched comparisons and roughly35-fold input ratio.",
+      "teaching_construction": "Original partial dense compute ledger, exact counts, equivalent work and units/runtime distinction; comparison conflict audit.",
+      "research_extension": "RLP Table4 plus appendix22/25 FLOP accounting, mislabeled baseline and separate32K timing protocol.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Reported roughly35-fold input-token comparison.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "RLP input/FLOP accounting and separate32K SFT/RLP timing setup.",
+          "origin": "Pinned RLP v2 appendix22/25"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Table4 matched43.36/38.04 results and TableS7 measured5.54/12.47sec steps.",
+          "origin": "Pinned RLP v2"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original partial dense count ledger,35.29ratio,5.32-point/13.99%gain,2.25timing ratio and appendix mislabeled6B audit.",
+          "origin": "Original computation/source audit"
+        }
+      ]
+    },
+    {
+      "section": "nano",
+      "title": "26. A larger hybrid model and mixed outcomes",
+      "start": 2419.44,
+      "end": 2541.39,
+      "segments": [
+        100,
+        104
+      ],
+      "lecture_material": "Hybrid Nemotron-Nano experiment and persistence.",
+      "teaching_construction": "Observed-token199.75Bdifference,43.24% table arithmetic and retained task regressions.",
+      "research_extension": "RLP Table2 Nano12B checkpoint and pre/post-training outcomes;35%summary discrepancy.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Hybrid Nemotron-Nano experiment and persistence.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Observed-token199.75Bdifference,43.24% table arithmetic and retained task regressions.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table2 Nano12B checkpoint and pre/post-training outcomes;35%summary discrepancy.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "related",
+      "title": "27. Four ways to learn from intermediate reasoning",
+      "start": 2541.39,
+      "end": 2719.6,
+      "segments": [
+        105,
+        112
+      ],
+      "lecture_material": "Quiet-STaR/RPT/RLPT comparison and token-matched RLP result.",
+      "teaching_construction": "Prediction/verification/filter/causality distinctions and1.66-point arithmetic.",
+      "research_extension": "Pinned Quiet-STaR/RPT/RLPT mechanisms and RLP Table3 specific reproduction comparison.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Quiet-STaR/RPT/RLPT comparison and token-matched RLP result.",
+          "origin": "Recording"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Prediction/verification/filter/causality distinctions and1.66-point arithmetic.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Pinned Quiet-STaR/RPT/RLPT mechanisms and RLP Table3 specific reproduction comparison.",
+          "origin": "Pinned primary research"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table3 token-matched RPT/RLP41.69/43.35 comparison; original1.66-point/3.98%arithmetic separately graded engineering check.",
+          "origin": "Pinned RLP v2"
+        }
+      ]
+    },
+    {
+      "section": "synthesis-results",
+      "title": "28. Corpus robustness and the limits of a combined story",
+      "start": 2721.87,
+      "end": 2926.45,
+      "segments": [
+        113,
+        120
+      ],
+      "lecture_material": "Corpus results, learner synthesis and rough combined60% story.",
+      "teaching_construction": "Factorial-interaction requirement;7.24–9.17-point arithmetic and nonmonotonic hyperparameter interpretation.",
+      "research_extension": "RLP Table4 six corpus results and TableS1 sampled-recipe hyperparameters.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Learner synthesis and rough combined60%claim.",
+          "origin": "Recording"
+        },
+        {
+          "class": "empirical result",
+          "claim": "RLP Table4 six corpus results and TableS1 nonmonotonic rollout/length/regularization outcomes.",
+          "origin": "Pinned RLP v2"
+        },
+        {
+          "class": "definition",
+          "claim": "Chosen16rollouts/max2048/zeroKL recipe is an experimental convention.",
+          "origin": "Pinned RLP v2"
+        },
+        {
+          "class": "engineering check",
+          "claim": "7.24–9.17-point arithmetic and factorial/interactions needed for combined claim.",
+          "origin": "Original audit/design"
+        }
+      ]
+    },
+    {
+      "section": "grpo",
+      "title": "29. Group-relative optimization does not require binary rewards",
+      "start": 2929.17,
+      "end": 3020.85,
+      "segments": [
+        121,
+        123
+      ],
+      "lecture_material": "Group-relative method relationship and log-gain versus zero/one analogy.",
+      "teaching_construction": "Different normalizations and zero-standard-deviation boundary.",
+      "research_extension": "DeepSeekMath §§4.1.2–4.1.3 learned outcome/process rewards and original GRPO standard-deviation normalization.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Group-relative method relationship and log-gain versus zero/one analogy.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Different normalizations and zero-standard-deviation boundary.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "DeepSeekMath §§4.1.2–4.1.3 learned outcome/process rewards and original GRPO standard-deviation normalization.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "open-questions",
+      "title": "30. Multimodal, alignment and quality questions remain distinct",
+      "start": 3020.85,
+      "end": 3333.07,
+      "segments": [
+        124,
+        134
+      ],
+      "lecture_material": "Untested multimodal extension; alignment/hallucination expertise boundary; educational/domain-quality rubric discussion.",
+      "teaching_construction": "Quality target must fit scientific reader; no truth/alignment cure inferred.",
+      "research_extension": "FineWeb v1 educational rubric0–5 and school-content focus; EssentialWeb name recording-only.",
+      "evidence_class": "speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Untested multimodal extension; alignment/hallucination expertise boundary; educational/domain-quality rubric discussion.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Quality target must fit scientific reader; no truth/alignment cure inferred.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "FineWeb v1 educational rubric0–5 and school-content focus; EssentialWeb name recording-only.",
+          "origin": "Pinned primary research"
+        }
+      ]
+    },
+    {
+      "section": "sampling",
+      "title": "31. Eligible everywhere does not mean trained everywhere",
+      "start": 3335.44,
+      "end": 3468.5,
+      "segments": [
+        135,
+        139
+      ],
+      "lecture_material": "One uniform selected target per document, no entropy filter; unpublished4Tcheckpoint discussion.",
+      "teaching_construction": "Conditional document-uniform versus token-uniform expected reward identity;0.5/0.8fixture.",
+      "research_extension": "RLP §3 one-target-per-document protocol; no undocumented loader weighting claimed.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Uniformly selected single target per document; no entropy filter.",
+          "origin": "Recording and pinned RLP §3"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Additional4Tcheckpoint result is attributed unpublished report without retained table.",
+          "origin": "Recording"
+        },
+        {
+          "class": "theorem",
+          "claim": "Document-uniform versus token-uniform expected reward identities under stated sampling assumptions.",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Two-document0.5/0.8exposure-measure fixture; no actual loader weighting attestation.",
+          "origin": "Original fixture"
+        }
+      ]
+    },
+    {
+      "section": "program",
+      "title": "32. Executable: two ledgers and a frozen thought scorer",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Original finite stdlib program, explicit representability contract,24 invalid checks and exact output.",
+      "research_extension": null,
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Original finite stdlib program, explicit representability contract,24 invalid checks and exact output.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    },
+    {
+      "section": "exercises",
+      "title": "33. Exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Six mixed complete solutions: exposure constraint, optimization proof, CE/Jensen/MI, iid enumeration, signed clipping/compute and factorial audit.",
+      "research_extension": null,
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Exercise2 order identity/minimizer; Exercise3 CE/Jensen/MI/KL; Exercise4 iid corrected-estimator enumeration.",
+          "origin": "Original teaching"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Exercise1 exposure/cap arithmetic; Exercise5 signed surrogate and partial compute counts; Exercise6 factorial/metric/source-conflict audit.",
+          "origin": "Original teaching"
+        }
+      ]
+    },
+    {
+      "section": "takeaways",
+      "title": "34. What to carry into the next training decision",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "teaching_construction": "Original scientific-assistant synthesis and reproducible training-decision criteria.",
+      "research_extension": null,
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Original scientific-assistant synthesis and reproducible training-decision criteria.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    }
+  ],
+  "segment_index_base": 0,
+  "omitted_material": [
+    {
+      "segments": [
+        0,
+        2
+      ],
+      "start": 4.66,
+      "end": 76.66,
+      "reason": "Speaker introduction/career logistics; no substantive learning mechanism omitted."
+    },
+    {
+      "segments": null,
+      "reason": "Greetings/thanks inside retained intervals omitted; academic Q&A preserved."
+    }
+  ],
+  "coverage_check": {
+    "complete_sequential_read": true,
+    "mapped_substantive_segments": 137,
+    "explicitly_omitted_administrative_segments": 3,
+    "unique_partition_all_segments": true,
+    "original_sections_with_null_spans": [
+      "case",
+      "order-proof",
+      "ce-proof",
+      "marginal-proof",
+      "policy-hinge",
+      "group-proof",
+      "baseline-cancellation",
+      "clipping",
+      "program",
+      "exercises",
+      "takeaways"
+    ]
+  },
+  "primary_source_audit": [
+    {
+      "id": "2412.15285v1",
+      "url": "https://arxiv.org/pdf/2412.15285v1",
+      "sha256": "5c81e1e0818c0ee01e8cc276fd4581cbfd933da6ca6c5f9c110c20188c543866",
+      "claim_pages_read": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "supports": "PDF pp.1–8: quality/epoch blend design; same-blend ordering comparison; Table4 aggregate45.17/51.12/52.86; repeats, phase duration and scaled-horizon findings.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "2510.03264v1",
+      "url": "https://arxiv.org/pdf/2510.03264v1",
+      "sha256": "62537d806818024cf9e6dfb53c350e9d50b83e09cd1686b976033a5bd919d05a",
+      "claim_pages_read": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "supports": "PDF pp.1–15: SHQ/LDQ/LMQ source and trace confounds; 8B/1T/80:20 setup; Tables1–4 and appendix8–9; within-stage gains, catch-up and unresolved main/appendix/arithmetic conflicts.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "2510.01265v2",
+      "url": "https://arxiv.org/pdf/2510.01265v2",
+      "sha256": "b243938038f74dbf3f03a10aebdcc184ee2bc9ab29de341eef7da1dc050cb0e3",
+      "claim_pages_read": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        16,
+        17,
+        20,
+        21,
+        22,
+        24,
+        25,
+        26
+      ],
+      "supports": "PDF pp.1–10,16–17,20–22,24–26: reward/CE/Jensen identities; detached thought-only update and no standard NTP term; corrected group/clipped objective; Qwen/Nano/RPT/corpus tables; input-token/FLOP/wall-time protocols; EMA cancellation versus TableS6; bounded numeric conflicts.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "2403.09629v2",
+      "url": "https://arxiv.org/pdf/2403.09629v2",
+      "sha256": "3dd74be14ad29e5dbec1c454d1ac57d54219f57745510fb89d627602536bdae8",
+      "claim_pages_read": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "supports": "PDF pp.1–7: think/talk/learn, learned mixing, future-token likelihood, rationale REINFORCE and distinct parallel prefix-conditioned paths.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "2506.08007v1",
+      "url": "https://arxiv.org/pdf/2506.08007v1",
+      "sha256": "f76e63febe2bf17c3eff442ec8608a62484777b3376603daca7dd2560d3085a9",
+      "claim_pages_read": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "supports": "PDF pp.1–4: deterministic binary byte-prefix matching at valid token boundaries; proxy high-entropy position selection is separate from verification.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "2509.19249v2",
+      "url": "https://arxiv.org/pdf/2509.19249v2",
+      "sha256": "92657f567d72fb9cb8783d348e7c3bb9b69a6429a742ea44a65a603860faacd7",
+      "claim_pages_read": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "supports": "PDF pp.1–5: autoregressive versus middle-segment tasks, semantic-prefix judge, binary rewards and cold-start SFT. Following context is intentional in masked prediction.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "2402.03300v2",
+      "url": "https://arxiv.org/pdf/2402.03300v2",
+      "sha256": "55d4cfe2733b8160bb96f7d887a39762c2744c244d893c1139fcfab4728e5083",
+      "claim_pages_read": [
+        8,
+        9,
+        11,
+        12,
+        13,
+        14
+      ],
+      "supports": "PDF pp.13–14 (context pp.8–9,11–12): original GRPO outcome/process reward formulations, learned reward scores, group standard-deviation normalization and policy/reference roles.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "2406.17557v1",
+      "url": "https://arxiv.org/pdf/2406.17557v1",
+      "sha256": "457e415c435b54928582f6ea13b05129993df94304709102362b7a563a78e028",
+      "claim_pages_read": [
+        1,
+        8,
+        9,
+        18,
+        24
+      ],
+      "supports": "PDF pp.8–9,18,24 (context p.1): educational classifier, school-content rubric, zero-to-five annotation scale and threshold; not universal graduate quality.",
+      "verification": "Listed actual retained PDF text read; listed visual pages inspected separately."
+    },
+    {
+      "id": "epoch-data-limits-2024",
+      "url": "https://epoch.ai/publications/will-we-run-out-of-data-limits-of-llm-scaling-based-on-human-generated-data",
+      "sha256": "d034f1c918d3d9757d234389e756cc6ecaa2fa414e2a53a050ce94cb3b97dc0e",
+      "claim_pages_read": [],
+      "supports": "Historical conditional utilization forecast for public human text after quality/repetition adjustments; does not establish the lecture’s exact95%-by-2030 wording.",
+      "verification": "Primary webpage read via web tool; actual HTML retained; forecast scoped as historical and conditional."
+    }
+  ],
+  "source_version_boundaries": [
+    "Retained v1, December2024; later versions are not substituted.",
+    "Retained through originally unversioned PDF URL; actual frontmatter and arXiv version identity are v1, September26,2025. Public citation pins v1.",
+    "Lecture-era March1,2026 v2; retained ICLR2026 version. Main methodology takes precedence over conflicting introductory interleaving wording.",
+    "Pinned v2; later revisions not substituted.",
+    "Pinned June9,2025 v1.",
+    "Pinned v2; frontmatter September26,2025. Later versions not substituted.",
+    "Pinned v2; no claim that GRPO intrinsically requires binary rewards.",
+    "Pinned v1; current dataset-card updates are not used to rewrite the original rubric.",
+    "Lecture reverse-order numeric ablation and fixed-budget12% Front-Loading claim lack established matching entries.",
+    "Front-Loading main Table3 prose18.57/AIME39.32 disagree with the named displayed pairs; main/appendix SFT overall differs.",
+    "RLP Nano35% summary differs from Table2 arithmetic43.24%; appendix25mislabels35.60as6B comparator instead of main Table4’s38.04.",
+    "Common EMA baseline cancels in displayed detached centered advantage; TableS6 does not specify a reconciliation.",
+    "Combined60% and early4T checkpoint result remain attributed proposals/unpublished observation, not independently verified effect."
+  ],
+  "original_teaching_work": {
+    "running_case": "Scientific continuation assistant with fixed exposure/compute budgets",
+    "original_derivations": [
+      "exposure conservation",
+      "scalar order identity",
+      "CE/KL/MI boundary",
+      "finite-thought Jensen",
+      "frozen-reward semigradient",
+      "iid inclusive group correction",
+      "common-baseline cancellation",
+      "sampling-measure identity"
+    ],
+    "benchmark_replication": false
+  },
+  "prose_word_count_without_math_code_svg": 8959,
+  "exercise_count": 6,
+  "original_code": {
+    "filename": "chapter05.py",
+    "file": "chapter05.py",
+    "sha256": "6b8b59753ffd9294ea85bc872a87111fd6a60c923c46f222c2f824f172b6c1a1",
+    "stdlib_only": true,
+    "dependencies": "Python standard library only",
+    "embedded_byte_identity": true,
+    "embedded_code_exact": true,
+    "isolated_execution_exit_code": 0,
+    "displayed_stdout_exact": true,
+    "stdout": "expected source epochs: [0.75, 3.0, 1.0]\ncurriculum endpoints: 0.500000 / 0.375000\nlog-gain rewards: [1.098612, 0.0, -0.693147]\ncorrected advantages: [1.445186, -0.202733, -1.242453]\ncommon-baseline cancellation: passed\nexpected reward / marginal bound: 0.202733 / 0.559616\nsigned clipped objectives: 2.400000 / -1.600000\ninput / generated / training-equivalent tokens: 10000 / 8000 / 10666.666667\nAll finite mathematical checks and 24 invalid-input checks passed.\n",
+    "stdout_sha256": "e2c531cb2ec6d13747bdaa22d0678af3d89d04c9c5168675e45678584e12ed65",
+    "effects": "No network, file writes, random sampling or model training.",
+    "numerical_boundary": "Finite representable int/float excluding bool; explicit probability/dimension/compute domains; rejects final unrepresentable ratios and required intermediates."
+  },
+  "authored_body_sha256": "0df596f805e619d9ab5c88cb9088fb81010fdf48c48d3a75bfef1590c26bdf44",
+  "quality_passes": [
+    {
+      "pass": "1-6,6a,6c",
+      "result": "Complete within the chapter recorded source, visual, mathematical, code and exercise scopes"
+    },
+    {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; exact reviewed body/code retained"
+    },
+    {
+      "pass": "9",
+      "result": "Actual local reader/source/program/privacy evidence recorded separately in validation-summary.json; human screen-reader audit is not performed"
+    }
+  ],
+  "gate6b": {
+    "status": "accepted",
+    "rounds": 2,
+    "blocking_findings": 0,
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "0df596f805e619d9ab5c88cb9088fb81010fdf48c48d3a75bfef1590c26bdf44",
+    "accepted_metadata_sha256": "005f3f992a5104bdc2bfaf7b7db8a622c34f14e804d75d87cbc2d66c62eff297"
+  },
+  "publication": "Not published; local reading edition",
+  "permission_errors_current_author_task": [],
+  "references": [
+    {
+      "id": "2412.15285v1",
+      "title": "Maximize Your Data’s Potential: Enhancing LLM Accuracy with Two-Phase Pretraining",
+      "url": "https://arxiv.org/pdf/2412.15285v1",
+      "version": "2412.15285v1",
+      "sha256": "5c81e1e0818c0ee01e8cc276fd4581cbfd933da6ca6c5f9c110c20188c543866",
+      "supports": "PDF pp.1–8: quality/epoch blend design; same-blend ordering comparison; Table4 aggregate45.17/51.12/52.86; repeats, phase duration and scaled-horizon findings."
+    },
+    {
+      "id": "2510.03264v1",
+      "title": "Front-Loading Reasoning: The Synergy between Pretraining and Post-Training Data",
+      "url": "https://arxiv.org/pdf/2510.03264v1",
+      "version": "2510.03264v1",
+      "sha256": "62537d806818024cf9e6dfb53c350e9d50b83e09cd1686b976033a5bd919d05a",
+      "supports": "PDF pp.1–15: SHQ/LDQ/LMQ source and trace confounds; 8B/1T/80:20 setup; Tables1–4 and appendix8–9; within-stage gains, catch-up and unresolved main/appendix/arithmetic conflicts."
+    },
+    {
+      "id": "2510.01265v2",
+      "title": "RLP: Reinforcement as a Pretraining Objective",
+      "url": "https://arxiv.org/pdf/2510.01265v2",
+      "version": "2510.01265v2",
+      "sha256": "b243938038f74dbf3f03a10aebdcc184ee2bc9ab29de341eef7da1dc050cb0e3",
+      "supports": "PDF pp.1–10,16–17,20–22,24–26: reward/CE/Jensen identities; detached thought-only update and no standard NTP term; corrected group/clipped objective; Qwen/Nano/RPT/corpus tables; input-token/FLOP/wall-time protocols; EMA cancellation versus TableS6; bounded numeric conflicts."
+    },
+    {
+      "id": "2403.09629v2",
+      "title": "Quiet-STaR: Language Models Can Teach Themselves to Think Before Speaking",
+      "url": "https://arxiv.org/pdf/2403.09629v2",
+      "version": "2403.09629v2",
+      "sha256": "3dd74be14ad29e5dbec1c454d1ac57d54219f57745510fb89d627602536bdae8",
+      "supports": "PDF pp.1–7: think/talk/learn, learned mixing, future-token likelihood, rationale REINFORCE and distinct parallel prefix-conditioned paths."
+    },
+    {
+      "id": "2506.08007v1",
+      "title": "Reinforcement Pre-Training",
+      "url": "https://arxiv.org/pdf/2506.08007v1",
+      "version": "2506.08007v1",
+      "sha256": "f76e63febe2bf17c3eff442ec8608a62484777b3376603daca7dd2560d3085a9",
+      "supports": "PDF pp.1–4: deterministic binary byte-prefix matching at valid token boundaries; proxy high-entropy position selection is separate from verification."
+    },
+    {
+      "id": "2509.19249v2",
+      "title": "Reinforcement Learning on Pre-Training Data",
+      "url": "https://arxiv.org/pdf/2509.19249v2",
+      "version": "2509.19249v2",
+      "sha256": "92657f567d72fb9cb8783d348e7c3bb9b69a6429a742ea44a65a603860faacd7",
+      "supports": "PDF pp.1–5: autoregressive versus middle-segment tasks, semantic-prefix judge, binary rewards and cold-start SFT. Following context is intentional in masked prediction."
+    },
+    {
+      "id": "2402.03300v2",
+      "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+      "url": "https://arxiv.org/pdf/2402.03300v2",
+      "version": "2402.03300v2",
+      "sha256": "55d4cfe2733b8160bb96f7d887a39762c2744c244d893c1139fcfab4728e5083",
+      "supports": "PDF pp.13–14 (context pp.8–9,11–12): original GRPO outcome/process reward formulations, learned reward scores, group standard-deviation normalization and policy/reference roles."
+    },
+    {
+      "id": "2406.17557v1",
+      "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+      "url": "https://arxiv.org/pdf/2406.17557v1",
+      "version": "2406.17557v1",
+      "sha256": "457e415c435b54928582f6ea13b05129993df94304709102362b7a563a78e028",
+      "supports": "PDF pp.8–9,18,24 (context p.1): educational classifier, school-content rubric, zero-to-five annotation scale and threshold; not universal graduate quality."
+    },
+    {
+      "id": "epoch-data-limits-2024",
+      "title": "Will we run out of data? Limits of LLM scaling based on human-generated data",
+      "url": "https://epoch.ai/publications/will-we-run-out-of-data-limits-of-llm-scaling-based-on-human-generated-data",
+      "version": "June6,2024 historical analysis; webpage retained October2,2026",
+      "sha256": "d034f1c918d3d9757d234389e756cc6ecaa2fa414e2a53a050ce94cb3b97dc0e",
+      "supports": "Historical conditional utilization forecast for public human text after quality/repetition adjustments; does not establish the lecture’s exact95%-by-2030 wording."
+    }
+  ]
+}
