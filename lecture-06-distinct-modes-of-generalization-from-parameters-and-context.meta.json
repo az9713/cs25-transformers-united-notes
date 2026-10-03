@@ -1,0 +1,1031 @@
+{
+  "video_id": "dJtHauhRasc",
+  "title": "Distinct Modes of Generalization from Parameters and Context",
+  "chapter_order": 6,
+  "recording_lecture_number": 6,
+  "recording_title": "Stanford CS25: Transformers United V6 I Distinct Modes of Generalization from Parameters and Context",
+  "speaker": "Andrew Lampinen",
+  "date": "2026-05-07",
+  "date_boundary": "Official deck page1 and course sequence.",
+  "status": "Independently reviewed chapter; local reader validation recorded separately; course completion pending",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "audio_sha256": "7ea8b1191ad5f1eca1b4c596a08c7225339393303f50e28b40eb2ace278e8d89",
+  "audio_duration_seconds": 4349.961,
+  "transcription_audio_duration_seconds": 4349.9450625,
+  "playlist_duration_seconds": 4350,
+  "transcript_sha256": "03ad730d0a0d585f6183dc9538545bcdc2a60844d0def3cdd5d6922053075122",
+  "transcript_text_sha256": "e4126ca0042d87b39448036ef98eb411be9ac0eaacec3d5a517da175d44941ba",
+  "transcript_segment_count": 145,
+  "transcript_first_start_seconds": 4.66,
+  "transcript_last_end_seconds": 4344.69,
+  "slides": {
+    "lecture": 6,
+    "drive_id": "1-YIOa5Yal4RCjAsV-0tnW_NNDGbY1GTo",
+    "url": "https://drive.google.com/uc?export=download&id=1-YIOa5Yal4RCjAsV-0tnW_NNDGbY1GTo",
+    "bytes": 8786135,
+    "pages": 50,
+    "sha256": "08d41acf44ae95fd6d36b6acf4cb159709952635a77905f47e9fd46d46c45341",
+    "status": "acquired and extracted",
+    "pages_rendered_and_inspected": [
+      12,
+      17,
+      18,
+      28,
+      33,
+      34,
+      38,
+      46
+    ],
+    "visual_scope": "Listed stills only; all50 slide texts read. No audio/video/animation certificate."
+  },
+  "sections": [
+    {
+      "section": "modes",
+      "title": "1. Separate parameter learning from contextual access 0:04",
+      "start": 4.66,
+      "end": 214.32,
+      "segments": [
+        1,
+        7
+      ],
+      "lecture_material": "Speaker framing, parameters versus context and three interventions.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Parameter learning, finetuning, context and fixed inference-time weights.",
+          "origin": "lecture/original exposition"
+        }
+      ]
+    },
+    {
+      "section": "reversal",
+      "title": "2. Relation inversion is a change in access direction 3:34",
+      "start": 214.32,
+      "end": 306.99,
+      "segments": [
+        8,
+        10
+      ],
+      "lecture_material": "Forward/inverse access and restricted ICL-gradient-descent discussion.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Inverse relation versus swapping an unchanged predicate.",
+          "origin": "original"
+        },
+        {
+          "class": "theorem",
+          "claim": "Bayes inversion under positive marginal probability.",
+          "origin": "original derivation"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Studied inverse-access failures in Berglund v1pp1–2.",
+          "origin": "research"
+        },
+        {
+          "class": "definition",
+          "claim": "Restricted regression/self-attention correspondence in von Oswald v1pp1–2.",
+          "origin": "research protocol"
+        }
+      ]
+    },
+    {
+      "section": "controlled",
+      "title": "3. Match evidence before comparing learning modes 5:06",
+      "start": 306.99,
+      "end": 522.78,
+      "segments": [
+        11,
+        17
+      ],
+      "lecture_material": "Data-matched comparisons, reversal and syllogism results.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Bounded novel-fact generalization comparisons in Lampinen v3pp1–7.",
+          "origin": "research"
+        },
+        {
+          "class": "definition",
+          "claim": "Likelihood-ranking, data matching, subsampling and split protocols.",
+          "origin": "research protocol"
+        },
+        {
+          "class": "theorem",
+          "claim": "Subset transitivity and invalid existential inference countermodel.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "latent",
+      "title": "4. A training objective can miss future uses of an experience 8:42",
+      "start": 522.78,
+      "end": 732.38,
+      "segments": [
+        18,
+        24
+      ],
+      "lecture_material": "Scratch-model reversals, codebooks and future-goal latent use.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Latent learning and trained-component versus new-query tests.",
+          "origin": "lecture"
+        },
+        {
+          "class": "definition",
+          "claim": "20k forward/19,800 reverse training and200 held-out reversal design.",
+          "origin": "research protocol"
+        }
+      ]
+    },
+    {
+      "section": "scope",
+      "title": "5. Architecture, tokenization and task construction matter 12:12",
+      "start": 732.38,
+      "end": 914.46,
+      "segments": [
+        25,
+        30
+      ],
+      "lecture_material": "Q&A dataset/model/cutoff and objective dependence.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Architecture/objective and proprietary-pretraining scope qualifications.",
+          "origin": "lecture Q&A"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Crossed directional access and renaming/tokenization diagnostic.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "geometry",
+      "title": "6. Shared structure can make some deductions cheap 15:14",
+      "start": 914.46,
+      "end": 1132.99,
+      "segments": [
+        31,
+        37
+      ],
+      "lecture_material": "Explicit/latent information, parametric structures and geometric-memory reference.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Specified learned graph geometries in Noroozizadeh v1pp1–2.",
+          "origin": "research"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Original distance-rule representation and its symmetry boundary.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "cues",
+      "title": "7. A correlated cue can bypass the intended deduction 18:52",
+      "start": 1132.99,
+      "end": 1396.22,
+      "segments": [
+        38,
+        46
+      ],
+      "lecture_material": "Co-occurrence shortcuts, statistical expectation and compression.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Constructed shortcut/subgroup accuracy calculation and relation-switched test.",
+          "origin": "original"
+        },
+        {
+          "class": "definition",
+          "claim": "Statistical expectation versus entailment.",
+          "origin": "lecture/original exposition"
+        }
+      ]
+    },
+    {
+      "section": "augmentation",
+      "title": "8. Expose deductions during training 23:16",
+      "start": 1396.22,
+      "end": 1580.16,
+      "segments": [
+        47,
+        52
+      ],
+      "lecture_material": "Offline contextual reasoning augmentation and bounded comparisons.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Contextual reasoning augmentation procedure.",
+          "origin": "lecture/research protocol"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Task-dependent controlled augmentation results.",
+          "origin": "research"
+        },
+        {
+          "class": "theorem",
+          "claim": "Chain transitive-closure pair count and synchronous-round derivation.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "information",
+      "title": "9. Computation can expose information without creating observations 26:20",
+      "start": 1580.16,
+      "end": 1670.34,
+      "segments": [
+        53,
+        55
+      ],
+      "lecture_material": "Data-processing objection, usable information and learning by thinking.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Shannon/predictive-family entropy and optional ignorance.",
+          "origin": "research/original exposition"
+        },
+        {
+          "class": "theorem",
+          "claim": "Deterministic data processing and original XOR restricted-family optimum.",
+          "origin": "original derivation"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Representational interpretation of learning by thinking.",
+          "origin": "research review"
+        }
+      ]
+    },
+    {
+      "section": "retrieval",
+      "title": "10. Retrieve an episode when its relevance becomes clear 27:50",
+      "start": 1670.34,
+      "end": 1844.91,
+      "segments": [
+        56,
+        61
+      ],
+      "lecture_material": "Episodic oracle access with distractors and contextual use.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Oracle retrieval, recall/precision and within-example ICL training.",
+          "origin": "research protocol"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Bounded episodic evidence-use improvements in latent-learning study.",
+          "origin": "research"
+        },
+        {
+          "class": "theorem",
+          "claim": "Total-probability accuracy decomposition under stated events.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "cue-query",
+      "title": "11. Query formulation controls which fact becomes accessible 30:45",
+      "start": 1845.62,
+      "end": 1922.51,
+      "segments": [
+        62,
+        64
+      ],
+      "lecture_material": "Q&A factual RAG, query cues and inverse access.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Query cue and factual-RAG scope discussion.",
+          "origin": "lecture Q&A"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Separate inverse retrieval, candidate enumeration and augmentation tests.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "thinking",
+      "title": "12. Train a reasoning process that transfers to known facts 32:02",
+      "start": 1922.51,
+      "end": 2073.33,
+      "segments": [
+        65,
+        69
+      ],
+      "lecture_material": "Train/test knowledge sets and RL-trained reasoning.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Known-fact/OOD reasoning split and teacher-bootstrap/RL route.",
+          "origin": "research protocol"
+        },
+        {
+          "class": "empirical result",
+          "claim": "OOD syllogism F1 .66 thinking/.88 ICL in test-time paperp8.",
+          "origin": "research"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Premise and explanation-verification boundaries in maintenance.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "enumeration",
+      "title": "13. Generate-and-verify depends on candidate coverage 34:33",
+      "start": 2073.33,
+      "end": 2286.96,
+      "segments": [
+        70,
+        76
+      ],
+      "lecture_material": "Generate-and-verify reversal and syllogism strategy; three-route summary.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Uniform candidate coverage and conditional independent-verification products.",
+          "origin": "original derivation"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Paperp9 single/multiple-attempt gap and remaining contextual advantage.",
+          "origin": "research"
+        }
+      ]
+    },
+    {
+      "section": "cost",
+      "title": "14. Include training, retrieval and query volume in the objective 38:06",
+      "start": 2286.96,
+      "end": 2447.57,
+      "segments": [
+        77,
+        82
+      ],
+      "lecture_material": "Train/inference costs and realistic retrieval difficulty.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Original fixed-cost/per-query crossover with all assumptions stated.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Train/inference and realistic retrieval cost discussion.",
+          "origin": "lecture"
+        }
+      ]
+    },
+    {
+      "section": "replay",
+      "title": "15. Brain-inspired complementarity is a hypothesis about computation 40:48",
+      "start": 2448.18,
+      "end": 2710.05,
+      "segments": [
+        83,
+        91
+      ],
+      "lecture_material": "Natural intelligence conjecture, offline/online replay and summary.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Specified fMRI/MEG replay-strategy associations.",
+          "origin": "research"
+        },
+        {
+          "class": "definition",
+          "claim": "Correlational measurement versus necessity/sufficiency and implementation identity.",
+          "origin": "original exposition"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Brain-inspired complementary-computation hypothesis.",
+          "origin": "lecture"
+        }
+      ]
+    },
+    {
+      "section": "question-scope",
+      "title": "16. Model size and content effects limit transfer 45:10",
+      "start": 2710.05,
+      "end": 3005.26,
+      "segments": [
+        92,
+        100
+      ],
+      "lecture_material": "Q&A opening, model scale/content/architectures and tokenization.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unperformed size/MoE mechanism comparisons.",
+          "origin": "lecture Q&A"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Specified content effects in Dasgupta v1pp1–2.",
+          "origin": "research"
+        },
+        {
+          "class": "theorem",
+          "claim": "Original nonempty countermodel to invalid syllogism.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "integration",
+      "title": "17. Slow integration and one-shot retention solve different problems 50:05",
+      "start": 3005.9,
+      "end": 3223.78,
+      "segments": [
+        101,
+        107
+      ],
+      "lecture_material": "Slow integration, one-shot storage, interference and feedback.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Slow integration, fast retention and interference discussion.",
+          "origin": "lecture Q&A"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Incremental correction/old-fact regression evaluation design.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "formal-content",
+      "title": "18. Formal deduction still depends on the supplied premises 53:43",
+      "start": 3223.78,
+      "end": 3568.06,
+      "segments": [
+        108,
+        119
+      ],
+      "lecture_material": "Offline traces, formal languages, priors and symbolic/statistical complementarity.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Declared formal premises and relation-specific inference rules.",
+          "origin": "original exposition"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Requires-transitivity counterexample and stale-premise boundary.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "lifetime",
+      "title": "19. Long-lived memory requires selection, identity and correction 59:28",
+      "start": 3568.06,
+      "end": 3816.64,
+      "segments": [
+        120,
+        128
+      ],
+      "lecture_material": "Attention/hippocampal analogy, lifetime memory and confabulation.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Lifetime access and confabulation concern without quantified rate.",
+          "origin": "lecture Q&A"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Revision-scoped fact and missing-clause evaluation.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "conflict",
+      "title": "20. Instructions and factual evidence need different authority rules 1:03:36",
+      "start": 3816.64,
+      "end": 3963.54,
+      "segments": [
+        129,
+        132
+      ],
+      "lecture_material": "Conflicting contextual instructions and trained principles.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Context/principle conflict discussion without demonstrated universal superiority.",
+          "origin": "lecture Q&A"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Authority versus factual evidence test design.",
+          "origin": "original"
+        }
+      ]
+    },
+    {
+      "section": "objective",
+      "title": "21. Optimize the full train-plus-inference service 1:06:03",
+      "start": 3963.54,
+      "end": 4052.51,
+      "segments": [
+        133,
+        135
+      ],
+      "lecture_material": "Train-plus-inference objective and proposed allocation tradeoffs.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Original full-service resource/error objective and hard constraints.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Train-plus-inference scaling tradeoff proposal.",
+          "origin": "lecture Q&A"
+        }
+      ]
+    },
+    {
+      "section": "synthetic",
+      "title": "22. More generated traces help only under an error model 1:07:32",
+      "start": 4052.51,
+      "end": 4213.02,
+      "segments": [
+        136,
+        140
+      ],
+      "lecture_material": "Cost intuition, hallucination dependence and collateral drift.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Independent three-trace majority probability and perfectly dependent countercase.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Spoken augmentation-cost estimate and collateral-drift concerns.",
+          "origin": "lecture Q&A"
+        }
+      ]
+    },
+    {
+      "section": "closing",
+      "title": "23. Make the future query explicit enough to evaluate 1:10:13",
+      "start": 4213.02,
+      "end": 4344.69,
+      "segments": [
+        141,
+        145
+      ],
+      "lecture_material": "Prompt specificity, synthetic-data methods, uncertainty and closing.",
+      "teaching_construction": "Original first-use definitions, maintenance case, qualified inference and locally stated formal fixtures.",
+      "research_extension": "Only adjacent pinned references and specified claim pages; original examples are not paper measurements.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Source-to-answer failure decomposition and concrete query contract.",
+          "origin": "original"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Prompt specificity and unresolved synthetic-data discussion.",
+          "origin": "lecture Q&A"
+        }
+      ]
+    },
+    {
+      "section": "lab",
+      "title": "24. Run finite checks on access, deductions and coverage",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original executable fixtures and complete solutions."
+    },
+    {
+      "section": "exercises",
+      "title": "25. Exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original executable fixtures and complete solutions."
+    },
+    {
+      "section": "references",
+      "title": "26. References and evidence boundaries",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Versioned source attribution and scope of actual checks."
+    }
+  ],
+  "omitted_material": [
+    {
+      "segments": [
+        1,
+        2
+      ],
+      "scope": "Biographical detail only; framing retained in modes",
+      "reason": "Not technical content"
+    },
+    {
+      "segments": [
+        92,
+        93
+      ],
+      "scope": "Acknowledgement names/promotional handles only; substantive Q&A retained",
+      "reason": "Not technical content"
+    }
+  ],
+  "coverage_check": "All145 segments assigned once; local nontechnical details omitted with scope; three original sections have null spans.",
+  "references": [
+    {
+      "id": "2309.12288v1",
+      "title": "The Reversal Curse: LLMs trained on “A is B” fail to learn “B is A”",
+      "url": "https://arxiv.org/pdf/2309.12288v1",
+      "version": "2309.12288v1",
+      "sha256": "404613276063d63ad0b97272688b3a02fc75bab4be5607c28eb1849948d674e2",
+      "supports": "PDF pp. 1, 2: Controlled inverse-access failure; not architecture-wide impossibility."
+    },
+    {
+      "id": "2212.07677v1",
+      "title": "Transformers learn in-context by gradient descent",
+      "url": "https://arxiv.org/pdf/2212.07677v1",
+      "version": "2212.07677v1",
+      "sha256": "f4541e1fa479877a0e0552283e15cb5240b243cc67aaa9a404c3135f23e5d9ac",
+      "supports": "PDF pp. 1, 2: Restricted regression and linear self-attention equivalence, not arbitrary ICL/finetuning identity."
+    },
+    {
+      "id": "2505.00661v3",
+      "title": "On the generalization of language models from in-context learning and finetuning: a controlled study",
+      "url": "https://arxiv.org/pdf/2505.00661v3",
+      "version": "2505.00661v3",
+      "sha256": "edb07f8efd5acf723ad55860962f280df0d85accde857d689df9fbac771497a3",
+      "supports": "PDF pp. 1, 2, 3, 4, 5, 6, 7: Novel controlled facts, data matching, likelihood ranking, subsampling/splitting conditions and bounded augmentation results."
+    },
+    {
+      "id": "2509.16189v3",
+      "title": "Latent learning: episodic memory complements parametric learning by enabling flexible reuse of experiences",
+      "url": "https://arxiv.org/pdf/2509.16189v3",
+      "version": "2509.16189v3",
+      "sha256": "5fe692d464c47a665962897526ff3d89145d9842d8e0f93105a98ae9d211ec00",
+      "supports": "PDF pp. 1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 16, 17, 18: Synthetic reversal split; oracle episodic retrieval during training/testing; within-example ICL and unmatched compute caveats."
+    },
+    {
+      "id": "2510.26745v1",
+      "title": "Deep sequence models tend to memorize geometrically; it is unclear why.",
+      "url": "https://arxiv.org/pdf/2510.26745v1",
+      "version": "2510.26745v1",
+      "sha256": "d92f436ef71c2883272bf91d436b869479c1c3b166460c3088524e0a45f6b1f5",
+      "supports": "PDF pp. 1, 2: Controlled graph task and representations; not a universal parametric-memory mechanism."
+    },
+    {
+      "id": "2002.10689v1",
+      "title": "A Theory of Usable Information under Computational Constraints",
+      "url": "https://arxiv.org/pdf/2002.10689v1",
+      "version": "2002.10689v1",
+      "sha256": "592ea66929901ea72aa809c10631320da4c2504e112d033389fdc3f872d55285",
+      "supports": "PDF pp. 1, 2, 3, 4: Predictive-family entropy/information and optional ignorance; original XOR construction separately labeled."
+    },
+    {
+      "id": "lombrozo-learning-by-thinking",
+      "title": "Learning by thinking in natural and artificial minds",
+      "url": "https://cognition.princeton.edu/sites/g/files/toruqf3386/files/documents/lbt.pdf",
+      "version": "lombrozo-learning-by-thinking",
+      "sha256": "85ae41e9c76e9c62a15420cb13ca26050c700743e3b62c67d9ca1ed67aa588d4",
+      "supports": "PDF pp. 1, 2, 3: Review and bounded representational interpretation; not reliable self-correction guarantee."
+    },
+    {
+      "id": "2604.01430v1",
+      "title": "Improving Latent Generalization Using Test-time Compute",
+      "url": "https://arxiv.org/pdf/2604.01430v1",
+      "version": "2604.01430v1",
+      "sha256": "965394566132ff5f0effbab2942b7ed6b21bacaab90bda7abe93e0a6f77b6071",
+      "supports": "PDF pp. 1, 2, 3, 4, 5, 6, 7, 8, 9, 10: Known facts/OOD reasoning split, answer-conditioned teacher bootstrapping/RL route, F1/passN distinctions and verification limits."
+    },
+    {
+      "id": "elife-32548-v1",
+      "title": "Offline Replay Supports Planning in Human Reinforcement Learning",
+      "url": "https://cdn.elifesciences.org/articles/32548/elife-32548-v1.pdf",
+      "version": "elife-32548-v1",
+      "sha256": "80f717abb95cf4927204620db4074c73eff76b2733b926fd08bdd44d8b65b294",
+      "supports": "PDF pp. 1, 4, 8, 16, 18, 28, 30: fMRI reinstatement/revaluation association and explicit correlational design; retained52-page manuscript pagination."
+    },
+    {
+      "id": "elife-56911-v1",
+      "title": "The roles of online and offline replay in planning",
+      "url": "https://cdn.elifesciences.org/articles/56911/elife-56911-v1.pdf",
+      "version": "elife-56911-v1",
+      "sha256": "9560c508a04e3b58e5127e70977c2d125495a9b09d5cbd3052f605aa5b0b26c9",
+      "supports": "PDF pp. 1, 11, 12: MEG task-dependent replay/strategy associations and methods; not universal replay benefit."
+    },
+    {
+      "id": "2207.07051v1",
+      "title": "Language models show human-like content effects on reasoning",
+      "url": "https://arxiv.org/pdf/2207.07051v1",
+      "version": "2207.07051v1",
+      "sha256": "0dc59fdf0e086990cd8e23d92cee051f7ee30277fe992c41f11ffab752acd33d",
+      "supports": "PDF pp. 1, 2: Specified content-dependent reasoning tasks; similar behavior does not identify mechanisms."
+    }
+  ],
+  "primary_source_audit": [
+    {
+      "id": "2309.12288v1",
+      "url": "https://arxiv.org/pdf/2309.12288v1",
+      "sha256": "404613276063d63ad0b97272688b3a02fc75bab4be5607c28eb1849948d674e2",
+      "bytes": 3678450,
+      "page_count": 18,
+      "pages_checked": [
+        1,
+        2
+      ],
+      "supports": "Controlled inverse-access failure; not architecture-wide impossibility.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "2212.07677v1",
+      "url": "https://arxiv.org/pdf/2212.07677v1",
+      "sha256": "f4541e1fa479877a0e0552283e15cb5240b243cc67aaa9a404c3135f23e5d9ac",
+      "bytes": 1981970,
+      "page_count": 22,
+      "pages_checked": [
+        1,
+        2
+      ],
+      "supports": "Restricted regression and linear self-attention equivalence, not arbitrary ICL/finetuning identity.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "2505.00661v3",
+      "url": "https://arxiv.org/pdf/2505.00661v3",
+      "sha256": "edb07f8efd5acf723ad55860962f280df0d85accde857d689df9fbac771497a3",
+      "bytes": 1460866,
+      "page_count": 22,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "supports": "Novel controlled facts, data matching, likelihood ranking, subsampling/splitting conditions and bounded augmentation results.",
+      "pages_rendered_and_inspected": [
+        5
+      ],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "2509.16189v3",
+      "url": "https://arxiv.org/pdf/2509.16189v3",
+      "sha256": "5fe692d464c47a665962897526ff3d89145d9842d8e0f93105a98ae9d211ec00",
+      "bytes": 7050512,
+      "page_count": 29,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "supports": "Synthetic reversal split; oracle episodic retrieval during training/testing; within-example ICL and unmatched compute caveats.",
+      "pages_rendered_and_inspected": [
+        15
+      ],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "2510.26745v1",
+      "url": "https://arxiv.org/pdf/2510.26745v1",
+      "sha256": "d92f436ef71c2883272bf91d436b869479c1c3b166460c3088524e0a45f6b1f5",
+      "bytes": 20468386,
+      "page_count": 58,
+      "pages_checked": [
+        1,
+        2
+      ],
+      "supports": "Controlled graph task and representations; not a universal parametric-memory mechanism.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "2002.10689v1",
+      "url": "https://arxiv.org/pdf/2002.10689v1",
+      "sha256": "592ea66929901ea72aa809c10631320da4c2504e112d033389fdc3f872d55285",
+      "bytes": 1367930,
+      "page_count": 24,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "supports": "Predictive-family entropy/information and optional ignorance; original XOR construction separately labeled.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "lombrozo-learning-by-thinking",
+      "url": "https://cognition.princeton.edu/sites/g/files/toruqf3386/files/documents/lbt.pdf",
+      "sha256": "85ae41e9c76e9c62a15420cb13ca26050c700743e3b62c67d9ca1ed67aa588d4",
+      "bytes": 1060317,
+      "page_count": 12,
+      "pages_checked": [
+        1,
+        2,
+        3
+      ],
+      "supports": "Review and bounded representational interpretation; not reliable self-correction guarantee.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "2604.01430v1",
+      "url": "https://arxiv.org/pdf/2604.01430v1",
+      "sha256": "965394566132ff5f0effbab2942b7ed6b21bacaab90bda7abe93e0a6f77b6071",
+      "bytes": 4532105,
+      "page_count": 30,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "supports": "Known facts/OOD reasoning split, answer-conditioned teacher bootstrapping/RL route, F1/passN distinctions and verification limits.",
+      "pages_rendered_and_inspected": [
+        8,
+        9
+      ],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "elife-32548-v1",
+      "url": "https://cdn.elifesciences.org/articles/32548/elife-32548-v1.pdf",
+      "sha256": "80f717abb95cf4927204620db4074c73eff76b2733b926fd08bdd44d8b65b294",
+      "bytes": 12884871,
+      "page_count": 52,
+      "pages_checked": [
+        1,
+        4,
+        8,
+        16,
+        18,
+        28,
+        30
+      ],
+      "supports": "fMRI reinstatement/revaluation association and explicit correlational design; retained52-page manuscript pagination.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "elife-56911-v1",
+      "url": "https://cdn.elifesciences.org/articles/56911/elife-56911-v1.pdf",
+      "sha256": "9560c508a04e3b58e5127e70977c2d125495a9b09d5cbd3052f605aa5b0b26c9",
+      "bytes": 1867925,
+      "page_count": 23,
+      "pages_checked": [
+        1,
+        11,
+        12
+      ],
+      "supports": "MEG task-dependent replay/strategy associations and methods; not universal replay benefit.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    },
+    {
+      "id": "2207.07051v1",
+      "url": "https://arxiv.org/pdf/2207.07051v1",
+      "sha256": "0dc59fdf0e086990cd8e23d92cee051f7ee30277fe992c41f11ffab752acd33d",
+      "bytes": 859185,
+      "page_count": 36,
+      "pages_checked": [
+        1,
+        2
+      ],
+      "supports": "Specified content-dependent reasoning tasks; similar behavior does not identify mechanisms.",
+      "pages_rendered_and_inspected": [],
+      "reading_scope": "Listed claim-bearing text/pages; no full-paper certification"
+    }
+  ],
+  "exercise_count": 6,
+  "prose_word_count_without_math_code_svg": 9211,
+  "author_allocation": "Root inherited Codex agent; no unsupported historical model attestation",
+  "original_code": {
+    "filename": "chapter06.py",
+    "sha256": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
+    "dependencies": "Python3 standard library only",
+    "embedded_byte_identity": true,
+    "stdout": "inverse explicit lookup: ['pump']\none-round deduction: True\nrestricted NLL: 0.693147 -> 0.000000 nats\nconditional evidence accuracy: 0.76\ncandidate coverage: 0.300 distinct; 0.271 replacement\nAll chapter 6 finite-fixture and input checks passed.\n",
+    "checks": "Original inverse/closure/XOR/evidence/enumeration fixtures;16 invalid-input calls and empty/zero/count boundary cases."
+  },
+  "quality_passes": [
+    {
+      "pass": "1-6,6a,6c",
+      "result": "Author preparation/manuscript/math/code/exercises and listed source/visual checks performed; independent audit pending"
+    },
+    {
+      "pass": "7-8",
+      "result": "Author revisions applied; independent prose/parity evaluation pending"
+    },
+    {
+      "pass": "9",
+      "result": "Reader integration and book validation pending"
+    },
+    {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; reviewed body retained; source and finite-code limits remain explicit"
+    }
+  ],
+  "gate6b": {
+    "status": "accepted",
+    "blocking_findings": 0,
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "28dddb9244837d888447519eef04b1ab853b767578f9fb4e3750b1809c3345d6",
+    "accepted_metadata_sha256": "fbb7d27d6a1a344c13c0a523f549a8d7cf9415bfa46fc75157318d5c5fb86842"
+  },
+  "publication": "Not published"
+}

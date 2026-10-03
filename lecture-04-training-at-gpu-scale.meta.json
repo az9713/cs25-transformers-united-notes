@@ -1,0 +1,1060 @@
+{
+  "video_id": "I5BKi32IEa8",
+  "title": "Training at GPU Scale",
+  "chapter_order": 4,
+  "recording_lecture_number": 4,
+  "recording_title": "Stanford CS25: Transformers United V6 I The Ultra-Scale Talk: Scaling Training to Thousands of GPUs",
+  "speaker": "Nouamane Tazi",
+  "date": "2026-04-23",
+  "date_boundary": "Official Spring2026 V6 schedule; historical software explicitly pinned before talk",
+  "status": "Independently reviewed chapter; local reader validation recorded separately; course completion pending",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "audio_sha256": "efa6203b45d2fffaf5f7b224768bc96fed7d14f292a15d5308804f84e07d890a",
+  "audio_duration_seconds": 3707.861,
+  "transcription_audio_duration_seconds": 3707.84,
+  "playlist_duration_seconds": 3708,
+  "transcript_sha256": "7022d7e325e1770425f5eabe5d00ae256d368883ebec984299371909f2043988",
+  "transcript_text_sha256": "7cfb5fbf6dc3bbbc80850bf3ef73fcd51052a40a3e03118b74cfa2fd673c74a4",
+  "transcript_segment_count": 132,
+  "transcript_first_start_seconds": 4.69,
+  "transcript_last_end_seconds": 3703.09,
+  "slides": {
+    "lecture": 4,
+    "drive_id": "1dxdC76Rk_o6UEd5AqhHjp0rapsxYOR6j",
+    "url": "https://drive.google.com/uc?export=download&id=1dxdC76Rk_o6UEd5AqhHjp0rapsxYOR6j",
+    "bytes": 8965278,
+    "pages": 106,
+    "sha256": "caf117f5030d60b9a33e95124761bbc512257615501dc9b3e8ed823d18aa214b",
+    "status": "acquired and extracted",
+    "pages_rendered_and_inspected": [
+      25,
+      30,
+      43,
+      48,
+      50,
+      55,
+      58,
+      63,
+      66,
+      69,
+      73,
+      75,
+      77,
+      82,
+      85,
+      90,
+      94,
+      95,
+      97,
+      99,
+      102
+    ],
+    "reading_status": "All106 extracted page texts read sequentially;21 selected actual slide images inspected"
+  },
+  "sections": [
+    {
+      "section": "scale",
+      "title": "1. A training step is a resource contract 1:20",
+      "start": 80.61,
+      "end": 335.22,
+      "segments": [
+        4,
+        13
+      ],
+      "lecture_material": "Scaling, accumulation, global batch and infrastructure",
+      "research_extension": null,
+      "teaching_construction": "Original token-mean objective, fixed-version accumulation conditions and checkpoint lower bound",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Token-mean objective and fixed-version accumulation contract"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Batch cardinalities under equal sizes"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Checkpoint bytes/bandwidth lower bound; illustrative scales are not measurements"
+        }
+      ]
+    },
+    {
+      "section": "data-parallel",
+      "title": "2. Data parallelism preserves an objective through weighted reduction 5:35",
+      "start": 335.22,
+      "end": 686.13,
+      "segments": [
+        14,
+        26
+      ],
+      "lecture_material": "Replicas, AllReduce, buckets, CPU/GPU overlap and DP limitations",
+      "research_extension": null,
+      "teaching_construction": "Weighted global-mean derivation, unequal-token counterexample and ideal exposed-transfer bound",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and original",
+          "claim": "Replicas and SUM/AVG reduction conventions"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Weighted global token gradient and counterexample"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Ideal overlap bound; no throughput measurement"
+        }
+      ]
+    },
+    {
+      "section": "zero",
+      "title": "3. ZeRO removes state redundancy, not optimizer requirements 11:26",
+      "start": 686.13,
+      "end": 943.07,
+      "segments": [
+        27,
+        35
+      ],
+      "lecture_material": "Optimizer/gradient sharding, Muon caveat and parameter sharding",
+      "research_extension": "ZeRO v3 pp.7–11; Mixed Precision Training v1 pp.2–4",
+      "teaching_construction": "Exact state accounting with precision contract and rank-one limit",
+      "evidence_class": "definition; theorem; empirical result; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "primary and original",
+          "claim": "Explicit 16-byte mixed-precision Adam state contract"
+        },
+        {
+          "class": "theorem",
+          "origin": "original checked against primary",
+          "claim": "Cumulative ZeRO memory formulas and rank-one limit"
+        },
+        {
+          "class": "empirical result",
+          "origin": "primary",
+          "claim": "Mixed-precision accuracy comparisons restricted to original tested networks"
+        },
+        {
+          "class": "engineering check",
+          "origin": "lecture and original",
+          "claim": "Full-matrix optimizer representation needs compatible algebra; Muon not implemented"
+        }
+      ]
+    },
+    {
+      "section": "fsdp",
+      "title": "4. Fully sharded training is a schedule of temporary ownership 15:43",
+      "start": 943.07,
+      "end": 1388.56,
+      "segments": [
+        36,
+        51
+      ],
+      "lecture_material": "FSDP units, prefetch, flat versus per-parameter representations, hybrid sharding and stage choice",
+      "research_extension": "PyTorch 2.8 documentation and v2.8.0 original source",
+      "teaching_construction": "Conservative temporary-memory peak and ownership trace",
+      "evidence_class": "definition; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and primary",
+          "claim": "Sharded persistent state and temporary unit ownership"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "PyTorch2.8 per-parameter default placement and root reshard policy"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Conservative42GB peak under explicitly assumed allocations"
+        }
+      ]
+    },
+    {
+      "section": "tensor-parallel",
+      "title": "5. Tensor parallelism follows matrix dimensions through backward 23:08",
+      "start": 1388.75,
+      "end": 1789.6,
+      "segments": [
+        52,
+        65
+      ],
+      "lecture_material": "Column/row matmul, MLP pairing, attention-head partition",
+      "research_extension": "Megatron-LM v1 pp.3–5",
+      "teaching_construction": "Frobenius differential derivation, exact local gradients and finite differences; feature-split attention correction",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and primary",
+          "claim": "Column/row weight axes and head ownership"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Frobenius matrix gradients and nonlinear MLP pairing"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Exact finite fixture and8 finite-difference derivatives"
+        }
+      ]
+    },
+    {
+      "section": "tensor-cost",
+      "title": "6. Communication volume is measured in bytes on a named group 29:49",
+      "start": 1789.6,
+      "end": 1929.6,
+      "segments": [
+        66,
+        70
+      ],
+      "lecture_material": "TP communication/topology, replicated normalization and numerical complexity",
+      "research_extension": null,
+      "teaching_construction": "Ring transmitted-byte model with latency assumptions and unit-checked numerical case",
+      "evidence_class": "engineering check; theorem; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Ideal equal-chunk ring latency/bandwidth assumptions"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Transmitted-byte formula and units"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture and original",
+          "claim": "Fast-link placement and small-kernel limits; no claimed benchmark"
+        }
+      ]
+    },
+    {
+      "section": "sequence-parallel",
+      "title": "7. Sequence parallelism exchanges layouts through adjoint collectives 32:09",
+      "start": 1929.6,
+      "end": 2249.94,
+      "segments": [
+        71,
+        82
+      ],
+      "lecture_material": "Token/full-hidden layout, collective decomposition, backward and normalization",
+      "research_extension": "Sequence Parallelism v1 pp.3–7; pinned Megatron Core gradient finalizer lines189–225",
+      "teaching_construction": "Rank-product adjoint proof, noninverse counterexample, replicated gamma/beta gradient derivation",
+      "evidence_class": "definition; theorem",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and primary",
+          "claim": "Token/full-feature versus feature-shard layouts"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Rank-product Euclidean adjoint identity and noninverse result"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Gamma/beta gradients sum across token owners"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Pinned Megatron marked-normalization gradient finalizer"
+        }
+      ]
+    },
+    {
+      "section": "mesh",
+      "title": "8. A device mesh is an ownership map 37:29",
+      "start": 2249.94,
+      "end": 2422.51,
+      "segments": [
+        83,
+        88
+      ],
+      "lecture_material": "DP×TP topology and process groups",
+      "research_extension": null,
+      "teaching_construction": "Original six-rank ownership table; world-size and global-batch alternatives",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original",
+          "claim": "Rank coordinates and matching tensor/data groups"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Chosen world-size factorization and batch cardinalities"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Six-rank ownership table and wrong-group failure"
+        }
+      ]
+    },
+    {
+      "section": "pipeline",
+      "title": "9. Pipeline schedules trade bubbles against live activations 40:22",
+      "start": 2422.51,
+      "end": 2731.23,
+      "segments": [
+        89,
+        99
+      ],
+      "lecture_material": "AFAB, 1F1B, DualPipe, bubbles, recomputation and offload",
+      "research_extension": "GPipe v1 pp.2–3; PipeDream-2BW v1 pp.2–3; DeepSeek-V3 v2 pp.12–14",
+      "teaching_construction": "Balanced AFAB event schedule and utilization derivation; update semantics boundary",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and primary",
+          "claim": "AFAB/1F1B task ordering and distinct update semantics"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Balanced zero-transfer equal-duration utilization formula"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Finite AFAB dependency/exclusivity trace"
+        },
+        {
+          "class": "engineering check",
+          "origin": "primary",
+          "claim": "DeepSeek DualPipe memory/overlap comparison is workload-specific"
+        }
+      ]
+    },
+    {
+      "section": "context",
+      "title": "10. Context parallelism preserves global attention with block statistics 45:31",
+      "start": 2731.23,
+      "end": 2924.22,
+      "segments": [
+        100,
+        106
+      ],
+      "lecture_material": "Sequence-position shards, ring KV transfer, online softmax and CP-group replicated-parameter gradient reduction",
+      "research_extension": "Ring Attention v1 pp.3–5",
+      "teaching_construction": "Stable block-statistic derivation, mask boundary and explicit-byte ring model",
+      "evidence_class": "definition; engineering check; theorem",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and primary",
+          "claim": "Global attention with local query ownership"
+        },
+        {
+          "class": "engineering check",
+          "origin": "lecture and original",
+          "claim": "Replicated parameter gradients combine distinct CP token contributions using the objective SUM/normalization convention"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Exact real-arithmetic softmax block merge for finite permitted scores"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Extreme-score oracle and order-tolerant finite fixture"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Simple uncompressed ring payload with explicit element bytes"
+        }
+      ]
+    },
+    {
+      "section": "experts",
+      "title": "11. Expert parallelism routes work as well as tensors 48:44",
+      "start": 2924.22,
+      "end": 3102.96,
+      "segments": [
+        107,
+        112
+      ],
+      "lecture_material": "Top-k MoE, AllToAll dispatch/combine and groups",
+      "research_extension": "Sparse MoE v1 pp.3–5",
+      "teaching_construction": "Simple aggregate-payload bound, load conservation, maximum/mean and capacity counterexample",
+      "evidence_class": "definition; theorem; engineering check",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and primary",
+          "claim": "Sparse mixture, top-k and dispatch/combine ownership"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Simple aggregate payload and assignment conservation"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Maximum/mean load and finite capacity counterexample"
+        }
+      ]
+    },
+    {
+      "section": "dispatch",
+      "title": "12. Dynamic dispatch creates a synchronization dependency 51:42",
+      "start": 3102.96,
+      "end": 3263.95,
+      "segments": [
+        113,
+        118
+      ],
+      "lecture_material": "Dynamic sizes, CPU wait, DeepEP/HybridEP and hardware-dependent transfer",
+      "research_extension": "DeepEP v1.2.1 pinned README and normal-dispatch diagram",
+      "teaching_construction": "Dynamic dependency and buffer-capacity reasoning; no reproduced hardware measurements",
+      "evidence_class": "engineering check; definition; product claim",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "origin": "lecture and primary",
+          "claim": "Data-dependent receive count creates host allocation dependency"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "DeepEPv1.2.1 normal/low-latency requirements and host-wait example"
+        },
+        {
+          "class": "product claim",
+          "origin": "primary developer report",
+          "claim": "Developer H800/CX7 rates not reproduced or used as chapter constants"
+        }
+      ]
+    },
+    {
+      "section": "composition",
+      "title": "13. Combining parallelism requires a tensor-by-tensor plan 54:23",
+      "start": 3263.95,
+      "end": 3404.8,
+      "segments": [
+        119,
+        123
+      ],
+      "lecture_material": "EP/PP overlap, five dimensions, playbooks and implementation libraries",
+      "research_extension": null,
+      "teaching_construction": "Original 32-rank coupled DP/EP layout, ownership plan and controlled design sequence",
+      "evidence_class": "definition; engineering check; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "lecture and original",
+          "claim": "Five ownership roles with distinct module groups"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "32-rank coupled DP/EP layout and feasible design sequence"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture and original",
+          "claim": "Overlap requires independence and available resources"
+        }
+      ]
+    },
+    {
+      "section": "validation",
+      "title": "14. Correctness and cost remain separate acceptance criteria 56:44",
+      "start": 3404.8,
+      "end": 3703.09,
+      "segments": [
+        124,
+        132
+      ],
+      "lecture_material": "Energy, expert balancing, mathematical equivalence, preprocessing and topology/search Q&A",
+      "research_extension": "Sparse MoE v1 p.5; DeepSeek-V3 v2 p.9",
+      "teaching_construction": "Fixed-objective acceptance criteria, fictional energy calculation and performance dimensions",
+      "evidence_class": "engineering check; definition; theorem; speaker judgment",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "origin": "original",
+          "claim": "Fixed-data objective/gradient/update checks and separate resource gate"
+        },
+        {
+          "class": "definition",
+          "origin": "primary",
+          "claim": "Bias routing versus complementary sequence balance loss"
+        },
+        {
+          "class": "theorem",
+          "origin": "original",
+          "claim": "Joule/kWh accounting under constant-power assumptions"
+        },
+        {
+          "class": "speaker judgment",
+          "origin": "lecture and original",
+          "claim": "Loader/search/topology profiling and performance dimensions"
+        }
+      ]
+    },
+    {
+      "section": "lab",
+      "title": "15. An executable ownership and resource check",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original finite stdlib simulator and exact output",
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "origin": "original executable",
+          "claim": "Finite simulator, exact stdout, invalid-input and numerical-boundary checks"
+        }
+      ]
+    },
+    {
+      "section": "exercises",
+      "title": "16. Exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Six original mixed exercises and fully reasoned solutions",
+      "evidence_class": "theorem; engineering check; definition",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "origin": "original derivation",
+          "claim": "Gradient normalization, collective adjoints, state accounting, ring bytes, pipeline utilization and routing conservation under stated assumptions"
+        },
+        {
+          "class": "engineering check",
+          "origin": "original finite fixture",
+          "claim": "Simulator, capacity counterexample, resource estimates and bounded distributed design checks"
+        },
+        {
+          "class": "definition",
+          "origin": "original exposition",
+          "claim": "Distinction between equivalence, resource feasibility and workload-specific performance"
+        }
+      ]
+    },
+    {
+      "section": "references",
+      "title": "17. References and evidence boundaries",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Claim-page and version-specific evidence boundaries",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "origin": "original evidence exposition",
+          "claim": "Version/page provenance and explicit limits on empirical and software evidence"
+        }
+      ]
+    }
+  ],
+  "omitted_material": [
+    {
+      "segments": [
+        1,
+        3
+      ],
+      "start": 4.69,
+      "end": 80.61,
+      "reason": "Administrative introduction and biography omitted; speaker identity, date and agenda retained in source note"
+    }
+  ],
+  "coverage_check": {
+    "numbering": "One-based inclusive metadata; preparation map zero-based inclusive",
+    "all_segments_assigned_exactly_once": true,
+    "segments": 132,
+    "substantive_spine_sections": 14,
+    "original_sections": 3,
+    "endpoint_gap_seconds": 4.771
+  },
+  "primary_source_audit": [
+    {
+      "id": "ref-zero",
+      "url": "https://arxiv.org/pdf/1910.02054v3",
+      "filename": "1910.02054v3.pdf",
+      "bytes": 779206,
+      "sha256": "c531734c7d9ee647fda9b4f0e1a6abd6d58ad34e862bc945451b09032be3167e",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 24,
+      "pages_checked": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "pages_rendered_and_inspected": [],
+      "supports": "Rajbhandari et al., ZeRO: Memory Optimizations Toward Training Trillion Parameter Models , v3, May 13, 2020, PDF pp. 7–11: state decomposition and cumulative partition stages. The withdrawn v1 PDF is unavailable; this chapter uses v3.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-megatron",
+      "url": "https://arxiv.org/pdf/1909.08053v1",
+      "filename": "1909.08053v1.pdf",
+      "bytes": 2984334,
+      "sha256": "014b8a8d3cec8bee5e371b23e4f49d4e74597641febc36992faf33d8834f8fe2",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 15,
+      "pages_checked": [
+        1,
+        3,
+        4,
+        5
+      ],
+      "pages_rendered_and_inspected": [
+        5
+      ],
+      "supports": "Shoeybi et al., Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism , v1, 2019, PDF pp. 3–5: column/row MLP placement, whole-head attention partition, and logical replication conventions.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-sequence",
+      "url": "https://arxiv.org/pdf/2205.05198v1",
+      "filename": "2205.05198v1.pdf",
+      "bytes": 3050278,
+      "sha256": "5fcd24e92a086f5671cbb8c0624cd42251d2d43324245da9d93b0b2289e46abc",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 17,
+      "pages_checked": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages_rendered_and_inspected": [
+        6,
+        7
+      ],
+      "supports": "Korthikanti et al., Reducing Activation Recomputation in Large Transformer Models , v1, 2022, PDF pp. 3–7: activation accounting and sequence-parallel layouts; Figs. 5–6 specify paired collectives. Payload equivalence is not a universal runtime guarantee.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-fsdp",
+      "url": "https://docs.pytorch.org/docs/2.8/distributed.fsdp.fully_shard.html",
+      "status": "versioned documentation read via web; direct download HTTP403",
+      "bytes": null,
+      "sha256": null,
+      "pages_checked": [],
+      "supports": "PyTorch 2.8, FSDP2 (fully_shard) , documentation updated June 16, 2025: per-parameter dim-0 sharding, optimizer contract, groups, and reshard policy. These are version-specific API behaviors.",
+      "cited_in_chapter": true,
+      "supporting_original_source": {
+        "url": "https://raw.githubusercontent.com/pytorch/pytorch/v2.8.0/torch/distributed/fsdp/_fully_shard/_fully_shard.py",
+        "filename": "fsdp2-v2.8.0.py",
+        "sha256": "901220efd8b6ea015eebd468a689a8edcf5023cfcc3694159d892950261d8e15",
+        "bytes": 30118,
+        "lines_checked": [
+          [
+            86,
+            175
+          ],
+          [
+            193,
+            244
+          ]
+        ]
+      }
+    },
+    {
+      "id": "ref-megatron-code",
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/d580efc68a9f0dbf1945f834f6f6200cd01d3343/megatron/core/distributed/finalize_model_grads.py#L189-L225",
+      "filename": "Megatron-LM-pinned.txt",
+      "bytes": 14295,
+      "sha256": "85c5ec0aa95e539f8c33def4c48cf2e43444b9662b347c7658a6071bc563725f",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": null,
+      "pages_checked": [],
+      "pages_rendered_and_inspected": [],
+      "supports": "Megatron Core 0.12.0, gradient finalizer , commit d580efc, May 6, 2025, lines 189–225: explicit replicated layer-normalization parameter-gradient reduction for sequence parallelism.",
+      "cited_in_chapter": true,
+      "reading_status": "Lines189–225 and finalizer context checked"
+    },
+    {
+      "id": "ref-gpipe",
+      "url": "https://arxiv.org/pdf/1811.06965v1",
+      "filename": "1811.06965v1.pdf",
+      "bytes": 632507,
+      "sha256": "58bb403c7ccb7982d149bc21a0ba7345da1e7966719cf1ba15b8a70333698281",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 11,
+      "pages_checked": [
+        1,
+        2,
+        3
+      ],
+      "pages_rendered_and_inspected": [],
+      "supports": "Huang et al., GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism , v1, 2018, PDF pp. 2–3: microbatches, pipelining, and synchronous update boundaries. Reported speedups concern its experiments.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-pipedream",
+      "url": "https://arxiv.org/pdf/2006.09503v1",
+      "filename": "2006.09503v1.pdf",
+      "bytes": 895920,
+      "sha256": "60680acf6924eaad0015a05023bc96c332ca43756d15621fe3d673f9afd0cdf6",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 12,
+      "pages_checked": [
+        1,
+        2,
+        3
+      ],
+      "pages_rendered_and_inspected": [
+        3
+      ],
+      "supports": "Narayanan et al., Memory-Efficient Pipeline-Parallel DNN Training , v1, 2020, PDF pp. 2–3: 1F1B scheduling, weight versions, and PipeDream-2BW's delayed-update semantics.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-ring",
+      "url": "https://arxiv.org/pdf/2310.01889v1",
+      "filename": "2310.01889v1.pdf",
+      "bytes": 1732738,
+      "sha256": "c71efbcb417138be383b7cc8cf9b5f1491ee4136809c2bf01aa31beadbc395be",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 16,
+      "pages_checked": [
+        1,
+        3,
+        4,
+        5
+      ],
+      "pages_rendered_and_inspected": [
+        4
+      ],
+      "supports": "Liu, Zaharia, and Abbeel, Ring Attention with Blockwise Transformers for Near-Infinite Context , v1, 2023, PDF pp. 3–5: rotating key/value blocks and conditional transfer/compute overlap. All byte equations in this chapter state their own element sizes.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-mixed",
+      "url": "https://arxiv.org/pdf/1710.03740v1",
+      "filename": "1710.03740v1.pdf",
+      "bytes": 1494855,
+      "sha256": "0d86873a3bd3cf4ebf6cd30a652b01c0fda73ebcf194fd8dc0a4d8943dd80015",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 14,
+      "pages_checked": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "pages_rendered_and_inspected": [
+        3
+      ],
+      "supports": "Micikevicius et al., Mixed Precision Training , v1, 2017, PDF pp. 2–4: master weights, rounding, and loss scaling. Numerical recipes and empirical accuracy have stated conditions.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-moe",
+      "url": "https://arxiv.org/pdf/1701.06538v1",
+      "filename": "1701.06538v1.pdf",
+      "bytes": 544288,
+      "sha256": "2567713d198a376b65b92f0c60b9f58c8c5f66755530b92203533a17c4ec4b8e",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 19,
+      "pages_checked": [
+        1,
+        3,
+        4,
+        5,
+        7,
+        8
+      ],
+      "pages_rendered_and_inspected": [],
+      "supports": "Shazeer et al., Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer , v1, 2017, PDF pp. 3–5: sparse mixture, top-k routing, combined data/expert placement, and importance balancing. Later hardware performance is not inferred from this paper.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-deepseek",
+      "url": "https://arxiv.org/pdf/2412.19437v2",
+      "filename": "2412.19437v2.pdf",
+      "bytes": 1887366,
+      "sha256": "812a3fd645c80725354de9d831a6785503007a60681461407f64e97305fa9330",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": 53,
+      "pages_checked": [
+        6,
+        7,
+        9,
+        12,
+        13,
+        14
+      ],
+      "pages_rendered_and_inspected": [
+        13
+      ],
+      "supports": "DeepSeek-AI, DeepSeek-V3 Technical Report , v2, February 18, 2025, PDF p. 9 and pp. 12–14: routing bias and complementary balance loss; DualPipe and its memory/overlap tradeoffs.",
+      "cited_in_chapter": true,
+      "reading_status": "Selected relevant pages; not cover-to-cover paper review"
+    },
+    {
+      "id": "ref-deepep",
+      "url": "https://github.com/deepseek-ai/DeepEP/blob/9af0e0d0e74f3577af1979c9b9e1ac2cad0104ee/README.md",
+      "filename": "DeepEP-pinned.txt",
+      "bytes": 19320,
+      "sha256": "92b2e14c11d26491f4157fbba424f28c56c1d9e640437eef2b3473b0a107c29b",
+      "status": "claim-page checked; selected-page reading only",
+      "page_count": null,
+      "pages_checked": [],
+      "pages_rendered_and_inspected": [],
+      "supports": "DeepEP v1.2.1 README , commit 9af0e0d, September 15, 2025: dispatch/combine contracts, received-count host wait, distinct low-latency mode, NVSHMEM and architecture/network requirements. Reported H800/CX7 performance is developer evidence for that setup.",
+      "cited_in_chapter": true,
+      "reading_status": "Full README read"
+    }
+  ],
+  "references": [
+    {
+      "id": "ref-talk",
+      "title": "Nouamane Tazi, “The Ultra-Scale Talk: Scaling Training to Thousands of GPUs,” CS25 V6",
+      "url": "https://www.youtube.com/watch?v=I5BKi32IEa8",
+      "version": "Spring 2026 V6",
+      "sha256": null,
+      "supports": "Nouamane Tazi, “The Ultra-Scale Talk: Scaling Training to Thousands of GPUs,” CS25 V6 , April 23, 2026. Official course schedule . Official slides and machine transcript supply the coverage spine; numerical guarantees come from the explicit derivations here."
+    },
+    {
+      "id": "ref-zero",
+      "title": "Rajbhandari et al., ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+      "url": "https://arxiv.org/pdf/1910.02054v3",
+      "version": "1910.02054v3",
+      "sha256": "c531734c7d9ee647fda9b4f0e1a6abd6d58ad34e862bc945451b09032be3167e",
+      "supports": "Rajbhandari et al., ZeRO: Memory Optimizations Toward Training Trillion Parameter Models , v3, May 13, 2020, PDF pp. 7–11: state decomposition and cumulative partition stages. The withdrawn v1 PDF is unavailable; this chapter uses v3."
+    },
+    {
+      "id": "ref-megatron",
+      "title": "Shoeybi et al., Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+      "url": "https://arxiv.org/pdf/1909.08053v1",
+      "version": "1909.08053v1",
+      "sha256": "014b8a8d3cec8bee5e371b23e4f49d4e74597641febc36992faf33d8834f8fe2",
+      "supports": "Shoeybi et al., Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism , v1, 2019, PDF pp. 3–5: column/row MLP placement, whole-head attention partition, and logical replication conventions."
+    },
+    {
+      "id": "ref-sequence",
+      "title": "Korthikanti et al., Reducing Activation Recomputation in Large Transformer Models",
+      "url": "https://arxiv.org/pdf/2205.05198v1",
+      "version": "2205.05198v1",
+      "sha256": "5fcd24e92a086f5671cbb8c0624cd42251d2d43324245da9d93b0b2289e46abc",
+      "supports": "Korthikanti et al., Reducing Activation Recomputation in Large Transformer Models , v1, 2022, PDF pp. 3–7: activation accounting and sequence-parallel layouts; Figs. 5–6 specify paired collectives. Payload equivalence is not a universal runtime guarantee."
+    },
+    {
+      "id": "ref-fsdp",
+      "title": "PyTorch 2.8, FSDP2 (fully_shard)",
+      "url": "https://docs.pytorch.org/docs/2.8/distributed.fsdp.fully_shard.html",
+      "version": "PyTorch 2.8",
+      "sha256": null,
+      "supports": "PyTorch 2.8, FSDP2 (fully_shard) , documentation updated June 16, 2025: per-parameter dim-0 sharding, optimizer contract, groups, and reshard policy. These are version-specific API behaviors."
+    },
+    {
+      "id": "ref-megatron-code",
+      "title": "Megatron Core 0.12.0, gradient finalizer",
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/d580efc68a9f0dbf1945f834f6f6200cd01d3343/megatron/core/distributed/finalize_model_grads.py#L189-L225",
+      "version": "core_v0.12.0 / d580efc68a9f0dbf1945f834f6f6200cd01d3343",
+      "sha256": "85c5ec0aa95e539f8c33def4c48cf2e43444b9662b347c7658a6071bc563725f",
+      "supports": "Megatron Core 0.12.0, gradient finalizer , commit d580efc, May 6, 2025, lines 189–225: explicit replicated layer-normalization parameter-gradient reduction for sequence parallelism."
+    },
+    {
+      "id": "ref-gpipe",
+      "title": "Huang et al., GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+      "url": "https://arxiv.org/pdf/1811.06965v1",
+      "version": "1811.06965v1",
+      "sha256": "58bb403c7ccb7982d149bc21a0ba7345da1e7966719cf1ba15b8a70333698281",
+      "supports": "Huang et al., GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism , v1, 2018, PDF pp. 2–3: microbatches, pipelining, and synchronous update boundaries. Reported speedups concern its experiments."
+    },
+    {
+      "id": "ref-pipedream",
+      "title": "Narayanan et al., Memory-Efficient Pipeline-Parallel DNN Training",
+      "url": "https://arxiv.org/pdf/2006.09503v1",
+      "version": "2006.09503v1",
+      "sha256": "60680acf6924eaad0015a05023bc96c332ca43756d15621fe3d673f9afd0cdf6",
+      "supports": "Narayanan et al., Memory-Efficient Pipeline-Parallel DNN Training , v1, 2020, PDF pp. 2–3: 1F1B scheduling, weight versions, and PipeDream-2BW's delayed-update semantics."
+    },
+    {
+      "id": "ref-ring",
+      "title": "Liu, Zaharia, and Abbeel, Ring Attention with Blockwise Transformers for Near-Infinite Context",
+      "url": "https://arxiv.org/pdf/2310.01889v1",
+      "version": "2310.01889v1",
+      "sha256": "c71efbcb417138be383b7cc8cf9b5f1491ee4136809c2bf01aa31beadbc395be",
+      "supports": "Liu, Zaharia, and Abbeel, Ring Attention with Blockwise Transformers for Near-Infinite Context , v1, 2023, PDF pp. 3–5: rotating key/value blocks and conditional transfer/compute overlap. All byte equations in this chapter state their own element sizes."
+    },
+    {
+      "id": "ref-mixed",
+      "title": "Micikevicius et al., Mixed Precision Training",
+      "url": "https://arxiv.org/pdf/1710.03740v1",
+      "version": "1710.03740v1",
+      "sha256": "0d86873a3bd3cf4ebf6cd30a652b01c0fda73ebcf194fd8dc0a4d8943dd80015",
+      "supports": "Micikevicius et al., Mixed Precision Training , v1, 2017, PDF pp. 2–4: master weights, rounding, and loss scaling. Numerical recipes and empirical accuracy have stated conditions."
+    },
+    {
+      "id": "ref-moe",
+      "title": "Shazeer et al., Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+      "url": "https://arxiv.org/pdf/1701.06538v1",
+      "version": "1701.06538v1",
+      "sha256": "2567713d198a376b65b92f0c60b9f58c8c5f66755530b92203533a17c4ec4b8e",
+      "supports": "Shazeer et al., Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer , v1, 2017, PDF pp. 3–5: sparse mixture, top-k routing, combined data/expert placement, and importance balancing. Later hardware performance is not inferred from this paper."
+    },
+    {
+      "id": "ref-deepseek",
+      "title": "DeepSeek-AI, DeepSeek-V3 Technical Report",
+      "url": "https://arxiv.org/pdf/2412.19437v2",
+      "version": "2412.19437v2",
+      "sha256": "812a3fd645c80725354de9d831a6785503007a60681461407f64e97305fa9330",
+      "supports": "DeepSeek-AI, DeepSeek-V3 Technical Report , v2, February 18, 2025, PDF p. 9 and pp. 12–14: routing bias and complementary balance loss; DualPipe and its memory/overlap tradeoffs."
+    },
+    {
+      "id": "ref-deepep",
+      "title": "DeepEP v1.2.1 README",
+      "url": "https://github.com/deepseek-ai/DeepEP/blob/9af0e0d0e74f3577af1979c9b9e1ac2cad0104ee/README.md",
+      "version": "v1.2.1 / 9af0e0d0e74f3577af1979c9b9e1ac2cad0104ee",
+      "sha256": "92b2e14c11d26491f4157fbba424f28c56c1d9e640437eef2b3473b0a107c29b",
+      "supports": "DeepEP v1.2.1 README , commit 9af0e0d, September 15, 2025: dispatch/combine contracts, received-count host wait, distinct low-latency mode, NVSHMEM and architecture/network requirements. Reported H800/CX7 performance is developer evidence for that setup."
+    }
+  ],
+  "source_version_boundaries": [
+    "ZeRO v1 withdrawn; pinned v3 used",
+    "FSDP2 PyTorch2.8 behavior, not later defaults",
+    "DeepEP v1.2.1 2025-09-15; current V2.5 not substituted",
+    "Megatron Core0.12.0 2025-05-06",
+    "DeepSeek-V3 v2 2025-02-18; distinct from 2018 DualPipe naming",
+    "No hardware product rate promoted to measured chapter constant"
+  ],
+  "author_allocation": "Inherited available Codex agent; original author checks do not constitute independent editor acceptance",
+  "prose_word_count_without_math_code_svg": 9333,
+  "exercise_count": 6,
+  "original_code": {
+    "filename": "chapter04.py",
+    "sha256": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
+    "dependencies": "Python standard library only",
+    "embedded_byte_identity": true,
+    "checks": [
+      "Collective adjoint and noninverse",
+      "Weighted token gradient",
+      "TP forward/analytic gradients and8 finite differences",
+      "Sequence-local gamma parameter-gradient sum",
+      "Block softmax flat/reversed/oracle/single-key",
+      "ZeRO memory stages and rank1 limit",
+      "AFAB schedule exclusivity and producer/consumer dependencies",
+      "Expert assignment conservation/maxload",
+      "25 invalid-input failures"
+    ],
+    "stdout": "collective adjoint inner products: 100.0 = 100.0\nAG then RS: [[2.0, 4.0], [6.0, 8.0]]; not identity\nglobal mean: weighted=5.0, mean-of-means=4.0\ncolumn TP output=[[19.0, 22.0], [43.0, 50.0]]; dX=[[11.0, 15.0], [11.0, 15.0]]; dW=[[4.0, 4.0], [6.0, 6.0]]\nsequence-local gamma gradients=[[2, -3], [-5, 7]]; sum=[-3.0, 4.0]\nonline attention=3.060390192; flat/reversed agree\n7B model state GB at R=8: 112.00, 38.50, 26.25, 14.00\nAFAB p=4 m=8: makespan=22, utilization=0.727273\nexpert loads=[4, 2, 1, 1]; max/mean=2.0\ninvalid-input contracts: 25 rejected\n"
+  },
+  "quality_passes": [
+    {
+      "pass": "1",
+      "status": "author complete",
+      "evidence": "Full132-segment sequential read and106-page text read; exact partition in coverage ledger"
+    },
+    {
+      "pass": "2",
+      "status": "author complete",
+      "evidence": "Continuous original HTML with recurring7B maintenance-training decision"
+    },
+    {
+      "pass": "3",
+      "status": "author complete",
+      "evidence": "Gradient, collective, state-byte, TP, pipeline, attention and energy derivations; first-use notation ledger"
+    },
+    {
+      "pass": "4",
+      "status": "author complete",
+      "evidence": "Pinned originals and dated software; exact supporting pages/lines"
+    },
+    {
+      "pass": "5",
+      "status": "author complete",
+      "evidence": "Original stdlib implementation, isolated execution and embedded parity"
+    },
+    {
+      "pass": "6",
+      "status": "author complete",
+      "evidence": "Six mixed fully solved derivation/computation/counterexample/design exercises"
+    },
+    {
+      "pass": "6a",
+      "status": "author complete with limits",
+      "evidence": "21 selected official slide pages,7 primary paper pages and DeepEP original dispatch visual inspected"
+    },
+    {
+      "pass": "6b",
+      "status": "pending independent science-editor"
+    },
+    {
+      "pass": "6c",
+      "status": "author complete",
+      "evidence": "Source ledger lists selected claim pages/lines; does not claim entire papers read"
+    },
+    {
+      "pass": "7",
+      "status": "author pass; independent editorial review pending",
+      "evidence": "Local first-use, consequence/assumption and prose pacing checks"
+    },
+    {
+      "pass": "8",
+      "status": "author parity pass; independent editorial review pending",
+      "evidence": "CS230ch9, CS231Nch14 and accepted CS25pilot read for calibration; intellectual work recorded privately"
+    },
+    {
+      "pass": "9",
+      "status": "pending root integration and book-wide validation"
+    },
+    {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; reviewed body retained; source and finite-code limits remain explicit"
+    }
+  ],
+  "gate6b": {
+    "status": "accepted",
+    "blocking_findings": 0,
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066",
+    "accepted_metadata_sha256": "4351b6ba23472fcf0bacc7cb4625c9bb175b4c35dd7ce7a4dd818cd91d9dee56"
+  },
+  "publication": "Not published; local author draft",
+  "permission_errors_current_author_task": {
+    "permission_rejections": 0,
+    "AbsolutePathBuf": 0
+  }
+}

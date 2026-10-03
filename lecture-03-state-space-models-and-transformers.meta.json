@@ -1,0 +1,900 @@
+{
+  "video_id": "OyimE74UMF8",
+  "title": "State Space Models and Transformers",
+  "chapter_order": 3,
+  "recording_lecture_number": 3,
+  "recording_title": "On the Tradeoffs of SSMs and Transformers",
+  "speaker": "Albert Gu; separate MongoDB sponsor segment",
+  "date": "2026-04-16",
+  "date_boundary": "Official Spring 2026 schedule verified; historical comparisons remain attributed to recording date.",
+  "official_schedule_url": "https://web.stanford.edu/class/cs25/",
+  "status": "Independently reviewed chapter; local reader validation recorded separately; course completion pending",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "audio_sha256": "1e741a4d698a607acba7a2b25db0f85473952ff47b0747fb3967acbb787e3a1f",
+  "audio_duration_seconds": 4627.461,
+  "transcription_audio_duration_seconds": 4627.4346875,
+  "playlist_duration_seconds": 4628,
+  "transcript_sha256": "10dc422a5dff61b72aa2ec27be1becf02719cca2a6cb677f9d124c020b751e50",
+  "transcript_text_sha256": "310dc90d3b5fe71d52b4e10f32ed727814a3a1ce35b09afa5cc1d44a76d03080",
+  "transcript_segment_count": 167,
+  "transcript_first_start_seconds": 5.1,
+  "transcript_last_end_seconds": 4617.62,
+  "slides": {
+    "status": "No official chapter-3 deck found in course source set",
+    "lecture_video_visuals_inspected": false,
+    "primary_pdf_visuals": [
+      {
+        "source": "2507.07955v1",
+        "pdf_page": 3,
+        "sha256": "33521f753793a48d0cb8ba6767f5ec00f213cac2624ef26196d335b0468cc43a",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2507.07955v1",
+        "pdf_page": 7,
+        "sha256": "a6a3792792fbfde9bc837b3a9e350c370bf559159b3684f99dd0b18978baa860",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2507.07955v1",
+        "pdf_page": 13,
+        "sha256": "cf9d26b003bcc085114746e212cc07e5f898252cdb372bf1d62ec106f36fd9a6",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2507.07955v1",
+        "pdf_page": 15,
+        "sha256": "db2143a5f8c8617bd486e8f570234ae82fd8049a17e60c6785dd4221370a669f",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2507.07955v1",
+        "pdf_page": 19,
+        "sha256": "f3326adb530f0af66614c6e6dedd487c2abfc046b8afef49cd5698e4fbcea664",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2312.00752v2",
+        "pdf_page": 13,
+        "sha256": "68a5db51511cb9c597dbbea1bd768be74eadf2aa54d41dffc09be00bbd734bda",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2602.10603v3",
+        "pdf_page": 3,
+        "sha256": "be5292c10fc9e4c38315a6a13413b566cfb3e0db637a7b59f7911fdf726d5833",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2602.10603v3",
+        "pdf_page": 6,
+        "sha256": "d8b37732e5eadacb9770dce2476112fd1d57483c2eeebd5c2684ce2307579b60",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2401.13660v1",
+        "pdf_page": 1,
+        "sha256": "5d416585dc123cad53e69d83e764a855c6bba30207d6e4b6e2c8cec51bdfafdd",
+        "author_visually_inspected": true
+      },
+      {
+        "source": "2010.11929v2",
+        "pdf_page": 3,
+        "sha256": "62513d497ee43718334fece04de72ac03d769de490a7afbeb0b5b26355215e10",
+        "author_visually_inspected": true
+      }
+    ],
+    "boundary": "Only listed original PDF pages rendered and inspected; no deck or video animation attestation."
+  },
+  "sections": [
+    {
+      "section": "landscape",
+      "title": "1. Classify the computation before comparing model names 1:05",
+      "start": 65.3,
+      "end": 323.09,
+      "segments": [
+        2,
+        10
+      ],
+      "lecture_material": "Autoregressive sequence modeling, attention versus recurrent model families and dated modeling comparisons.",
+      "research_extension": "Mamba-3 pp. 1, 3–4: discretization, complex dynamics and multiple input/output channels; dated extension.",
+      "teaching_construction": "Maintenance trend versus exact historical identifier; conditional prediction interface and model-family boundaries.",
+      "evidence_class": "definition: Autoregressive prefix prediction and family interfaces; speaker judgment: Dated relative model comparisons; definition: Named Mamba-3 architectural mechanisms",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Autoregressive prefix prediction and family interfaces"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Dated relative model comparisons"
+        },
+        {
+          "class": "definition",
+          "claim": "Named Mamba-3 architectural mechanisms"
+        }
+      ]
+    },
+    {
+      "section": "decode",
+      "title": "2. Account for one update and for an entire generation 5:23",
+      "start": 323.09,
+      "end": 520.94,
+      "segments": [
+        11,
+        17
+      ],
+      "lecture_material": "Attention reads the accumulated history; recurrence updates a fixed-dimensional state; prompt processing and generation costs differ.",
+      "research_extension": null,
+      "teaching_construction": "Explicit causal pair counts, prompt-generation sum, head/cache bytes and fixed-width assumptions.",
+      "evidence_class": "engineering check: Original finite operation and storage counts; definition: History-length asymptotics at fixed model dimensions",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Original finite operation and storage counts"
+        },
+        {
+          "class": "definition",
+          "claim": "History-length asymptotics at fixed model dimensions"
+        }
+      ]
+    },
+    {
+      "section": "recurrence",
+      "title": "3. Derive the information path through a recurrent state 8:41",
+      "start": 521.23,
+      "end": 751.33,
+      "segments": [
+        18,
+        25
+      ],
+      "lecture_material": "SSM transitions, input injection, readout, state expansion and input-dependent selectivity.",
+      "research_extension": "Mamba pp. 3–5 and Mamba-3 pp. 3–4; input-dependent coefficients and discretization boundaries.",
+      "teaching_construction": "Exact scalar constant-input integration, units, limiting cases and noncommuting matrix-product unroll.",
+      "evidence_class": "theorem: Constant-coefficient interval integration and conditional recurrent expansion; engineering check: Equilibrium and small-step checks; definition: Selectivity and state dimension",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Constant-coefficient interval integration and conditional recurrent expansion"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Equilibrium and small-step checks"
+        },
+        {
+          "class": "definition",
+          "claim": "Selectivity and state dimension"
+        }
+      ]
+    },
+    {
+      "section": "scan",
+      "title": "4. Parallelize affine composition without reversing time 12:31",
+      "start": 751.33,
+      "end": 879.39,
+      "segments": [
+        26,
+        30
+      ],
+      "lecture_material": "Linear/affine recurrence can be parallelized by a scan when coefficients are available; dense state transformations incur costs.",
+      "research_extension": "MambaByte pp. 3–5: associative affine scan; SSD pp. 3–8: structured algorithmic representations.",
+      "teaching_construction": "Chronological composition, associativity proof, noncommutativity and a reset-safe fixture; work/span assumptions.",
+      "evidence_class": "theorem: Affine composition associativity and prefix-state identity; engineering check: Serial/scan/unroll equivalence and zero reset; definition: Work versus dependent span",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Affine composition associativity and prefix-state identity"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Serial/scan/unroll equivalence and zero reset"
+        },
+        {
+          "class": "definition",
+          "claim": "Work versus dependent span"
+        }
+      ]
+    },
+    {
+      "section": "ssd",
+      "title": "5. Understand the precise state-space/attention duality 14:39",
+      "start": 879.39,
+      "end": 992.69,
+      "segments": [
+        31,
+        34
+      ],
+      "lecture_material": "The speaker compares linear recurrent families including Mamba-2, gated DeltaNet and Mamba-3; rankings are dated and not universal.",
+      "research_extension": "SSD pp. 3–8: scalar-times-identity state-space duality; the detailed matrix/rank proof supplements the recording.",
+      "teaching_construction": "Signed nonnormalized sequence matrix, cross-cut factorization and precise rank/conditional-linearity boundaries.",
+      "evidence_class": "theorem: Restricted fixed-coefficient matrix duality and cross-cut rank bound; speaker judgment: Family performance comparisons at the recording date",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Restricted fixed-coefficient matrix duality and cross-cut rank bound"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Family performance comparisons at the recording date"
+        }
+      ]
+    },
+    {
+      "section": "bottleneck",
+      "title": "6. Prove a finite-memory boundary before invoking an analogy 16:32",
+      "start": 992.69,
+      "end": 1238.26,
+      "segments": [
+        35,
+        43
+      ],
+      "lecture_material": "Fixed state compresses history; attention preserves explicit positions; summary and exact recall have different demands.",
+      "research_extension": "Gu author essay: state/cache framing; ideal-real versus finite-precision distinction is original teaching.",
+      "teaching_construction": "Pigeonhole proof under fixed precision, 512-bit/520-bit counterexample and query-dependent recall.",
+      "evidence_class": "theorem: Finite deterministic-state exact-recall bound under arbitrary position queries; engineering check: Bit-budget arithmetic; speaker judgment: Summary/recall tradeoff framing",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Finite deterministic-state exact-recall bound under arbitrary position queries"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Bit-budget arithmetic"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Summary/recall tradeoff framing"
+        }
+      ]
+    },
+    {
+      "section": "hybrids",
+      "title": "7. Allocate explicit recall within a hybrid model 20:38",
+      "start": 1238.42,
+      "end": 1379.9,
+      "segments": [
+        44,
+        48
+      ],
+      "lecture_material": "Hybrid recurrent/attention models and dated recurrent-to-attention layer ratios; explicit recall complements summaries.",
+      "research_extension": "H-Net pp. 18–19: parameter-budget approximately matched outer-layer variants have different FLOP costs.",
+      "teaching_construction": "Separate layer ratio, retained bytes, parameter allocation and task capability; maintenance routing design.",
+      "evidence_class": "speaker judgment: Unseen ratio-table summaries near 10:1 and 3:1/4:1; empirical result: Scoped H-Net outer-layer ablation; engineering check: Explicit-recall task allocation",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Unseen ratio-table summaries near 10:1 and 3:1/4:1"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Scoped H-Net outer-layer ablation"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Explicit-recall task allocation"
+        }
+      ]
+    },
+    {
+      "section": "resolution",
+      "title": "8. Choose the input unit without confusing it with meaning 22:59",
+      "start": 1379.9,
+      "end": 1601.42,
+      "segments": [
+        49,
+        56
+      ],
+      "lecture_material": "Attention can be stronger at abstract resolution; bytes, patches and compressed positions change the input unit.",
+      "research_extension": "ViT p. 3: patch projection and positions; H-Net pp. 1–3: hierarchical framing.",
+      "teaching_construction": "Task-dependent resolution counterexample and explicit patch-interface dimensional explanation.",
+      "evidence_class": "definition: Input units and patch representations; engineering check: Identifier collision after coarsening; speaker judgment: Abstraction heuristic",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Input units and patch representations"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Identifier collision after coarsening"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Abstraction heuristic"
+        }
+      ]
+    },
+    {
+      "section": "bytes",
+      "title": "9. Compare likelihood on a common byte denominator 26:41",
+      "start": 1601.42,
+      "end": 1773.12,
+      "segments": [
+        57,
+        62
+      ],
+      "lecture_material": "Byte-level modeling, MambaByte and tokenization make resource and likelihood comparisons depend on resolution.",
+      "research_extension": "MambaByte pp. 1, 3–5; H-Net pp. 11–13: reproduction protocols, curves and final BPB table.",
+      "teaching_construction": "BPB conversion, token-perplexity counterexample, UTF-8/code-point distinction and matched-protocol limits.",
+      "evidence_class": "definition: Byte-normalized negative-log likelihood; engineering check: Equal-probability segmentation example; empirical result: Global/sliding LlamaByte and MambaByte scoped endpoints/curves",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Byte-normalized negative-log likelihood"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Equal-probability segmentation example"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Global/sliding LlamaByte and MambaByte scoped endpoints/curves"
+        }
+      ]
+    },
+    {
+      "section": "heuristics",
+      "title": "10. Turn abstraction heuristics into testable hypotheses 29:33",
+      "start": 1773.12,
+      "end": 2023.63,
+      "segments": [
+        63,
+        71
+      ],
+      "lecture_material": "Changing resolution, abstraction and repetition is proposed to guide architecture rather than fix universal laws.",
+      "research_extension": "Gu essay; H-Net pp. 15–19: actual boundary and outer-layer ablation evidence.",
+      "teaching_construction": "Refutable experiment separating repetition, token unit, compute and exact recall; causal interpretation limits.",
+      "evidence_class": "speaker judgment: Architecture/abstraction heuristics; empirical result: Scoped boundary/ablation observations; engineering check: Controlled test design",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Architecture/abstraction heuristics"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Scoped boundary/ablation observations"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Controlled test design"
+        }
+      ]
+    },
+    {
+      "section": "router",
+      "title": "11. Learn a boundary without inventing a vocabulary table 33:43",
+      "start": 2023.63,
+      "end": 2224.4,
+      "segments": [
+        72,
+        78
+      ],
+      "lecture_material": "H-Net learns a dynamic boundary router and processes selected representations at a coarser level.",
+      "research_extension": "H-Net pp. 3–7: adjacent-projection cosine score, thresholded selection and forced first boundary.",
+      "teaching_construction": "First-use row/column dimensions, nonzero norm domain, threshold ties and score-not-calibrated-probability boundary.",
+      "evidence_class": "definition: Actual causal boundary-selection mechanism; engineering check: Threshold and representation interpretation",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Actual causal boundary-selection mechanism"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Threshold and representation interpretation"
+        }
+      ]
+    },
+    {
+      "section": "causal-chunks",
+      "title": "12. Return coarse information to fine positions causally 37:04",
+      "start": 2224.91,
+      "end": 2426.67,
+      "segments": [
+        79,
+        85
+      ],
+      "lecture_material": "Dynamic chunking must be causal; smoothing and expansion support learning across discrete selection.",
+      "research_extension": "H-Net pp. 6–9: selected-output EMA, latest-boundary expansion, residual and stop-gradient surrogate.",
+      "teaching_construction": "Prefix-causality proof, future-pooling counterexample and four-position forward fixture.",
+      "evidence_class": "theorem: Prefix causality under causal encoder/main network and latest-boundary expansion; engineering check: Future perturbation versus future-chunk mean",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Prefix causality under causal encoder/main network and latest-boundary expansion"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Future perturbation versus future-chunk mean"
+        }
+      ]
+    },
+    {
+      "section": "learning-chunks",
+      "title": "13. Separate a discrete forward decision from its training surrogate 40:26",
+      "start": 2426.67,
+      "end": 2655.38,
+      "segments": [
+        86,
+        93
+      ],
+      "lecture_material": "The speaker describes hierarchical models and empirical scaling/segmentation behavior across several resolutions.",
+      "research_extension": "H-Net pp. 7–9, 13, 15: training surrogate, ratio loss and learned segmentation examples.",
+      "teaching_construction": "Straight-through forward value versus prescribed derivative; feasible off-diagonal ratio example and finite-length boundary.",
+      "evidence_class": "definition: Straight-through backward prescription; engineering check: Forward-one surrogate and off-diagonal penalty below one; empirical result: Scoped hierarchy/segmentation observations; theorem: Ratio-loss diagonal minimum with explicit restriction",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Straight-through backward prescription"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Forward-one surrogate and off-diagonal penalty below one"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Scoped hierarchy/segmentation observations"
+        },
+        {
+          "class": "theorem",
+          "claim": "Ratio-loss diagonal minimum with explicit restriction"
+        }
+      ]
+    },
+    {
+      "section": "empirical-hierarchy",
+      "title": "14. Read the hierarchy experiment with its matching protocol 44:15",
+      "start": 2655.79,
+      "end": 2847.98,
+      "segments": [
+        94,
+        100
+      ],
+      "lecture_material": "The hierarchy is compared on language-model scaling and multimodal-resolution examples.",
+      "research_extension": "H-Net pp. 11–13, 15–19: training, final BPB, outer-layer costs and boundary visualizations; no unseen slide attestation.",
+      "teaching_construction": "Curve versus endpoint, parameters versus FLOPs versus wall time and fine-route information distinction.",
+      "evidence_class": "empirical result: Named H-Net configurations and measured BPB; engineering check: Protocol-dependent experiment interpretation",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Named H-Net configurations and measured BPB"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Protocol-dependent experiment interpretation"
+        }
+      ]
+    },
+    {
+      "section": "dna",
+      "title": "15. Extend the accounting to genomic resolution 47:27",
+      "start": 2847.98,
+      "end": 2956.99,
+      "segments": [
+        101,
+        104
+      ],
+      "lecture_material": "Genomic sequence modeling is a high-resolution setting where hierarchy and recurrence can be combined.",
+      "research_extension": "Mamba pp. 12–13 HG38 parameter/context sweeps; dnaHNet pp. 1, 3–7 retained April v3 mechanisms, fit and FLOP comparison.",
+      "teaching_construction": "Resource accounting, fitted compute-doubling arithmetic and impossible extrapolation below perplexity one.",
+      "evidence_class": "empirical result: Named genomic sweeps, in-range exponents and model-specific FLOP ratio; engineering check: Compute-doubling fit calculation and outer/main accounting; speaker judgment: Genomic architectural motivation",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Named genomic sweeps, in-range exponents and model-specific FLOP ratio"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Compute-doubling fit calculation and outer/main accounting"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Genomic architectural motivation"
+        }
+      ]
+    },
+    {
+      "section": "synthesis",
+      "title": "16. Select a model by the information the task requires 49:16",
+      "start": 2956.99,
+      "end": 3271.58,
+      "segments": [
+        105,
+        115
+      ],
+      "lecture_material": "Architecture, training budget, application capability and physical constraints are synthesized; abstraction is an intuition, not a universal result.",
+      "research_extension": null,
+      "teaching_construction": "Explicit task thresholds and evidence requirements; no scalar intelligence score inferred from FLOPs.",
+      "evidence_class": "speaker judgment: Architectural synthesis and future direction; engineering check: Decision-relevant capability constraints",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Architectural synthesis and future direction"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Decision-relevant capability constraints"
+        }
+      ]
+    },
+    {
+      "section": "bptt",
+      "title": "17. Q&A: distinguish a truncated gradient from impossible learning 54:31",
+      "start": 3271.58,
+      "end": 3495.25,
+      "segments": [
+        116,
+        122
+      ],
+      "lecture_material": "Q&A discusses truncated backpropagation, long-term learning, recurrence restrictions and possible alternatives.",
+      "research_extension": null,
+      "teaching_construction": "Temporal chain-rule product and precise cut-gradient distinction; shared-parameter/direct-path qualification.",
+      "evidence_class": "theorem: Temporal chain-rule path under differentiability; speaker judgment: Alternative training directions; engineering check: Truncation boundary and training-test design",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Temporal chain-rule path under differentiability"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Alternative training directions"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Truncation boundary and training-test design"
+        }
+      ]
+    },
+    {
+      "section": "future-chunking",
+      "title": "18. Q&A: keep the scale limitation attached to the proposal 58:15",
+      "start": 3495.25,
+      "end": 3562.77,
+      "segments": [
+        123,
+        124
+      ],
+      "lecture_material": "Q&A asks about chunking at larger scale; the speaker retains current data/compute limitations.",
+      "research_extension": null,
+      "teaching_construction": "One-bottleneck-at-a-time extension protocol without promising a scaling result.",
+      "evidence_class": "speaker judgment: Larger-scale opportunity and existing limitation; engineering check: Refutable extension design",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Larger-scale opportunity and existing limitation"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Refutable extension design"
+        }
+      ]
+    },
+    {
+      "section": "vocabulary",
+      "title": "19. Q&A: dynamic chunks are continuous features 59:22",
+      "start": 3562.77,
+      "end": 3730.06,
+      "segments": [
+        125,
+        130
+      ],
+      "lecture_material": "Q&A distinguishes learned chunks from vocabulary entries and asks how variable-length chunks feed the main model.",
+      "research_extension": "H-Net pp. 15–19 supports static boundary examples but not a word-meaning certificate.",
+      "teaching_construction": "Continuous contextual features versus a discrete inner codebook; prefix-dependent representation and causal pooling qualifications.",
+      "evidence_class": "definition: Continuous representation versus vocabulary table; speaker judgment: Dynamic chunks without an infinite embedding table; empirical result: Scoped static boundary examples",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Continuous representation versus vocabulary table"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Dynamic chunks without an infinite embedding table"
+        },
+        {
+          "class": "empirical result",
+          "claim": "Scoped static boundary examples"
+        }
+      ]
+    },
+    {
+      "section": "memory",
+      "title": "20. Q&A: a hierarchy of memories remains a proposal 1:02:10",
+      "start": 3730.1,
+      "end": 3815.34,
+      "segments": [
+        131,
+        133
+      ],
+      "lecture_material": "Q&A proposes repeated chunking for long-term summaries; brain analogy is qualified and no completed result is claimed.",
+      "research_extension": null,
+      "teaching_construction": "Repeated-compression revision-conflict counterexample and query-dependent evaluation.",
+      "evidence_class": "speaker judgment: Memory hierarchy proposal and limited analogy; engineering check: Loss of corrective evidence",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Memory hierarchy proposal and limited analogy"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Loss of corrective evidence"
+        }
+      ]
+    },
+    {
+      "section": "small-models",
+      "title": "21. Q&A: preserve an unanswered comparison 1:03:35",
+      "start": 3815.34,
+      "end": 3904.5,
+      "segments": [
+        134,
+        136
+      ],
+      "lecture_material": "Q&A asks about small models and parameter-efficient experiments; the speaker does not know the requested comparison.",
+      "research_extension": null,
+      "teaching_construction": "Preserve unanswered scope; require a matched test rather than fabricate a small-model ranking.",
+      "evidence_class": "speaker judgment: Explicit unanswered small-model comparison",
+      "claim_provenance": [
+        {
+          "class": "speaker judgment",
+          "claim": "Explicit unanswered small-model comparison"
+        }
+      ]
+    },
+    {
+      "section": "dependency-maps",
+      "title": "22. Q&A: interpret a dependency map at the right level 1:05:04",
+      "start": 3904.5,
+      "end": 3992.46,
+      "segments": [
+        137,
+        139
+      ],
+      "lecture_material": "Q&A asks whether recurrent/attention-like maps can explain dependencies and learned representations.",
+      "research_extension": "SSD pp. 3–8 permits a conditional sequence map; full derivative comparison below is original.",
+      "teaching_construction": "Input-dependent two-step example with frozen coefficient 1 versus total derivative 3.",
+      "evidence_class": "theorem: Conditional affine map versus full input derivative; engineering check: Derivative counterexample and interpretability boundary",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Conditional affine map versus full input derivative"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Derivative counterexample and interpretability boundary"
+        }
+      ]
+    },
+    {
+      "section": "sponsor",
+      "title": "23. Sponsor technical segment: represent a document before retrieving it 1:06:32",
+      "start": 3992.5,
+      "end": 4471.02,
+      "segments": [
+        140,
+        160
+      ],
+      "lecture_material": "Separate MongoDB sponsor demonstration describes insurance-image/page retrieval, Voyage multimodal embeddings, CLIP comparison and vector/document co-location.",
+      "research_extension": "CLIP p. 4 corrects separate-tower/shared-space overstatement; January 15 Voyage announcement supports its product design only.",
+      "teaching_construction": "Cosine similarity versus entailment, model/source version coupling, synchronization limits and verified action preconditions.",
+      "evidence_class": "product claim: Sponsor workflow and Voyage design; definition: CLIP paired alignment into a shared embedding space; engineering check: Wrong-revision retrieval and operational boundary",
+      "claim_provenance": [
+        {
+          "class": "product claim",
+          "claim": "Sponsor workflow and Voyage design"
+        },
+        {
+          "class": "definition",
+          "claim": "CLIP paired alignment into a shared embedding space"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Wrong-revision retrieval and operational boundary"
+        }
+      ]
+    },
+    {
+      "section": "lab",
+      "title": "24. Executable checks: composition, causality and comparable units",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original stdlib scalar recurrence/scan, causal expansion, units and failure checks.",
+      "evidence_class": "engineering check: Original stdlib scalar recurrence/scan, causal expansion, units and failure checks.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Original stdlib scalar recurrence/scan, causal expansion, units and failure checks."
+        }
+      ]
+    },
+    {
+      "section": "exercises",
+      "title": "25. Six exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Six original derivation, counterexample, numerical, transfer and synthesis exercises with full solutions.",
+      "evidence_class": "theorem: Finite-state capacity bound, chronological affine associativity and restricted diagonal ratio minimum; engineering check: Finite likelihood, recurrence, causal-routing and resource arithmetic; controlled study design",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "Finite-state capacity bound, chronological affine associativity and restricted diagonal ratio minimum",
+          "origin": "Original exercise proofs under stated hypotheses"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Finite likelihood, recurrence, causal-routing and resource arithmetic; controlled study design",
+          "origin": "Original exercise fixtures and design"
+        }
+      ]
+    },
+    {
+      "section": "references",
+      "title": "26. Primary sources and limits",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Pinned original source bibliography and explicit inspection boundaries.",
+      "evidence_class": "engineering check: Pinned original source bibliography and explicit inspection boundaries.",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Pinned original source bibliography and explicit inspection boundaries."
+        }
+      ]
+    }
+  ],
+  "omitted_material": [
+    {
+      "segments": [
+        0,
+        1
+      ],
+      "start": 5.1,
+      "end": 65.3,
+      "reason": "Speaker introduction/biography; title and speaker retained in header."
+    },
+    {
+      "segments": [
+        161,
+        166
+      ],
+      "start": 4471.25,
+      "end": 4617.62,
+      "reason": "Startup program promotion, credits, QR links and event logistics; substantive sponsor retrieval segment retained separately."
+    }
+  ],
+  "coverage_check": {
+    "all_segments_sequentially_read": 167,
+    "substantive_segments_assigned_once": 159,
+    "assigned_range": [
+      2,
+      160
+    ],
+    "academic_qa_retained": true,
+    "sponsor_technical_retained_with_separate_attribution": true,
+    "source_gap_boundary": "Section spans are navigation envelopes; inter-segment silences are not fabricated speech."
+  },
+  "primary_source_audit": {
+    "sources": 10,
+    "pinned_pdfs": 8,
+    "claim_pages_read": 44,
+    "primary_visuals_inspected": 10,
+    "scope": "Actual named claim pages only; no full-paper or benchmark reproduction attestation."
+  },
+  "source_version_boundaries": [
+    "H-Net retained July 2025 v1; exact unseen talk slide identity unresolved.",
+    "dnaHNet arXiv v3 April 9, printed April 13 preprint; used as named research extension to April 16 recording.",
+    "Mamba-3 March 16 v1; historical family comparisons not current universal ranking.",
+    "Voyage January 15 product announcement; conflicting comparative percentage summaries excluded."
+  ],
+  "author_allocation": {
+    "agent": "/root/chapter09",
+    "role": "chapter 3 author; not its reviewer",
+    "model": "actual inherited available agent model; historical unavailable model names not asserted",
+    "independent_gate": "Different agent required"
+  },
+  "authored_body_sha256": "22b7065c80b65f9948b929f1cd12d0ec26b786575dc0ec75fd8434e34bc48a74",
+  "prose_word_count_excluding_math_and_code": 10749,
+  "exercise_count": 6,
+  "original_code": {
+    "file": "chapter03.py",
+    "sha256": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
+    "standard_library_only": true,
+    "embedded_code_exact": true,
+    "embedded_stdout_exact": true,
+    "negative_input_checks": 18,
+    "fixture_scope": "Finite scalar math checks, not trained-model or hardware reproduction.",
+    "small_exponent_boundary_checks": 3,
+    "numerical_boundary": "Finite binary64 inputs; nonfinite interval exponent or unrepresentable final gain rejected. ZOH limiting ratio and binary scaling preserve representable small-exponent injection; a final gain outside the subnormal range may round to zero."
+  },
+  "quality_passes": {
+    "1": "full source spine and scope",
+    "2": "explanatory mechanisms and original derivations",
+    "3": "recurring case and consequences",
+    "4": "six complete mixed solutions and executable checks",
+    "5": "claim-specific primary source/evidence boundaries",
+    "6": "author verification",
+    "6a": "pre-derivation notation/domains/hypotheses",
+    "6b": "pending independent review",
+    "6c": "post-draft symbol reconciliation",
+    "7": "author prose pass; independent editorial verdict pending",
+    "8": "author qualitative exemplar comparison; independent parity verdict pending",
+    "9": "root-owned reader integration/render validation pending",
+    "independent_acceptance": {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; reviewed body retained; source and finite-code limits remain explicit"
+    }
+  },
+  "gate_6b": {
+    "status": "pending",
+    "self_acceptance": false
+  },
+  "publication": "private/local; not published",
+  "permission_errors_current_author_task": [],
+  "references": [
+    {
+      "title": "Albert Gu, On the Tradeoffs of SSMs and Transformers",
+      "url": "https://goombalab.github.io/blog/2025/tradeoffs/",
+      "supports": "(July 2025): the speaker's recurrence, state/cache framing and expressly heuristic abstraction argument."
+    },
+    {
+      "title": "Gu and Dao, Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+      "url": "https://arxiv.org/pdf/2312.00752v2",
+      "supports": "recurrent core, state expansion, input selection and the scoped HG38 parameter/context sweeps (PDF pp. 3–5, 12–13)."
+    },
+    {
+      "title": "Dao and Gu, Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",
+      "url": "https://arxiv.org/pdf/2405.21060v1",
+      "supports": "the restricted scalar-transition duality and recurrent/matrix representations (PDF pp. 3–8)."
+    },
+    {
+      "title": "Wang et al., MambaByte: Token-free Selective State Space Model",
+      "url": "https://arxiv.org/pdf/2401.13660v1",
+      "supports": "affine scan and the original byte-model experiment's comparison protocols (PDF pp. 1, 3–5)."
+    },
+    {
+      "title": "Hwang, Wang and Gu, Dynamic Chunking for End-to-End Hierarchical Sequence Modeling",
+      "url": "https://arxiv.org/pdf/2507.07955v1",
+      "supports": "causal selection/smoothing/expansion, training surrogates, hierarchy experiments and outer-layer ablations (PDF pp. 1–13, 15–19). Its originals supply the inspected diagrams."
+    },
+    {
+      "title": "Lahoti et al., Mamba-3: Improved Sequence Modeling using State Space Principles",
+      "url": "https://arxiv.org/pdf/2603.15569v1",
+      "supports": "(March 16, 2026): named architectural innovations, not a universal current ranking (PDF pp. 1, 3–4)."
+    },
+    {
+      "title": "Shah et al., dnaHNet: A Scalable and Hierarchical Foundation Model for Genomic Sequence Learning",
+      "url": "https://arxiv.org/pdf/2602.10603v3",
+      "supports": "retained arXiv April 9, 2026 version, printed April 13 preprint; genomic hierarchy, compute accounting and bounded evaluations (PDF pp. 1, 3–7). Exact unseen slide identity remains unconfirmed."
+    },
+    {
+      "title": "Dosovitskiy et al., An Image is Worth 16x16 Words",
+      "url": "https://arxiv.org/pdf/2010.11929v2",
+      "supports": "actual patch projection and positional interface (PDF p. 3)."
+    },
+    {
+      "title": "Radford et al., Learning Transferable Visual Models From Natural Language Supervision",
+      "url": "https://arxiv.org/pdf/2103.00020v1",
+      "supports": "CLIP's jointly aligned image/text embedding space, correcting the sponsor's architectural overstatement (PDF p. 4)."
+    },
+    {
+      "title": "Voyage AI, voyage-multimodal-3.5 announcement",
+      "url": "https://blog.voyageai.com/2026/01/15/voyage-multimodal-3-5/",
+      "supports": "(January 15, 2026): official single-encoder/interleaved-input product description. Insurance-demo accuracy and synchronization guarantees are not independently verified."
+    }
+  ],
+  "gate6b": {
+    "status": "accepted",
+    "blocking_findings": 0,
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "22b7065c80b65f9948b929f1cd12d0ec26b786575dc0ec75fd8434e34bc48a74",
+    "accepted_metadata_sha256": "7f99c791a732f1165bf4a5d80242c22431ed871c73bc52d9fae1a3c4712b1e95"
+  }
+}

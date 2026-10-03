@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><meta name="book-content-sha256" content="f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066"><title>Training at GPU Scale · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout"><aside class="toc" id="chapter-toc" aria-label="On this page"><h2>On this page</h2></aside><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><!-- BOOK-CONTENT-START -->
+<header><p class="eyebrow">CS25: Transformers United V6 · Chapter 4 · Spring 2026</p><h1>Training at GPU Scale</h1><p class="subtitle">Tensor ownership, gradient semantics, and the cost of moving a model through a machine</p></header>
+<p>A team wants to train a seven-billion-parameter maintenance assistant on technical documents. It has eight accelerators, each with a hypothetical usable memory budget of 80 decimal GB, and a fast connection within one node. The team proposes to copy the model onto every accelerator and divide the documents. Its parameter file occupies only 14 GB in a two-byte format. Yet an ordinary mixed-precision Adam training replica needs 112 GB of model state before the first saved activation. The proposal cannot start.</p>
+<p>A second proposal shards the state and fits. It runs faster, but a comparison with a single-device reference gives a different update. One worker averaged the losses of three valid tokens; another averaged one. Averaging those worker gradients gave the lone token three times the per-token weight of the other worker's tokens. The hardware problem and the mathematical problem are inseparable: fitting a tensor does not establish that the distributed program computes the intended objective.</p>
+<aside class="callout"><strong>Source and prerequisites.</strong> The sequence follows <a href="https://www.youtube.com/watch?v=I5BKi32IEa8">Nouamane Tazi's April 23, 2026 CS25 V6 talk</a>, “The Ultra-Scale Talk: Scaling Training to Thousands of GPUs,” and its official 106-page deck. Timestamps are navigation aids from machine transcription, not human-certified captions. Matrix differentiation, a transformer block, and gradient descent are assumed. The maintenance case, resource budgets, proofs, simulator, and exercises are original teaching constructions. Historical measurements are attributed separately. Memory values here use GB = $10^9$ bytes and GiB = $2^{30}$ bytes.</aside>
+
+<section id="scale"><h2>1. A training step is a resource contract <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=80">1:20</a></h2>
+<p>Three growth directions put different pressure on a training system. More parameters increase parameter and optimizer storage. More training tokens increase the number of updates or the work per update. Longer sequences increase activation storage and, for ordinary dense attention, the number of query-key interactions. A trillion parameters, trillions of tokens, and million-token contexts are useful scale markers in the talk; they are different quantities with different units. No one of them determines the required number of GPUs.</p>
+<p>Let $\theta\in\mathbb R^N$ be the vector of $N$ trainable scalar parameters. For a set $\mathcal B$ of valid prediction positions, define an individual differentiable loss $\ell_i(\theta)$ and the intended update objective</p>
+\[ L_{\mathcal B}(\theta)=\frac{1}{C}\sum_{i\in\mathcal B}\ell_i(\theta),\qquad C=|\mathcal B|>0. \]
+<p>A valid position contributes to both the numerator and the count. Padding and deliberately masked targets do neither. The objective fixes what the system must compute; the placement of those terms on devices is a separate choice. The same distinction applies if the desired objective is a mean over examples rather than over tokens. A long document receives more weight under a token mean. It receives equal weight to a short document under an example mean whose per-example losses have already been normalized.</p>
+<p>A <dfn>microbatch</dfn> is a group processed by one forward/backward evaluation before the optimizer step. <dfn>Gradient accumulation</dfn> adds contributions from several microbatches while holding $\theta$ fixed. With $D$ independent data replicas, $b$ examples per microbatch, and $a$ accumulation evaluations per replica, the global batch contains $Dba$ examples when all batches have that size. If every example has exactly $s$ valid targets, it contains $Dbas$ targets. Variable-length or masked data require the actual count $C$.</p>
+<p>Accumulation is equivalent to differentiation of the combined objective when its losses are weighted by their actual contribution, all microbatches use the same parameter version, and forward semantics remain the same. Batch-dependent normalization, changing random masks, or an optimizer step between microbatches can break a proposed equivalence. The optimizer is called once after the combined gradient is assembled. Applying Adam separately to each microbatch is not accumulation: its nonlinear moment update and its parameter version change each time.</p>
+<p>The eight-device maintenance job will preserve a chosen token batch and optimizer rule while changing tensor ownership. A feasible step also requires a peak memory bound, an executable communication schedule, and enough sustained throughput to finish the training budget. Checkpointing adds another resource constraint. If a checkpoint contains $Q$ bytes and storage sustains $B_{\mathrm{disk}}$ bytes per second, $Q/B_{\mathrm{disk}}$ seconds is an ideal transfer lower bound. Serialization, consistency barriers, and contention add time. The talk's one-second iteration and terabyte-checkpoint examples motivate this infrastructure problem; they are not universal operating targets.</p>
+</section>
+
+<section id="data-parallel"><h2>2. Data parallelism preserves an objective through weighted reduction <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=335">5:35</a></h2>
+<p>In <dfn>data parallelism</dfn> (DP), each worker holds the same model and processes a different portion of the data. A <dfn>rank</dfn> identifies a process in a communication group; in the simple case there is one process per accelerator. Replicas begin an update with the same parameters and optimizer state. Their gradients differ because their local data differ. An <dfn>all-reduce</dfn> combines corresponding entries across ranks and returns the combined vector to every rank.</p>
+<p>Suppose rank $r\in\{0,\ldots,D-1\}$ owns $C_r>0$ valid terms, with $C=\sum_r C_r$. Its local mean gradient is $g_r=C_r^{-1}\sum_{i\in\mathcal B_r}\nabla\ell_i$. Differentiation is linear over this finite sum, so the desired gradient is</p>
+\[ \nabla L_{\mathcal B}=\frac{1}{C}\sum_r\sum_{i\in\mathcal B_r}\nabla\ell_i
+=\sum_r\frac{C_r}{C}g_r. \]
+<p>This is a weighted reduction. The unweighted mean $D^{-1}\sum_r g_r$ is correct when every $C_r$ is equal, or by coincidence when the gradient differences cancel. With local means 2 and 6 from counts 1 and 3, the intended scalar gradient is $(1\cdot2+3\cdot6)/4=5$. A mean of means gives 4. This error persists in exact arithmetic; it is not a floating-point tolerance issue.</p>
+<p>There are two consistent implementation conventions. One can differentiate local loss sums, SUM-reduce the resulting gradients, and divide by the global count. Alternatively, with a framework that averages rank gradients, differentiate $D/C$ times each local loss sum. The framework's $1/D$ then cancels the inserted $D$. Counts may be assembled across every microbatch before backward, or sums may be accumulated and normalized after reduction. Exactly one normalization is required. Dividing each microbatch mean by an accumulation count handles only equal contributions. A rank with zero valid tokens must contribute a zero sum while remaining in the collective; it must not construct a mean by dividing by zero.</p>
+<p><dfn>DistributedDataParallel</dfn> (DDP) is PyTorch's replicated training abstraction discussed in the talk. Its gradient synchronization can be organized into <dfn>buckets</dfn>, groups of parameter gradients whose communication begins once those gradients are ready. Backward typically makes later layers' gradients ready first. Earlier-layer differentiation can then run while a completed bucket is being reduced. Waiting until every gradient is ready sacrifices this opportunity.</p>
+<p>The overlap has a dependency boundary. If a bucket takes $t_c$ seconds to communicate and $t_i$ seconds of genuinely independent computation remain after it becomes ready, an ideal overlap leaves at least $\max(0,t_c-t_i)$ seconds of exposed communication. This is a local optimistic model, not a prediction of a whole training iteration. Kernels may compete for bandwidth or execution resources. Very small buckets increase launch and latency costs; very large buckets become ready late. A CPU profiler can show queued launches before the GPU completes them, so host timestamps alone do not establish device overlap.</p>
+<p>DP improves aggregate throughput only while replica memory is feasible and additional workers can be used without an unacceptable global-batch change. It does not remove replicated optimizer storage. For the seven-billion-parameter case, that storage already defeats the 80 GB budget. Reducing the redundancy of state is the next change, while the objective above remains fixed.</p>
+</section>
+
+<section id="zero"><h2>3. ZeRO removes state redundancy, not optimizer requirements <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=686">11:26</a></h2>
+<p>Training state is larger than the parameter file. For the accounting contract used here, every parameter has a two-byte working weight, a two-byte stored gradient, a four-byte master weight for updates, and two four-byte Adam moments. Adam's moments track a decayed first moment and a decayed second moment of gradients; they are state of the optimization algorithm. Their presence is a mathematical choice, while their placement is a systems choice. This particular contract totals $2+2+4+4+4=16$ bytes per parameter.</p>
+<p>The master weight helps retain updates that would disappear if repeatedly rounded into a lower-precision weight. A small update can be lost even when it is itself representable, because adding it to a much larger weight rounds back to the original weight. <a href="#ref-mixed">Micikevicius and colleagues' mixed-precision paper</a>, PDF pp. 2–4, distinguishes master weights, lower-precision computation, and loss scaling. They are different mechanisms. If the loss is multiplied by a finite scale $\lambda>0$, the chain rule multiplies its gradients by $\lambda$. Unscaling before clipping or an optimizer step restores the intended gradient in exact arithmetic. It does not repair overflow or recover an underflow that has already occurred.</p>
+<p>The 16-byte contract is useful because it is explicit. An implementation with four-byte stored gradients instead needs 18 bytes per parameter before other overheads; an optimizer without a master copy differs again. Parameter format, reduction format, and multiplication/accumulation format need not be the same. Changing “FP16” to another two-byte format does not alone specify any of these choices. The historical paper's successful accuracy comparisons apply to its tested networks and settings, not to every future training job.</p>
+<p><dfn>Zero Redundancy Optimizer</dfn> (ZeRO) partitions state among data-parallel ranks. Stage 1 partitions optimizer state, including the master weights in this contract. Stage 2 also partitions gradients. Stage 3 additionally partitions working parameters. Assuming equal shards across $D$ ranks, persistent model-state storage per rank is</p>
+\[ M_0=16N,\quad M_1=\left(4+\frac{12}{D}\right)N,\quad
+M_2=\left(2+\frac{14}{D}\right)N,\quad M_3=\frac{16N}{D}\quad\text{bytes}. \]
+<p>The derivation counts which terms remain replicated. Stage 1 leaves two-byte weights and two-byte gradients on every rank, while dividing the remaining 12 bytes by $D$. Stage 2 leaves only the two-byte weight replicated. Stage 3 divides all four categories. For $N=7\times10^9$ and $D=8$, these bounds are 112, 38.50, 26.25, and 14.00 GB. The last value is about 13.04 GiB. With one rank all stages return 112 GB, an immediate consistency check. These formulas follow the state decomposition in <a href="#ref-zero">Rajbhandari and colleagues</a>, PDF pp. 7–11, and exclude saved activations, communication buffers, temporary full parameters, padding, and allocator overhead.</p>
+<p>Stage 1 lets a rank update only the parameters whose optimizer state it owns, then distribute updated weights to replicas. A reduce-scatter can deliver reduced gradients only to their designated owners. Stage 2 additionally keeps only those gradient shards. Stage 3 supplies parameter shards on demand to build the full weights needed for a computation. Moving a parameter does not turn its optimizer into a local scalar algorithm. A matrix optimizer such as the Muon method mentioned in the talk uses a matrix transformation, including an approximate orthogonalization by Newton–Schulz iteration. Arbitrary flattening and independently transforming pieces would generally define a different operation. A compatible distributed implementation must reconstruct the required matrix or implement the transformation with appropriate distributed algebra. No full Muon implementation is implied here.</p>
+<p>Choosing the smallest stage that gives safe memory headroom can avoid unnecessary parameter traffic. In this case Stage 1's 38.50 GB persistent state may already leave enough room for the chosen microbatch; only a measured or bounded activation peak can decide. Stage 3's smaller persistent number creates more flexibility, but it is not a guarantee that the job fits.</p>
+</section>
+
+<section id="fsdp"><h2>4. Fully sharded training is a schedule of temporary ownership <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=943">15:43</a></h2>
+<p><dfn>Fully sharded data parallelism</dfn> (FSDP) implements parameter, gradient, and optimizer-state sharding with a schedule tied to model computation. Unlike tensor parallelism, a rank can still compute a full layer on its own data once that layer's weights have been gathered. Sharding changes where the persistent state lives. It does not necessarily divide the layer's matrix multiplication among ranks.</p>
+<p>An <dfn>FSDP unit</dfn> is a group of parameters gathered together for execution. A representative schedule is: gather the unit before its forward computation; release its full working weights afterward; gather it again before backward; compute its full local gradient; reduce-scatter that gradient to owners; release the temporary full state. The optimizer subsequently updates the owned shards. Saved activations still have their own lifetimes. They are not freed merely because the full weights are freed.</p>
+<p>Unit size is consequential. Gathering all $N$ weights at once recreates a large memory peak. Very small units create many latency-sensitive collectives. Let a unit contain $U$ parameters and use $q$ bytes per working weight. Its full gather buffer costs $qU$ bytes. A conservative peak bound can add the persistent shard state, all simultaneously live full gather buffers, gradient/reduction buffers, saved activations, and workspace. This deliberately permits double counting a local shard present inside a full gather allocation; a tighter bound must use the allocator's actual reuse behavior.</p>
+<p>For the maintenance case, take Stage 3's 14 GB persistent state, two simultaneously materialized units of $0.5$ billion parameters at two bytes each, an independently budgeted 20 GB of saved activations, and 6 GB of gradient workspace and miscellaneous allocations. The conservative bound is $14+2(1)+20+6=42$ GB. It leaves 38 GB of the hypothetical 80 GB budget. The 20 and 6 GB entries are assumptions that must be checked for the actual implementation and microbatch; they are not benchmark measurements. A single full-model gather would cost 14 GB by itself. Deep prefetching can create several live units, defeating a calculation that assumes only one.</p>
+<p><dfn>Prefetching</dfn> begins a future gather before its computation is ready. If transfer can overlap independent work, it reduces a stall by spending extra temporary memory. There is no universal two-unit peak. A <dfn>hybrid sharding</dfn> arrangement shards within one group and replicates those shards across another group. This can keep large gathers on fast local links while synchronizing across nodes. It uses more total state than sharding over every worker, and its replication-axis synchronization remains necessary.</p>
+<p>The version boundary matters for API-level claims. <a href="#ref-fsdp">PyTorch 2.8's FSDP2 documentation</a> describes per-parameter dim-0 sharding represented by distributed tensors, rather than FSDP1's concatenated flat-parameter shards. This preserves parameter identity and names. It does not mean that a rank holds an entire parameter matrix. A two-dimensional mesh can replicate along one axis and shard along the other. With the documented default <code>reshard_after_forward=None</code>, non-root units reshard after forward while the root keeps full parameters; setting the policy changes those lifetimes. The optimizer must be initialized on the sharded parameters, and normal module invocation must trigger the gather hooks.</p>
+<p>The invariant to check is ownership at each point in the step, not an abstraction's name. Which ranks possess a shard? Which full copies are live? Which rank updates a coordinate? When must others see that update? An ownership trace makes an out-of-memory error or a stale-weight error intelligible. A profiler can then test the schedule rather than merely report that “FSDP was enabled.”</p>
+</section>
+
+<section id="tensor-parallel"><h2>5. Tensor parallelism follows matrix dimensions through backward <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=1388">23:08</a></h2>
+<p><dfn>Tensor parallelism</dfn> (TP) partitions the arithmetic of an operation across ranks. To specify it, give the matrix dimensions and the partition axis. Let $X\in\mathbb R^{n\times d}$ contain $n$ token rows and $d$ input features, and let $W\in\mathbb R^{d\times h}$ map them to $h$ output features. The output is $Y=XW\in\mathbb R^{n\times h}$. Here the weight convention puts input features in rows and output features in columns; a framework storing the transpose will use opposite physical axis labels.</p>
+<p>In a column partition, $W=[W_0\ \cdots\ W_{T-1}]$, with $W_r\in\mathbb R^{d\times h/T}$ and $T$ dividing $h$. Rank $r$ receives the same $X$ and computes $Y_r=XW_r$. Concatenating $Y_r$ along output features recovers $Y$. A consumer that accepts a feature shard can avoid that gather. For a differentiable scalar objective $L$, if $G=\partial L/\partial Y$ is partitioned in the same way, the differential identity</p>
+\[ dL=\langle G,dX\,W+X\,dW\rangle_F
+=\langle GW^\top,dX\rangle_F+\langle X^\top G,dW\rangle_F \]
+<p>uses the Frobenius inner product $\langle A,B\rangle_F=\sum_{ij}A_{ij}B_{ij}$. Matching the coefficients gives $\partial L/\partial X=GW^\top$ and $\partial L/\partial W=X^\top G$. Therefore each column rank owns its weight gradient $X^\top G_r$, but contributes only $G_rW_r^\top$ to the input gradient. Those contributions must be summed:</p>
+\[ \frac{\partial L}{\partial X}=\sum_{r=0}^{T-1}G_rW_r^\top. \]
+<p>A row partition instead uses $X=[X_0\ \cdots\ X_{T-1}]$ and stacks $W_r\in\mathbb R^{d/T\times h}$ along input features. Rank $r$ computes a partial output $Z_r=X_rW_r$. The full output is $Y=\sum_r Z_r$. Forward needs a reduction. Given the same logical upstream $G$, local backward computes $\partial L/\partial X_r=GW_r^\top$ and $\partial L/\partial W_r=X_r^\top G$. It does not require summing these disjoint input-coordinate shards.</p>
+<p>A transformer feed-forward block makes the two partitions complementary. Write $H=\phi(XA)$, $Y=HB$, with feed-forward width $f$, $A\in\mathbb R^{d\times f}$, $B\in\mathbb R^{f\times d}$, and elementwise nonlinearity $\phi$. Column-partition $A$, apply $\phi$ locally, and row-partition $B$ to consume the resulting feature shards. Then $H_r=\phi(XA_r)$ and $Y=\sum_r H_rB_r$. No reduction is needed between the two matrix multiplications. Reversing that design would require summing partial preactivations before applying $\phi$, because generally $\phi(u+v)\ne\phi(u)+\phi(v)$. <a href="#ref-megatron">The original Megatron-LM paper</a>, PDF pp. 4–5, develops this placement.</p>
+<p>For attention with $a_h$ heads, each head has query/key width $d_h$ (the pilot's $d_k$ for one head), and $a_h$ is divisible by $T$, assigning complete heads to ranks lets each rank compute its heads' query-key products, softmax, and value mixtures. The output projection consumes head-output shards with a row partition. Splitting one head's feature width is also mathematically possible, but a partial query-key dot product must be summed before the softmax. Applying a separate softmax to each partial score changes attention. The conventional whole-head design avoids that extra reduction inside each head. A figure saying that head partitioning is required “to keep attention correct” should be read as a description of that communication pattern, not an impossibility theorem about all other patterns.</p>
+<p>The executable fixture checks a two-rank column partition of $X=((1,2),(3,4))$ and $W=((5,6),(7,8))$. It recovers $Y=((19,22),(43,50))$. With an all-ones upstream, it recovers input gradient $((11,15),(11,15))$ and weight gradient $((4,4),(6,6))$. Finite differences independently test both gradients. The important property is that the summed partial gradient matches the unpartitioned derivative, rather than merely producing plausible numbers.</p>
+</section>
+
+<section id="tensor-cost"><h2>6. Communication volume is measured in bytes on a named group <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=1789">29:49</a></h2>
+<p>TP communicates activations or their derivatives repeatedly within transformer layers. DP commonly communicates parameter gradients once per update, with accumulation and overlap policies affecting the timing. These different dependencies explain the usual preference for keeping TP on a fast, tightly connected local group. It is a heuristic constrained by the actual topology, model, and kernel granularity, not a law that TP cannot cross nodes.</p>
+<p>For a ring SUM all-reduce on $T$ ranks with a full logical message of $M$ bytes per rank, an equal-chunk algorithm has $T-1$ reduce-scatter rounds and $T-1$ all-gather rounds. Each round transmits $M/T$ bytes per rank, so the transmitted volume is</p>
+\[ V_{\mathrm{tx}}=2\frac{T-1}{T}M. \]
+<p>The received volume is the same. Reporting transmitted plus received bytes would double this number; bandwidth measurements must use the same convention as their denominator. An optimistic latency-bandwidth model is $t_{\mathrm{ring}}\approx2(T-1)\alpha+V_{\mathrm{tx}}/B$, with per-round latency $\alpha$ seconds and effective directional bandwidth $B$ bytes per second. This model omits reduction compute, congestion, routing, and protocol overhead. Tree or hardware-assisted algorithms have different latency behavior.</p>
+<p>A two-byte $n\times d$ activation has $M=2nd$ bytes. At $n=8192$, $d=4096$, and $T=8$, it has 67,108,864 bytes, or 64 MiB. The ring model transmits 117,440,512 bytes per rank, or 112 MiB, per all-reduce. At an assumed effective $B=100\times10^9$ bytes/s, the bandwidth-only time is about 1.174 ms, before latency. Four such collectives have a 4.698 ms aggregate transfer term if performed sequentially. These values are calculations under a fictional sustained bandwidth, not measured GPU performance. Doubling hidden width doubles message bytes; halving matrix work per rank does not halve the communication message.</p>
+<p>Increasing TP can shrink local matrix multiplications enough that they use hardware less efficiently. The limiting time can shift from compute to repeated collective latency. Numerical behavior changes too: floating-point addition is not associative, so a new reduction order need not reproduce the same bits. A correctness comparison should distinguish an exact algebraic error such as omitted summation from an acceptable rounding difference under a specified tolerance.</p>
+<p>Parameters outside the partitioned matrix blocks need an explicit policy. If a parameter is replicated and every rank sees the same full tokens and logical derivative, copies may receive the same gradient without an additional TP sum. If ranks see disjoint tokens or partial contributions, the replicas must sum those contributions before applying identical updates. The input's ownership and the objective's meaning determine this choice. The layer's label alone does not.</p>
+</section>
+
+<section id="sequence-parallel"><h2>7. Sequence parallelism exchanges layouts through adjoint collectives <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=1929">32:09</a></h2>
+<p><dfn>Sequence parallelism</dfn> (SP), in the Megatron-style construction used here, distributes token rows in the regions between TP blocks while retaining each token's full hidden vector. Let an activation have shape $(s,b,d)$: sequence length $s$, microbatch size $b$, and hidden width $d$. This uses the slides' explicit sequence/batch axes; flattening them gives $n=sb$ token rows in the preceding matrix notation. A TP block can hold $(s,b,d/T)$ feature shards; a sequence-parallel normalization region can instead hold $(s/T,b,d)$ token shards, assuming $T$ divides $s$. The same $T$ ranks participate. SP is a change of layout on that group, not an extra factor multiplying the number of devices.</p>
+<p>Layer normalization for token vector $x\in\mathbb R^d$ uses its feature mean and variance: $\mu=d^{-1}\sum_jx_j$, $v=d^{-1}\sum_j(x_j-\mu)^2$, and $z_j=(x_j-\mu)/\sqrt{v+\epsilon}$ with $\epsilon>0$. It produces $y_j=\gamma_j z_j+\beta_j$, where learned vectors $\gamma,\beta\in\mathbb R^d$ are shared across tokens. Owning the full hidden vector for a subset of tokens lets a rank compute each such normalization locally. Splitting hidden features instead would require reductions to compute the token statistics.</p>
+<p>Before a column-parallel TP block, all-gather the token shards so every rank can apply its own weight columns to every token. After the row-parallel block, SUM-reduce the partial outputs and scatter the result along tokens. A reduce-scatter performs those two actions together. Their backward operations follow an adjoint relation that must be specified carefully.</p>
+<figure><svg viewBox="0 0 720 240" role="img" aria-labelledby="sp-title sp-desc" style="width:100%;height:auto;max-width:720px"><title id="sp-title">Three ownership states in sequence and tensor parallelism</title><desc id="sp-desc">Token shards with full hidden vectors become full token sequences on each tensor rank through all-gather. Each rank computes a different hidden-feature shard. Row-parallel partial outputs are sum-reduced and token-scattered back to the original owners. These states use the same ranks.</desc><rect x="10" y="20" width="210" height="170" rx="10" fill="#18354b" stroke="#9bcde3"/><rect x="255" y="20" width="210" height="170" rx="10" fill="#18354b" stroke="#9bcde3"/><rect x="500" y="20" width="210" height="170" rx="10" fill="#18354b" stroke="#9bcde3"/><g fill="#f1f6fa" font-family="sans-serif" font-size="15" text-anchor="middle"><text x="115" y="55">SP: token shards</text><text x="115" y="90">Rank 0: first tokens, all d</text><text x="115" y="120">Rank 1: other tokens, all d</text><text x="115" y="155">Local normalization</text><text x="360" y="55">TP: feature shards</text><text x="360" y="90">Rank 0: all tokens, f/2</text><text x="360" y="120">Rank 1: all tokens, f/2</text><text x="360" y="155">Column → row MLP</text><text x="605" y="55">SP: token shards</text><text x="605" y="90">Rank 0: first tokens, all d</text><text x="605" y="120">Rank 1: other tokens, all d</text><text x="605" y="155">Local dropout / residual</text></g><path d="M225 105h25m-8-6 8 6-8 6M470 105h25m-8-6 8 6-8 6" fill="none" stroke="#74c9de" stroke-width="3"/><g fill="currentColor" font-family="sans-serif" font-size="14" text-anchor="middle"><text x="238" y="220">All-gather</text><text x="483" y="220">SUM reduce-scatter</text></g></svg><figcaption>Original schematic for two ranks, suppressing the batch axis. The first conversion gathers token rows before a column-parallel MLP; the second sums row-parallel partial outputs and returns token ownership. The middle labels describe expanded MLP activations of width $f/2$, not the gathered full input. This layout change uses the same devices.</figcaption></figure>
+<p>For a precise finite model, let $T$ ranks each own $q$ coordinates of a concatenated vector of length $Tq$. Let $A$ map the collection of shards $x=(x_0,\ldots,x_{T-1})$ to $T$ physical copies of their concatenation. Let $R$ map $T$ full vectors $u_r$ to the shards of their coordinatewise sum. On both spaces use the ordinary sum of rank-local Euclidean inner products. Then</p>
+\[ \langle Ax,u\rangle=\sum_r\sum_k\langle x_k,u_{r,k}\rangle
+=\sum_k\left\langle x_k,\sum_r u_{r,k}\right\rangle
+=\langle x,Ru\rangle. \]
+<p>Here $u_{r,k}$ denotes rank $r$'s chunk corresponding to shard $k$. Thus the all-gather's adjoint is SUM reduce-scatter, $A^\top=R$, and $R^\top=A$. Reverse-mode differentiation applies an adjoint to upstream derivatives. It does not undo the forward operation. Indeed $RAx=Tx$ because gathering creates $T$ physical copies and reducing sums them. All-gather and SUM reduce-scatter are therefore not mutual inverses. An AVG convention changes the factors. The identity $ARu$ equals a SUM all-reduce on arbitrary rank-local full inputs is a different statement.</p>
+<p>There is also a logical-value boundary. A TP row reduction often represents one logical output replicated for later computation. If the program counts the same scalar loss on every physical copy, the objective has been multiplied by $T$. Framework custom backward rules for replicated logical tensors account for this representation, which is why a Megatron row-reduction can have an identity backward under its logical convention. That is not the raw adjoint of unrestricted all-rank SUM followed by a sum of losses. Always say whether a replicated tensor represents one value or independently contributing values. The rank-product proof above concerns the latter physical linear map and exposes the scaling convention.</p>
+<p>SP does not make the gradients of $\gamma$ and $\beta$ identical. For a rank's token subset $\mathcal T_r$ and upstream $u_{ij}=\partial L/\partial y_{ij}$, its contributions are $\sum_{i\in\mathcal T_r}u_{ij}z_{ij}$ and $\sum_{i\in\mathcal T_r}u_{ij}$. Summing across token shards recovers the full parameter gradients. Activation reduce-scatter delivers correct input derivatives; it does not sum these separate parameter contributions automatically. <a href="#ref-megatron-code">Megatron Core 0.12.0's gradient finalizer</a>, lines 189–225, explicitly all-reduces marked sequence-parallel layer-normalization gradients. The talk's slide 66 claim of no need to synchronize those gradients is incomplete for this standard ownership scheme.</p>
+<p><a href="#ref-sequence">Korthikanti and colleagues</a>, PDF pp. 5–7, show how paired gathers and reduce-scatters replace all-reduces while reducing replicated activations. Equality of ring payload volume is narrower than zero runtime overhead: latency, scheduling, and their extra backward gather for memory savings still matter. The maintenance job can gain memory for longer documents through SP without increasing its device count, but its normalization-gradient checks must follow the new token ownership.</p>
+</section>
+
+<section id="mesh"><h2>8. A device mesh is an ownership map <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=2249">37:29</a></h2>
+<p>A <dfn>device mesh</dfn> assigns rank coordinates to parallel roles. In a simple DP-by-TP mesh with $D$ data groups and $T$ tensor ranks per group, let $\delta$ and $\eta$ be the data and tensor coordinates. Assign rank number $r=\delta T+\eta$, with $0\le\delta&lt;D$ and $0\le\eta&lt;T$. Each fixed $\delta$ gives one TP group, whose ranks jointly process the same examples with different weight shards. Each fixed $\eta$ gives one DP group, whose ranks process different examples with matching weight shards. Communication across the wrong group combines quantities that do not mean the same thing.</p>
+<table><caption>Original ownership example: six ranks, $D=3$, $T=2$</caption><thead><tr><th>Data coordinate</th><th>Tensor coordinate 0</th><th>Tensor coordinate 1</th><th>TP group</th></tr></thead><tbody><tr><td>0: examples A</td><td>rank 0, weight shard 0</td><td>rank 1, weight shard 1</td><td>{0,1}</td></tr><tr><td>1: examples B</td><td>rank 2, weight shard 0</td><td>rank 3, weight shard 1</td><td>{2,3}</td></tr><tr><td>2: examples C</td><td>rank 4, weight shard 0</td><td>rank 5, weight shard 1</td><td>{4,5}</td></tr></tbody></table>
+<p>The DP group for shard 0 is {0,2,4}; for shard 1 it is {1,3,5}. A column-parallel input-gradient sum uses a TP group because its members own complementary output-feature contributions. A parameter-gradient reduction uses the matching DP group because its members own the same coordinates and different examples. Summing rank 0's gradient with rank 1's gradient as if both were DP replicas can mix distinct coordinates, even when their array shapes match.</p>
+<p>Extending the mesh requires the same questions. Pipeline coordinates identify different layers; context coordinates identify different token positions of the same sequence. One convenient dense-model layout has world size $W_{\mathrm{world}}=P T D C_p$, for pipeline degree $P$, tensor degree $T$, data degree $D$, and context degree $C_p$. This equation describes that chosen Cartesian layout. It is not a promise that every framework uses the same factorization or maps the factors onto physical links in the same order.</p>
+<p>On the maintenance team's eight devices, both $D=8,T=1$ sharded DP and $D=2,T=4$ combined DP/TP are legal decompositions. If $b=2$ and $a=8$, their global example batches are 128 and 32 respectively. To compare them at 128 examples, the latter needs $a=32$ under the same microbatch size. Keeping the accumulation count unchanged would mix a systems comparison with an optimization change. Later, SP uses the four TP ranks without making the world size 32.</p>
+<p>A rank map should be documented before launch. For every tensor, record its global shape, local shape, replicated or partitioned axes, and reduction convention. Then list the process group used by each collective. That small map is often more useful than a long list of launch flags. Shape equality is a necessary condition for some collectives; semantic equality of coordinates is the stronger condition required for a correct sum.</p>
+</section>
+
+<section id="pipeline"><h2>9. Pipeline schedules trade bubbles against live activations <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=2422">40:22</a></h2>
+<p><dfn>Pipeline parallelism</dfn> (PP) assigns consecutive layer groups to different ranks. A stage sends its forward activation to the next stage and receives the derivative of that activation during backward. Different microbatches let different stages work simultaneously. A pipeline <dfn>bubble</dfn> is time during which a stage has no runnable task because required data have not arrived or a flush is incomplete.</p>
+<p>First consider an ideal all-forward/all-backward (AFAB) schedule with $P$ balanced stages, $m$ microbatches, unit forward time $\tau$ seconds, unit backward time also $\tau$, no transfer cost, and no inter-batch overlap. Stage 0 starts one forward microbatch each slot. Microbatch $j$ reaches stage $k$ after $j+k$ slots when indices start at zero. The final forward completes after $(m+P-1)\tau$. After a global forward barrier, backward runs the same wave in reverse, taking another $(m+P-1)\tau$. Hence</p>
+\[ T_{\mathrm{AFAB}}=2(m+P-1)\tau,\qquad
+U=\frac{2Pm\tau}{P\,T_{\mathrm{AFAB}}}=\frac{m}{m+P-1}. \]
+<p>The numerator of utilization $U$ is useful device-time; the denominator is available device-time. With $P=4,m=8$, the makespan is $22\tau$, utilization is $8/11\approx72.73\%$, and the ideal bubble fraction is $3/11$. For $P=1$ utilization becomes 1. For $m=1$, it is $1/P$. Larger $m$ amortizes startup and drain, but changes the global batch unless a different factor is adjusted. Unequal stage times, transfer costs, or different forward/backward durations require a new schedule calculation rather than this symmetric formula.</p>
+<p>AFAB also keeps each microbatch's saved activations until backward. Just before the backward phase, a stage can hold activation state for all $m$ microbatches. A <dfn>one-forward/one-backward</dfn> (1F1B) schedule warms up the pipeline, alternates forward and backward tasks when their dependencies permit, and then drains it. Earlier backward execution frees saved activations sooner. In common flushed schedules, the number of live microbatches is bounded by pipeline depth rather than growing with an arbitrarily large $m$. Reducing this lifetime is the principal advantage over AFAB; alternating tasks does not by itself remove startup and drain bubbles.</p>
+<p>Scheduling and optimizer semantics are separate. Holding one parameter version through every microbatch and updating after a flush preserves synchronous accumulation under the earlier assumptions. An unflushed schedule can overlap batches whose gradients were evaluated at older weights. <a href="#ref-pipedream">Narayanan and colleagues' PipeDream-2BW paper</a>, PDF pp. 2–3, explicitly includes a delayed weight update rule. Its reported empirical behavior does not make that rule identical to ordinary synchronous SGD or Adam. “1F1B” names an ordering of tasks, not a universal theorem about the update.</p>
+<p><dfn>Activation checkpointing</dfn>, also called recomputation, saves selected boundary activations and reruns intervening forward computation during backward. It trades compute for memory. Recomputed random operations must reproduce the intended forward values, and side effects must be controlled. CPU offload instead stores state outside accelerator memory and brings it back when needed. Transfer must finish before its consumer runs; more host memory alone does not establish a throughput gain. Both techniques interact with the number of live pipeline microbatches.</p>
+<p>The <a href="#ref-deepseek">DeepSeek-V3 report</a>, PDF pp. 12–14, describes DualPipe's bidirectional schedule and overlap of forward/backward suboperations with expert and pipeline communication. Its Table 2 also accounts for two parameter copies per device and different activation requirements. This is an engineered tradeoff on a specified workload, not a free improvement over every 1F1B arrangement. The similarly named older “DualPipe” in GPipe's 2018 related work is a different historical proposal. This chapter uses the DeepSeek-V3 meaning.</p>
+<p>For the maintenance job, PP is useful when layer partitioning gives a better memory or topology tradeoff than aggressive TP. It communicates boundary activations rather than requiring an all-reduce within every matrix block. A pure pipeline with untied, disjoint parameters has no PP-axis parameter-gradient all-reduce, but DP replicas of a stage still synchronize, and parameters tied across stages need a consistent combined gradient. Embeddings and output heads also make equal layer counts an unreliable proxy for balanced stage time.</p>
+</section>
+
+<section id="context"><h2>10. Context parallelism preserves global attention with block statistics <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=2731">45:31</a></h2>
+<p>Long technical manuals can exceed the activation budget even when parameters fit. <dfn>Context parallelism</dfn> (CP) partitions sequence positions across devices throughout attention computation. A device owns local query positions but those queries may attend to keys on other devices. Processing each chunk as an isolated sequence discards cross-chunk dependencies and changes the model. CP must communicate the information needed for the original attention.</p>
+<p>For one query $q\in\mathbb R^{d_h}$, permitted keys $k_i\in\mathbb R^{d_h}$, and values $v_i\in\mathbb R^{d_v}$, define finite scores $a_i=q^\top k_i/\sqrt{d_h}$. The output is $o=\sum_i e^{a_i}v_i/\sum_i e^{a_i}$ over permitted keys. Direct exponentiation can overflow. For a nonempty block $B$ define three statistics:</p>
+\[ m_B=\max_{i\in B}a_i,\qquad
+\ell_B=\sum_{i\in B}e^{a_i-m_B},\qquad
+u_B=\sum_{i\in B}e^{a_i-m_B}v_i. \]
+<p>Here $m_B$ is a scalar score maximum, $\ell_B$ a positive scalar denominator, and $u_B\in\mathbb R^{d_v}$ an unnormalized numerator. For disjoint blocks $B$ and $C$, take $m=\max(m_B,m_C)$ and combine</p>
+\[ \ell=e^{m_B-m}\ell_B+e^{m_C-m}\ell_C,\qquad
+u=e^{m_B-m}u_B+e^{m_C-m}u_C,\qquad o=u/\ell. \]
+<p>To derive the rescaling, write $e^{a_i-m}=e^{m_B-m}e^{a_i-m_B}$ for every $i\in B$, and similarly for $C$. Both numerator and denominator now use the same reference maximum. Their ratio is the original softmax-weighted mixture because the common factor $e^{-m}$ cancels. In exact arithmetic the combined state summarizes the union independent of grouping or block order. Floating-point rounding can vary with that order. Averaging each block's already normalized output is generally wrong because blocks carry different total softmax mass.</p>
+<p>The executable checks scores 1000, 1001, and 999 with scalar values 2, 4, and −1. It produces 3.060390192 with a two-block merge and agrees with the flat computation and reversed blocks to a numerical tolerance. Naively evaluating $e^{1001}$ would overflow in ordinary binary64 arithmetic. A one-permitted-key check returns that key's value exactly. A fully masked query has no positive denominator; an implementation needs an explicit convention or must exclude that query. The fixture rejects empty blocks and expects supplied finite scores rather than masked negative infinities.</p>
+<p><dfn>Ring attention</dfn> holds queries on their owning device while rotating key/value blocks among devices, accumulating these statistics for each query. <a href="#ref-ring">Liu, Zaharia, and Abbeel</a>, PDF pp. 3–5, describe overlapping transfer with local block computation. Communication can be hidden only when independent block work is long enough and does not lose too much throughput from contention. The same need for keys and gradient accumulation reappears in backward. A forward softmax formula alone is not a complete distributed training implementation.</p>
+<p>Context ranks also own different query and token positions from the same examples. When a parameter is replicated across that context group, each rank contributes a different part of its gradient. Combine those contributions across the CP group using the objective's SUM and normalization convention, before or together with reduction across independent data replicas. Rotating key/value blocks in forward attention does not synchronize these shared-parameter gradients. The required groups and scheduling depend on the implementation and its other parallel axes.</p>
+<p>For a simple uncompressed ring with $C_p$ ranks, each owning $s/C_p$ key and value positions of width $d_h$ at $q_{\mathrm{byte}}$ bytes per element, circulating $C_p-1$ blocks transmits $2q_{\mathrm{byte}}s d_h(C_p-1)/C_p$ bytes per rank per head, before masks, metadata, or backward. This explicit element-size factor prevents mixing element counts with bytes. Dense attention still has $s^2$ query-key interactions globally; CP distributes them rather than changing their asymptotic count. Causal masking can also create unequal work among early and late query blocks, so placement and load balance matter.</p>
+</section>
+
+<section id="experts"><h2>11. Expert parallelism routes work as well as tensors <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=2924">48:44</a></h2>
+<p>A <dfn>mixture of experts</dfn> (MoE) replaces a single feed-forward module with several parameterized expert functions and a router. For input token representation $x\in\mathbb R^d$, expert $e$ computes $f_e(x)\in\mathbb R^d$. A router chooses a set $\mathcal S(x)$ of $k$ experts and weights $p_e(x)$, giving $y=\sum_{e\in\mathcal S(x)}p_e(x)f_e(x)$. Sparse routing computes only those selected experts for the token. Total expert parameters and active parameters per token are consequently different quantities.</p>
+<p><dfn>Expert parallelism</dfn> (EP) places different experts on different ranks. A dispatch phase sends token representations to ranks hosting their selected experts; a combine phase returns the expert results and assembles the weighted mixture at the token's owner. <dfn>All-to-all</dfn> describes communication in which each rank can send a different collection to each other rank. The required permutation, counts, weights, and return mapping are part of correctness. A token selected by two experts contributes two expert evaluations, and both outputs must return to the proper token.</p>
+<p>With $T_{\mathrm{tok}}$ tokens, hidden width $d$, $k$ selected experts, and $q$ bytes per representation element, a simple accounting model materializes $kT_{\mathrm{tok}}d q$ dispatch bytes in aggregate. If every assignment is remote, that is also aggregate payload transmitted; local assignments and sharing a token sent to several experts on one rank can reduce network bytes. Combine payload is of a similar order for equal-size outputs. Routing metadata, scales, padding, backward, and protocol overhead add to the budget. There can be $E_r^2$ sender/receiver pairs in a group of $E_r$ ranks, but this does not imply $E_r^2$ times as many bytes per rank.</p>
+<p>For an original fixture of 4096 tokens, width 4096, top-2 routing, and two-byte representations, the simple dispatch payload is 67,108,864 bytes, or 64 MiB, across the group. A perfectly balanced eight-rank placement would assign an average of 1024 expert evaluations to each rank. If one rank receives 2048 evaluations, its compute work can be twice the average even though total payload is unchanged. The critical path depends on the busiest destination, its experts' sizes, and communication congestion; the mean alone cannot predict completion time.</p>
+<p>The small simulator routes four tokens to two of four experts each and obtains loads $(4,2,1,1)$. Total assignments are eight, mean load is two, and maximum/mean is two. An idealized capacity of two assignments per expert would drop two assignments at expert 0 unless a rerouting or overflow policy intervened. Dropping them changes the forward result. Padding all experts to the maximum avoids uneven buffer shapes by spending extra work and memory. “Balanced routing” is therefore both a statistical and an execution concern.</p>
+<p>Dense attention and router weights can be replicated across ranks that host distinct experts. Their gradients must combine contributions from the different input data. Expert weights are reduced only across ranks that hold replicas of that same expert. In a simple layout, EP partitions a chosen DP group; increasing EP then reduces the number of replicas per expert rather than introducing an independent new world-size factor. <a href="#ref-moe">Shazeer and colleagues' original sparse MoE paper</a>, PDF pp. 3–5, already uses devices as data replicas for standard layers and as expert shards for the MoE. More elaborate layouts can use different meshes for different modules, but each module still needs its own ownership and gradient groups.</p>
+</section>
+
+<section id="dispatch"><h2>12. Dynamic dispatch creates a synchronization dependency <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=3102">51:42</a></h2>
+<p>The router's destination counts are computed from token data. If a host must read those GPU-computed counts before allocating receive buffers or launching a grouped expert multiplication, the GPU-to-host handoff creates a synchronization point. Launching more CPU work ahead cannot remove a true dependency on a count that does not yet exist. It can also expose overhead that is small for a large expert batch but dominant for a small one.</p>
+<p>Several engineering choices change the dependency. Preallocating a conservative maximum buffer removes a dynamic allocation but uses memory for capacity rather than actual load. Device-side communication can keep more of the schedule on the GPU. Fusing routing, permutation, and transfer can avoid intermediate materialization. Overlapping another microbatch's independent work can hide a residual stall. Each choice needs valid capacity bounds and correct buffer lifetimes; an underallocated receive buffer is a correctness failure, not a minor performance regression.</p>
+<p>A concrete dated implementation is <a href="#ref-deepep">DeepEP v1.2.1, pinned to its September 15, 2025 commit</a>. Its README describes separate normal and low-latency dispatch/combine paths. The normal example explicitly notes a CPU wait for received counts; low-latency paths use a different buffer and hook contract. This version depends on NVSHMEM and specifies architecture, CUDA, and network requirements. Those requirements do not establish that all GPUs, fabrics, or arbitrary framework combinations support the same path. They also must not be replaced by requirements from a later rewrite.</p>
+<p>Remote direct memory access (RDMA) permits network transfers involving remote memory without a conventional host-managed copy for every payload. GPU-initiated communication can further change who posts operations. It still requires supported hardware, drivers, memory registration, completion ordering, and a correct transport protocol. The talk connects these techniques to expert dispatch and cites DeepEP and HybridEP. Its hardware shorthand is a motivation to inspect a chosen implementation, not a general statement that recent hardware automatically eliminates host synchronization.</p>
+<p>Developer-reported bandwidth from DeepEP's H800/CX7 workload is evidence about that workload, not a bandwidth constant for this chapter's hypothetical node. The same boundary applies to a topology drawing of an AWS P5 arrangement. Endpoint link rates differ from sustained collective bandwidth, and bits/s differ from bytes/s by a factor of eight before overhead. The ownership and byte models here intentionally leave $B$ as an explicit assumption. A real deployment must profile its own token routing, group size, payload format, and concurrent operations.</p>
+<p>For the maintenance assistant, a switch from dense feed-forward layers to MoE would also change the statistical model. It is not merely a different placement of the original seven-billion-parameter model. A fair systems comparison can hold a chosen MoE model and router fixed while varying expert placement. Comparing a dense model with a newly designed MoE requires a separate quality and training-budget evaluation. Dispatch optimization should not hide that change.</p>
+</section>
+
+<section id="composition"><h2>13. Combining parallelism requires a tensor-by-tensor plan <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=3263">54:23</a></h2>
+<p>The five named directions in the talk solve different ownership problems: DP changes which examples a replica processes; TP changes feature or weight-coordinate ownership inside an operation; PP changes layer ownership; CP changes sequence-position ownership through attention; EP changes which rank hosts an expert. FSDP changes persistent state ownership and its temporal schedule. SP exchanges layouts on a TP group. These mechanisms can be combined, but the statement that all are “orthogonal” does not mean every degree independently multiplies world size.</p>
+<p>For a concrete 32-rank dense layout, choose $P=2,T=2,D=8,C_p=1$, so $W_{\mathrm{world}}=32$. Each layer belongs to one pipeline stage. Its tensor operation uses two ranks. Eight data groups provide eight different example batches. Now choose EP degree four by partitioning each eight-rank DP axis into expert groups, holding the other coordinates fixed. Experts then have two data replicas along that axis. Dense weights still have eight replicas; individual expert weights have two. World size stays 32. This illustrative construction assumes experts are partitionable as specified and does not prescribe a framework's launch flags.</p>
+<p>A correct plan gives different collectives different jobs. Dense weight shards reduce their data contributions across the dense DP group. Expert shards reduce across replicas of that expert. A row-parallel output sums across TP. Token dispatch permutes across EP. A pipeline boundary sends activations to the next stage, while context attention exchanges keys and values across CP. A shared embedding appearing on two pipeline stages requires one logical update assembled from both uses. Treating every matching-size array as one universal all-reduce group fails these distinctions.</p>
+<p>Overlapping EP transfer with another microbatch's forward or backward computation can improve pipeline utilization. The dependency graph permits overlap only when the other work does not consume the unfinished result and when its resource demand leaves enough capacity for transfer. Splitting backward into input-gradient and weight-gradient work can expose additional ordering choices: the preceding layer needs its input gradient before it needs this layer's weight gradient. DualPipe uses such distinctions in a carefully designed schedule. Reordering work never licenses an optimizer update before all required contributions are available.</p>
+<p>The seven-billion-parameter case does not require every mechanism. A reasonable first candidate is an eight-rank FSDP or lower ZeRO-stage arrangement with a fixed token batch, modest prefetch depth, and explicit activation budgeting. A second candidate adds TP and SP if local matrix size, gather cost, and long-document activation memory justify it. PP or CP is added when an identified layer or context bottleneck remains. EP applies only after selecting an MoE model. This is a sequence of falsifiable design choices: each addition should remove a measured limitation while preserving a stated training contract.</p>
+<p>The talk names practical implementations such as Nanotron, TorchTitan, and Megatron, and recommends the Ultra-Scale and Smol Training playbooks and the JAX Scaling Book. These are routes to implementation detail, not interchangeable evidence that one launch recipe is correct on every topology. The chapter's formulas describe their assumptions directly; its executable does not install or exercise any of those frameworks. A production plan should pin the framework revision and test the actual rank groups, optimizer representation, and checkpoint format before a large run.</p>
+</section>
+
+<section id="validation"><h2>14. Correctness and cost remain separate acceptance criteria <a class="timestamp" href="https://www.youtube.com/watch?v=I5BKi32IEa8&amp;t=3404">56:44</a></h2>
+<p>A distributed program should first reproduce a small reference objective and update under controlled conditions. Keep data order, loss normalization, optimizer state, stochastic choices, and parameter version explicit. Compare the forward result, intermediate tensor ownership, gradients for both partitioned and replicated parameters, and the post-update parameters. A loss curve that looks reasonable can conceal a missing sum, a wrong mask, or a factor-of-two gradient error. For mixed precision, use an appropriate numerical tolerance and inspect nonfinite values; require exact equality for discrete ownership, counts, and routing identities.</p>
+<p>Expert balancing illustrates a boundary between preserving a model and changing its training. A balance penalty adds a new term to the objective, so its gradient intentionally changes the update. <a href="#ref-moe">The 2017 sparse MoE paper</a>, PDF p. 5, introduces an importance-based auxiliary loss. In contrast, <a href="#ref-deepseek">the DeepSeek-V3 report</a>, PDF p. 9, uses expert biases to adjust top-k selection based on load while retaining original affinity scores for mixture weights. It also retains a complementary sequence-wise auxiliary balance loss. “Auxiliary-loss-free” describes its principal balancing mechanism; it does not mean that the whole training objective contains no auxiliary balancing term. Neither method establishes perfect load balance for every finite batch.</p>
+<p>Useful performance measures include valid training tokens per second, elapsed time to a fixed training budget, peak allocated and reserved memory, communicated bytes, and checkpoint/recovery cost. Kernel utilization alone can reward useless padding. A larger global batch can increase tokens/s while changing the number and statistics of optimizer updates. Comparing time to a target validation quality requires a separate convergence experiment. A faster iteration and a better trained model are different claims.</p>
+<p>The host data pipeline belongs in this accounting. Tokenization, loading, shuffling, packing, and host-to-device transfer can starve otherwise efficient kernels. Additional loader workers help only while those tasks have parallelizable work and memory or I/O headroom. A profiler should identify whether waiting occurs in input preparation, weight gathering, dispatch, matrix execution, reduction, or pipeline bubbles. Automatic parallelism search still needs such cost information and topology constraints; an abstract rank mesh cannot infer sustained bandwidth on an unfamiliar cluster.</p>
+<p>Energy is another quantity with its own units. With $W_{\mathrm{world}}$ devices averaging $p_{\mathrm{dev}}$ watts for $t$ seconds, accelerator energy is $E=W_{\mathrm{world}}p_{\mathrm{dev}}t$ joules under a constant-power approximation. Eight devices at an assumed 400 W for one hour consume 11.52 MJ, or 3.2 kWh, in accelerator energy. Host, memory, cooling, networking, and idle time are excluded. A higher-power kernel can still reduce total energy if it reduces elapsed time enough. The talk's energy concern motivates reporting this quantity; no specific device power or facility efficiency is asserted by the fictional example.</p>
+<p>The final decision for the maintenance team has two gates. The program must compute the intended loss and update within its stated numerical tolerance. Its actual peak and sustained schedule must fit the chosen resource budget with recovery headroom. Passing one gate does not pass the other. The small checks below make the mathematical contract executable; a real GPU implementation must additionally measure the hardware and software behaviors that the simulator leaves out.</p>
+</section>
+
+<section id="lab"><h2>15. An executable ownership and resource check</h2>
+<p>The original standard-library program <a href="chapter04.py">chapter04.py</a> models ranks as ordinary Python lists. Run <code>python chapter04.py</code>. It uses no GPU, network, external library, file input, or model-training framework. Its only effects are printing results and raising an exception when an input contract or a numerical assertion fails. It does not estimate an actual accelerator's speed.</p>
+<p>The collectives use SUM. Rectangular nonempty matrices contain finite integers or floats representable as Python binary64 values; booleans are rejected. Computed matrix products and sums must also be finite. The reduce-scatter fixture requires the full coordinate count to divide the number of ranks. Column TP requires an output width divisible by the rank count and an upstream matrix with the exact output shape. Gradients use the Frobenius convention derived above.</p>
+<p>The attention fixture accepts a nonempty collection of nonempty blocks of finite score/scalar-value pairs. Scores are supplied rather than computed from query/key vectors. It checks the stable numerator/denominator merge, including a reversed block order. It does not implement attention backward or vector-valued batched attention. Local layer-normalization parameter contributions are checked using supplied normalized coordinates and upstream derivatives; this is a parameter-gradient fixture, not a full layer-normalization kernel.</p>
+<p>State accounting uses exact rational arithmetic for ideal equal shards. A nondivisible parameter count can yield a fractional byte bound; an actual allocation must round or pad and may have unequal shards. The AFAB simulator creates dependency-constrained unit-duration events and checks stage exclusivity and forward-before-backward. It permits at most 10,000 stage/microbatch pairs to bound this deliberately finite simulator. It implements no 1F1B or DualPipe schedule and asserts no transfer timing. Expert routing checks integer IDs, distinct experts per token, constant top-k, conservation of assignments, and the maximum load.</p>
+<p>These checks include a finite-difference derivative, collective inner products, an unequal-count counterexample, a one-rank memory limit, pipeline dependency traces, stable extreme-score softmax, and invalid shapes, counts, ranks, values, and routes. Passing them establishes the behavior of these finite functions. It does not establish hardware performance, human listening accuracy, or correctness of a production distributed framework. The embedded program and downloadable file are byte-identical; the output below is the exact checked standard output.</p>
+<div class="codewrap"><pre><code id="chapter04-code" class="language-python">&quot;&quot;&quot;Original finite distributed-training simulator. Standard library only.
+
+No GPUs, networks, files, training frameworks, or external effects are used.
+Rank lists model physical copies; collectives use SUM, never implicit averaging.
+&quot;&quot;&quot;
+
+from fractions import Fraction
+import math
+
+
+def positive_int(value, name):
+    if type(value) is not int or value &lt; 1:
+        raise ValueError(name + &quot; must be a positive integer&quot;)
+    return value
+
+
+def number(value):
+    if type(value) not in (int, float):
+        raise ValueError(&quot;numeric values must be real int or float, excluding bool&quot;)
+    try:
+        value = float(value)
+    except (OverflowError, ValueError) as exc:
+        raise ValueError(&quot;numeric value is not representable&quot;) from exc
+    if not math.isfinite(value):
+        raise ValueError(&quot;numeric value must be finite&quot;)
+    return value
+
+
+def finite_sum(values):
+    try:
+        return number(math.fsum(values))
+    except OverflowError as exc:
+        raise ValueError(&quot;computed sum is not representable&quot;) from exc
+
+
+def matrix(values):
+    if not isinstance(values, (list, tuple)) or not values:
+        raise ValueError(&quot;matrix must be a nonempty row sequence&quot;)
+    if any(not isinstance(row, (list, tuple)) or not row for row in values):
+        raise ValueError(&quot;matrix rows must be nonempty sequences&quot;)
+    width = len(values[0])
+    if any(len(row) != width for row in values):
+        raise ValueError(&quot;matrix must be rectangular&quot;)
+    return [[number(x) for x in row] for row in values]
+
+
+def transpose(values):
+    return [list(row) for row in zip(*matrix(values))]
+
+
+def matmul(left, right):
+    left, right = matrix(left), matrix(right)
+    if len(left[0]) != len(right):
+        raise ValueError(&quot;matrix inner dimensions must match&quot;)
+    cols = transpose(right)
+    return [[finite_sum(number(a * b) for a, b in zip(row, col))
+             for col in cols] for row in left]
+
+
+def all_gather(shards):
+    shards = matrix(shards)
+    full = [x for shard in shards for x in shard]
+    return [full[:] for _ in shards]
+
+
+def reduce_scatter(copies):
+    copies = matrix(copies)
+    ranks, width = len(copies), len(copies[0])
+    if width % ranks:
+        raise ValueError(&quot;full width must be divisible by rank count&quot;)
+    summed = [finite_sum(row[i] for row in copies) for i in range(width)]
+    shard_width = width // ranks
+    return [summed[r * shard_width:(r + 1) * shard_width] for r in range(ranks)]
+
+
+def inner(left, right):
+    left, right = matrix(left), matrix(right)
+    if (len(left), len(left[0])) != (len(right), len(right[0])):
+        raise ValueError(&quot;inner product shapes must match&quot;)
+    return finite_sum(number(a * b) for x, y in zip(left, right)
+                      for a, b in zip(x, y))
+
+
+def global_mean(local_means, counts):
+    if not isinstance(local_means, (list, tuple)) or not local_means:
+        raise ValueError(&quot;local means must be a nonempty sequence&quot;)
+    if not isinstance(counts, (list, tuple)) or len(counts) != len(local_means):
+        raise ValueError(&quot;one positive count is required per local mean&quot;)
+    counts = [positive_int(c, &quot;count&quot;) for c in counts]
+    total = sum(counts)
+    return finite_sum(number(g) * (c / total) for g, c in zip(local_means, counts))
+
+
+def column_parallel(left, weight, upstream, ranks):
+    left, weight, upstream = matrix(left), matrix(weight), matrix(upstream)
+    ranks = positive_int(ranks, &quot;ranks&quot;)
+    if len(left[0]) != len(weight):
+        raise ValueError(&quot;input and weight dimensions must match&quot;)
+    width = len(weight[0])
+    if width % ranks or (len(upstream), len(upstream[0])) != (len(left), width):
+        raise ValueError(&quot;output width must divide ranks and match upstream&quot;)
+    step = width // ranks
+    outputs, dx_parts, dw_parts = [], [], []
+    for r in range(ranks):
+        w = [row[r * step:(r + 1) * step] for row in weight]
+        g = [row[r * step:(r + 1) * step] for row in upstream]
+        outputs.append(matmul(left, w))
+        dx_parts.append(matmul(g, transpose(w)))
+        dw_parts.append(matmul(transpose(left), g))
+    output = [[x for shard in outputs for x in shard[i]] for i in range(len(left))]
+    dx = [[finite_sum(part[i][j] for part in dx_parts)
+           for j in range(len(left[0]))] for i in range(len(left))]
+    dw = [[x for shard in dw_parts for x in shard[i]] for i in range(len(weight))]
+    return output, dx, dw
+
+
+def block_attention(blocks):
+    &quot;&quot;&quot;One query, scalar values, supplied finite scores; each block is nonempty.&quot;&quot;&quot;
+    if not isinstance(blocks, (list, tuple)) or not blocks:
+        raise ValueError(&quot;attention needs at least one block&quot;)
+    running_max, denominator, numerator = None, 0.0, 0.0
+    for block in blocks:
+        if not isinstance(block, (list, tuple)) or not block:
+            raise ValueError(&quot;each block needs a permitted key&quot;)
+        pairs = []
+        for pair in block:
+            if not isinstance(pair, (list, tuple)) or len(pair) != 2:
+                raise ValueError(&quot;each attention pair is (score, scalar value)&quot;)
+            pairs.append((number(pair[0]), number(pair[1])))
+        local_max = max(score for score, _ in pairs)
+        new_max = local_max if running_max is None else max(running_max, local_max)
+        # Negative score differences may round to -inf; exp(-inf)=0 is intentional.
+        old_scale = 0.0 if running_max is None else math.exp(running_max - new_max)
+        weights = [math.exp(score - new_max) for score, _ in pairs]
+        denominator = finite_sum([denominator * old_scale, finite_sum(weights)])
+        numerator = finite_sum([number(numerator * old_scale),
+                                finite_sum(number(w * v) for w, (_, v) in zip(weights, pairs))])
+        running_max = new_max
+    return number(numerator / denominator)
+
+
+def state_bytes(parameters, ranks, stage):
+    parameters, ranks = positive_int(parameters, &quot;parameters&quot;), positive_int(ranks, &quot;ranks&quot;)
+    if type(stage) is not int or stage not in (0, 1, 2, 3):
+        raise ValueError(&quot;stage must be 0, 1, 2, or 3&quot;)
+    # Ideal equal shards; Fraction exposes non-divisible padding as excluded overhead.
+    coefficients = (Fraction(16), 4 + Fraction(12, ranks),
+                    2 + Fraction(14, ranks), Fraction(16, ranks))
+    return parameters * coefficients[stage]
+
+
+def afab(stages, microbatches):
+    &quot;&quot;&quot;Balanced unit-duration forward/backward tasks with a global phase barrier.&quot;&quot;&quot;
+    stages = positive_int(stages, &quot;stages&quot;)
+    microbatches = positive_int(microbatches, &quot;microbatches&quot;)
+    if stages * microbatches &gt; 10000:
+        raise ValueError(&quot;finite schedule fixture permits at most 10000 stage-batch pairs&quot;)
+    forward = [[0] * microbatches for _ in range(stages)]
+    backward = [[0] * microbatches for _ in range(stages)]
+    events = []
+    for s in range(stages):
+        for m in range(microbatches):
+            start = max(forward[s][m - 1] if m else 0,
+                        forward[s - 1][m] if s else 0)
+            forward[s][m] = start + 1
+            events.append((s, m, &quot;F&quot;, start, start + 1))
+    barrier = forward[-1][-1]
+    for s in reversed(range(stages)):
+        for m in range(microbatches):
+            start = max(barrier, backward[s][m - 1] if m else barrier,
+                        backward[s + 1][m] if s + 1 &lt; stages else barrier)
+            backward[s][m] = start + 1
+            events.append((s, m, &quot;B&quot;, start, start + 1))
+    return backward[0][-1], events
+
+
+def expert_load(routes, experts):
+    experts = positive_int(experts, &quot;experts&quot;)
+    if not isinstance(routes, (list, tuple)) or not routes:
+        raise ValueError(&quot;routes must contain tokens&quot;)
+    loads, topk = [0] * experts, None
+    for route in routes:
+        if not isinstance(route, (list, tuple)) or not route:
+            raise ValueError(&quot;each token requires expert IDs&quot;)
+        if any(type(e) is not int or e &lt; 0 or e &gt;= experts for e in route):
+            raise ValueError(&quot;expert ID must be an integer in range&quot;)
+        if len(set(route)) != len(route):
+            raise ValueError(&quot;a token cannot select an expert twice&quot;)
+        if topk is None:
+            topk = len(route)
+        if len(route) != topk:
+            raise ValueError(&quot;fixture requires constant top-k&quot;)
+        for e in route:
+            loads[e] += 1
+    return loads
+
+
+def checks():
+    shards, copies = [[1, 2], [3, 4]], [[5, 6, 7, 8], [1, 2, 3, 4]]
+    lhs, rhs = inner(all_gather(shards), copies), inner(shards, reduce_scatter(copies))
+    assert lhs == rhs == 100.0
+    assert reduce_scatter(all_gather(shards)) == [[2, 4], [6, 8]]
+    assert all_gather(reduce_scatter(copies)) == [[6, 8, 10, 12]] * 2
+    print(f&quot;collective adjoint inner products: {lhs:.1f} = {rhs:.1f}&quot;)
+    print(&quot;AG then RS: [[2.0, 4.0], [6.0, 8.0]]; not identity&quot;)
+    weighted = global_mean([2, 6], [1, 3])
+    assert weighted == 5.0 and global_mean([2, 6], [1, 1]) == 4.0
+    print(f&quot;global mean: weighted={weighted:.1f}, mean-of-means=4.0&quot;)
+    x, w, g = [[1, 2], [3, 4]], [[5, 6], [7, 8]], [[1, 1], [1, 1]]
+    out, dx, dw = column_parallel(x, w, g, 2)
+    assert out == matmul(x, w) == [[19, 22], [43, 50]]
+    assert dx == matmul(g, transpose(w)) == [[11, 15], [11, 15]]
+    assert dw == matmul(transpose(x), g) == [[4, 4], [6, 6]]
+    eps = 1e-5
+    for i in range(2):
+        for j in range(2):
+            plus, minus = [r[:] for r in x], [r[:] for r in x]
+            plus[i][j] += eps
+            minus[i][j] -= eps
+            fd = (finite_sum(sum(r) for r in matmul(plus, w)) -
+                  finite_sum(sum(r) for r in matmul(minus, w))) / (2 * eps)
+            assert math.isclose(fd, dx[i][j], rel_tol=1e-8, abs_tol=1e-8)
+            w_plus, w_minus = [r[:] for r in w], [r[:] for r in w]
+            w_plus[i][j] += eps
+            w_minus[i][j] -= eps
+            fd_w = (finite_sum(sum(r) for r in matmul(x, w_plus)) -
+                    finite_sum(sum(r) for r in matmul(x, w_minus))) / (2 * eps)
+            assert math.isclose(fd_w, dw[i][j], rel_tol=1e-8, abs_tol=1e-8)
+    print(f&quot;column TP output={out}; dX={dx}; dW={dw}&quot;)
+    # Normalized token coordinates and upstreams are supplied, not an LN kernel.
+    norm, upstream = [[1, -1], [-1, 1]], [[2, 3], [5, 7]]
+    local_gamma = [[a * b for a, b in zip(n, u)] for n, u in zip(norm, upstream)]
+    gamma = [finite_sum(r[j] for r in local_gamma) for j in range(2)]
+    assert gamma == [-3, 4] and local_gamma[0] != local_gamma[1]
+    print(f&quot;sequence-local gamma gradients={local_gamma}; sum={gamma}&quot;)
+    blocks = [[(1000, 2), (1001, 4)], [(999, -1)]]
+    attention = block_attention(blocks)
+    flat = block_attention([[p for b in blocks for p in b]])
+    assert math.isclose(attention, flat, rel_tol=1e-15)
+    oracle = (2 * math.exp(-1) + 4 - math.exp(-2)) / (math.exp(-1) + 1 + math.exp(-2))
+    assert math.isclose(attention, oracle, rel_tol=1e-15)
+    assert math.isclose(attention, block_attention(list(reversed(blocks))), rel_tol=1e-15)
+    assert block_attention([[(2, 7)]]) == 7
+    print(f&quot;online attention={attention:.9f}; flat/reversed agree&quot;)
+    gb = [float(state_bytes(7_000_000_000, 8, s) / 10**9) for s in range(4)]
+    assert gb == [112, 38.5, 26.25, 14]
+    assert all(state_bytes(17, 1, s) == 272 for s in range(4))
+    print(&quot;7B model state GB at R=8: &quot; + &quot;, &quot;.join(f&quot;{v:.2f}&quot; for v in gb))
+    for p, m in [(1, 3), (4, 1), (4, 8), (3, 7)]:
+        duration, events = afab(p, m)
+        assert duration == 2 * (p + m - 1)
+        for stage in range(p):
+            local = sorted((a, b) for s, _, _, a, b in events if s == stage)
+            assert all(a[1] &lt;= b[0] for a, b in zip(local, local[1:]))
+        for stage, batch, kind, start, _ in events:
+            if (kind == &quot;F&quot; and stage &gt; 0) or (kind == &quot;B&quot; and stage + 1 &lt; p):
+                producer = stage - 1 if kind == &quot;F&quot; else stage + 1
+                producer_end = next(b for s, m0, k, _, b in events
+                                    if (s, m0, k) == (producer, batch, kind))
+                assert start &gt;= producer_end
+            if kind == &quot;B&quot;:
+                f_end = next(b for s, m0, k, _, b in events
+                             if (s, m0, k) == (stage, batch, &quot;F&quot;))
+                assert start &gt;= f_end
+    duration, _ = afab(4, 8)
+    print(f&quot;AFAB p=4 m=8: makespan={duration}, utilization={8 / 11:.6f}&quot;)
+    loads = expert_load([[0, 1], [0, 1], [0, 2], [0, 3]], 4)
+    assert loads == [4, 2, 1, 1] and sum(loads) == 8
+    print(f&quot;expert loads={loads}; max/mean={max(loads) / (sum(loads) / 4):.1f}&quot;)
+    invalid = [lambda: positive_int(True, &quot;ranks&quot;), lambda: number(float(&quot;nan&quot;)),
+               lambda: number(10**1000), lambda: matrix([]), lambda: matrix([[1], [2, 3]]),
+               lambda: matrix([[True]]), lambda: matmul([[1]], [[1, 2], [3, 4]]),
+               lambda: matmul([[1e308]], [[1e308]]),
+               lambda: finite_sum([1e308, 1e308]),
+               lambda: reduce_scatter([[1, 2, 3], [4, 5, 6]]),
+               lambda: inner([[1]], [[1, 2]]), lambda: global_mean([2], [0]),
+               lambda: global_mean([2, 3], [1]), lambda: column_parallel(x, w, g, 3),
+               lambda: block_attention([]), lambda: block_attention([[]]),
+               lambda: block_attention([[(1, float(&quot;inf&quot;))]]),
+               lambda: block_attention([[(1, 2, 3)]]), lambda: state_bytes(7, 0, 3),
+               lambda: state_bytes(7, 2, True), lambda: afab(0, 1), lambda: afab(101, 100),
+               lambda: expert_load([[0, 0]], 2), lambda: expert_load([[2]], 2),
+               lambda: expert_load([[0], [0, 1]], 2)]
+    for call in invalid:
+        try:
+            call()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(&quot;invalid input was accepted&quot;)
+    print(f&quot;invalid-input contracts: {len(invalid)} rejected&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    checks()
+</code></pre></div>
+<h3>Checked output</h3><pre><code id="chapter04-output" class="language-text">collective adjoint inner products: 100.0 = 100.0
+AG then RS: [[2.0, 4.0], [6.0, 8.0]]; not identity
+global mean: weighted=5.0, mean-of-means=4.0
+column TP output=[[19.0, 22.0], [43.0, 50.0]]; dX=[[11.0, 15.0], [11.0, 15.0]]; dW=[[4.0, 4.0], [6.0, 6.0]]
+sequence-local gamma gradients=[[2, -3], [-5, 7]]; sum=[-3.0, 4.0]
+online attention=3.060390192; flat/reversed agree
+7B model state GB at R=8: 112.00, 38.50, 26.25, 14.00
+AFAB p=4 m=8: makespan=22, utilization=0.727273
+expert loads=[4, 2, 1, 1]; max/mean=2.0
+invalid-input contracts: 25 rejected
+</code></pre>
+</section>
+
+<section id="exercises"><h2>16. Exercises with complete solutions</h2>
+<div class="exercise"><h3>1. Derivation: token means under an averaging reducer</h3>
+<p>Two replicas accumulate local token-loss sums over a complete update. Replica 0 has five valid terms whose gradient sum is $(10,-5)$; replica 1 has fifteen valid terms whose gradient sum is $(15,30)$. The framework averages the two rank gradients. Derive the scalar multiplier on each local loss sum needed to obtain the global token mean. Compute the desired gradient, the gradient obtained by averaging local means, and the gradient obtained by applying both the derived multiplier and an extra division by two.</p>
+<details class="solution"><summary>Solution</summary><p>The global count is 20. A rank-average reducer inserts $1/2$, so each local loss sum must be multiplied by $2/20=1/10$. The averaged gradient is $\frac12[0.1(10,-5)+0.1(15,30)]=(1.25,1.25)$, matching $(25,25)/20$. Local means are $(2,-1)$ and $(1,2)$; their unweighted mean is $(1.5,0.5)$, which gives the five-token replica excessive weight. A second division by two after the correct convention yields $(0.625,0.625)$ and halves the intended update contribution. The count and reducer convention determine the factor; “divide by the number of GPUs” alone is incomplete.</p></details></div>
+<div class="exercise"><h3>2. Proof and counterexample: collective adjoints</h3>
+<p>For three ranks, all-gather three scalar shards into three physical copies. Using the rank-product Euclidean inner product, derive its adjoint. For shards $(1,2,3)$ and upstream full vectors $(1,0,0)$, $(0,2,0)$, and $(0,0,3)$, check the inner-product identity. Is reduce-scatter followed by all-gather an identity on arbitrary full vectors? Identify the factor in all-gather followed by SUM reduce-scatter.</p>
+<details class="solution"><summary>Solution</summary><p>All-gather maps $x$ to $(x,x,x)$. Pairing with upstream vectors $u_r$ gives $\sum_r\sum_kx_ku_{r,k}=\sum_kx_k(\sum_ru_{r,k})$. Its adjoint returns scalar shard $\sum_ru_{r,k}$ to owner $k$, the SUM reduce-scatter. In the fixture those shards are $(1,2,3)$, so both inner products are $1^2+2^2+3^2=14$. Gather-after-scatter gives three copies of $(1,2,3)$, while the original full vectors are distinct, so it is not the identity. Scatter-after-gather yields $(3,6,9)=3x$. Multiplying reduce-scatter by $1/3$ would undo gather on that restricted replicated image, but reverse differentiation under the stated inner product uses the sum, not an arbitrary inverse.</p></details></div>
+<div class="exercise"><h3>3. Computation: memory and transfer units</h3>
+<p>A seven-billion-parameter model uses four-byte gradients while retaining the other state choices above. Compute persistent state per rank for DP and ZeRO Stages 1–3 with eight ranks. Under Stage 3, conservatively add two gathered 500-million-parameter units at two bytes per weight, 20 GB activations, and 6 GB workspace. Does this upper-budget calculation fit 80 GB? Separately compute transmitted ring all-reduce bytes per rank for a 64 MiB message on eight ranks. Explain why these are different resource quantities.</p>
+<details class="solution"><summary>Solution</summary><p>The state total is $2+4+12=18$ bytes per parameter. Stage 0 costs 126 GB. Stage 1 costs $(6+12/8)N=52.50$ GB. Stage 2 costs $(2+16/8)N=28.00$ GB. Stage 3 costs $18N/8=15.75$ GB. Its conservative peak budget is $15.75+2+20+6=43.75$ GB, below 80 GB by 36.25 GB under the stated allocations. This does not prove actual activation or workspace usage; those assumed bounds require verification. The ring transmitted volume is $2(7/8)\cdot64=112$ MiB, or 117,440,512 bytes per rank. The receiver gets the same amount. GB memory is an allocation capacity, while MiB per collective is communication volume; neither becomes seconds without a transfer-rate and scheduling model.</p></details></div>
+<div class="exercise"><h3>4. Counterexample: partitioning a nonlinear attention calculation</h3>
+<p>For one query and two keys, two feature partitions contribute score vectors $(2,0)$ and $(0,2)$ before softmax. Values are 0 and 10. Compute correct attention after summing scores. Compare it with summing the outputs obtained from separate local softmaxes. What communication makes a feature-partitioned head correct? Why does assigning whole heads to ranks avoid this particular reduction?</p>
+<details class="solution"><summary>Solution</summary><p>The full scores are $(2,2)$, so weights are $(1/2,1/2)$ and the output is 5. Local softmax outputs are $10/(e^2+1)\approx1.192$ and $10e^2/(e^2+1)\approx8.808$. Summing them gives 10, twice the correct result. Averaging happens to give 5 in this symmetric fixture, but is not a general rule: changing the second score partition to $(0,0)$ gives a correct output about 1.192, while the average of local outputs is about 3.096. Sum the partial query-key dot products before softmax, with the full-head scaling convention, and subsequently combine any needed value-coordinate shards. A complete-head owner has all features of its query and keys for that head and therefore computes the score locally. Different heads have separate softmax distributions.</p></details></div>
+<div class="exercise"><h3>5. Derivation: stable block attention and masks</h3>
+<p>Block A contains score $1000$ and value 2; block B contains score $1001$ and value 4. Derive the merged numerator and denominator in the common-maximum convention. Explain why the mean of the two block outputs is wrong. If all keys in block B are masked for this query, how should its state contribute? What if both blocks are fully masked?</p>
+<details class="solution"><summary>Solution</summary><p>The block states are $(1000,1,2)$ and $(1001,1,4)$. The new maximum is 1001, denominator is $e^{-1}+1$, and numerator is $2e^{-1}+4$. The result is about 3.462117157. The arithmetic mean of the local normalized outputs is 3; it ignores that the second block has $e$ times as much unnormalized mass. An empty permitted-key block contributes zero denominator and zero numerator and must be skipped without trying to take its maximum. The other block then returns 2. If both blocks are fully masked, the denominator is zero and the mathematical attention distribution is undefined. A production mask policy must define or exclude such queries. The lab's simpler input contract excludes empty blocks and has no implicit masked-query fallback.</p></details></div>
+<div class="exercise"><h3>6. Design: a valid rank map and a useful performance experiment</h3>
+<p>Design groups for a 32-rank layout with $P=2,T=2,D=8$ and EP degree four inside DP. Specify the dense and expert replica counts. An observed profile shows a host wait for receive counts, a later overloaded expert, and small TP matrix kernels. Propose a controlled experiment for each bottleneck while keeping the chosen MoE model, token batch, and objective fixed. Explain what a successful result would and would not establish.</p>
+<details class="solution"><summary>Solution</summary><p>At fixed pipeline and tensor coordinates, the eight DP ranks replicate dense parameter shards. Divide that axis into two four-rank EP groups: experts are partitioned within each group and each expert has two replicas across the groups. Dense gradients reduce across all eight matching dense replicas; an expert gradient reduces only across the two copies of that expert. TP operations sum complementary features across the two tensor ranks at fixed other coordinates. PP connects the two stage owners with matching tensor/data roles. World size is $2\cdot2\cdot8=32$, not 128.</p><p>For the host wait, compare dynamic sizing with a proven-capacity preallocation or a supported device-side dispatch path, checking output identities and peak buffers. For the overloaded expert, first record per-expert counts and placement; redistribute expert placement or schedule independent work without changing router choices, then measure the longest destination time. Changing a balance penalty or routing bias would alter the training mechanism and needs a separate experiment. For the small TP kernels, compare a smaller TP degree with compensating DP/accumulation factors and adequate memory so the same global token batch remains fixed. Check objective, gradients, and updates before comparing sustained tokens/s and peak memory. Success establishes finite equivalence and measured behavior on that hardware/revision; it does not establish a universal best mesh, convergence equivalence after changing the objective, or every future batch's memory safety.</p></details></div>
+</section>
+
+<section id="references"><h2>17. References and evidence boundaries</h2>
+<p>These sources support the mechanisms at the indicated pages or code locations. The running case and computed resource values are original examples. Software references are pinned to a release or commit that predates the talk; performance claims remain limited to their original settings. The source lecture's topic order is preserved, while administrative introductions and biographies are omitted.</p>
+<ol>
+<li id="ref-talk"><a href="https://www.youtube.com/watch?v=I5BKi32IEa8">Nouamane Tazi, “The Ultra-Scale Talk: Scaling Training to Thousands of GPUs,” CS25 V6</a>, April 23, 2026. <a href="https://web.stanford.edu/class/cs25/">Official course schedule</a>. Official slides and machine transcript supply the coverage spine; numerical guarantees come from the explicit derivations here.</li>
+<li id="ref-zero"><a href="https://arxiv.org/pdf/1910.02054v3">Rajbhandari et al., <cite>ZeRO: Memory Optimizations Toward Training Trillion Parameter Models</cite></a>, v3, May 13, 2020, PDF pp. 7–11: state decomposition and cumulative partition stages. The withdrawn v1 PDF is unavailable; this chapter uses v3.</li>
+<li id="ref-megatron"><a href="https://arxiv.org/pdf/1909.08053v1">Shoeybi et al., <cite>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism</cite></a>, v1, 2019, PDF pp. 3–5: column/row MLP placement, whole-head attention partition, and logical replication conventions.</li>
+<li id="ref-sequence"><a href="https://arxiv.org/pdf/2205.05198v1">Korthikanti et al., <cite>Reducing Activation Recomputation in Large Transformer Models</cite></a>, v1, 2022, PDF pp. 3–7: activation accounting and sequence-parallel layouts; Figs. 5–6 specify paired collectives. Payload equivalence is not a universal runtime guarantee.</li>
+<li id="ref-fsdp"><a href="https://docs.pytorch.org/docs/2.8/distributed.fsdp.fully_shard.html">PyTorch 2.8, <cite>FSDP2 (fully_shard)</cite></a>, documentation updated June 16, 2025: per-parameter dim-0 sharding, optimizer contract, groups, and reshard policy. These are version-specific API behaviors.</li>
+<li id="ref-megatron-code"><a href="https://github.com/NVIDIA/Megatron-LM/blob/d580efc68a9f0dbf1945f834f6f6200cd01d3343/megatron/core/distributed/finalize_model_grads.py#L189-L225">Megatron Core 0.12.0, gradient finalizer</a>, commit d580efc, May 6, 2025, lines 189–225: explicit replicated layer-normalization parameter-gradient reduction for sequence parallelism.</li>
+<li id="ref-gpipe"><a href="https://arxiv.org/pdf/1811.06965v1">Huang et al., <cite>GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism</cite></a>, v1, 2018, PDF pp. 2–3: microbatches, pipelining, and synchronous update boundaries. Reported speedups concern its experiments.</li>
+<li id="ref-pipedream"><a href="https://arxiv.org/pdf/2006.09503v1">Narayanan et al., <cite>Memory-Efficient Pipeline-Parallel DNN Training</cite></a>, v1, 2020, PDF pp. 2–3: 1F1B scheduling, weight versions, and PipeDream-2BW's delayed-update semantics.</li>
+<li id="ref-ring"><a href="https://arxiv.org/pdf/2310.01889v1">Liu, Zaharia, and Abbeel, <cite>Ring Attention with Blockwise Transformers for Near-Infinite Context</cite></a>, v1, 2023, PDF pp. 3–5: rotating key/value blocks and conditional transfer/compute overlap. All byte equations in this chapter state their own element sizes.</li>
+<li id="ref-mixed"><a href="https://arxiv.org/pdf/1710.03740v1">Micikevicius et al., <cite>Mixed Precision Training</cite></a>, v1, 2017, PDF pp. 2–4: master weights, rounding, and loss scaling. Numerical recipes and empirical accuracy have stated conditions.</li>
+<li id="ref-moe"><a href="https://arxiv.org/pdf/1701.06538v1">Shazeer et al., <cite>Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer</cite></a>, v1, 2017, PDF pp. 3–5: sparse mixture, top-k routing, combined data/expert placement, and importance balancing. Later hardware performance is not inferred from this paper.</li>
+<li id="ref-deepseek"><a href="https://arxiv.org/pdf/2412.19437v2">DeepSeek-AI, <cite>DeepSeek-V3 Technical Report</cite></a>, v2, February 18, 2025, PDF p. 9 and pp. 12–14: routing bias and complementary balance loss; DualPipe and its memory/overlap tradeoffs.</li>
+<li id="ref-deepep"><a href="https://github.com/deepseek-ai/DeepEP/blob/9af0e0d0e74f3577af1979c9b9e1ac2cad0104ee/README.md">DeepEP v1.2.1 README</a>, commit 9af0e0d, September 15, 2025: dispatch/combine contracts, received-count host wait, distinct low-latency mode, NVSHMEM and architecture/network requirements. Reported H800/CX7 performance is developer evidence for that setup.</li>
+</ol>
+</section>
+<!-- BOOK-CONTENT-END --></article><nav class="page-turn" aria-label="Chapter navigation"><a rel="prev" href="lecture-03-state-space-models-and-transformers.html">Previous available chapter</a><a href="index.html">Lecture index</a><a rel="next" href="lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html">Next available chapter</a></nav></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

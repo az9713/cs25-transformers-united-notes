@@ -1,13 +1,13 @@
 {
   "course": "CS25",
-  "checked_at_utc": "2026-10-02T23:44:41.170615+00:00",
+  "checked_at_utc": "2026-10-03T01:49:44.987408+00:00",
   "scope": "Actual current files, source identities, embedded programs, reader mechanics, privacy and preservation; editorial acceptance is separate",
   "status": "passed",
   "course_complete": false,
   "chapters": [
     {
       "file": "lecture-01-overview-of-transformers.html",
-      "html_sha256": "88e67c07c7b3ea5c498055ddc9636aec9ab91fdb57052870aa6be22af514937e",
+      "html_sha256": "df00dae6be07a4ab37ebb8088637aaab263a7c80cf7c3c1a5aefb9e1b75f0aee",
       "authored_body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
       "metadata_sha256": "8b6a7d93d8a812535d8237c1974464201115619ed660f9923a10aa8ccd6e6ac4",
       "programs": [
@@ -16,6 +16,70 @@
           "status": "passed",
           "printed_output_matches": true,
           "stdout": "causal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
+      "file": "lecture-02-representation-learning-and-world-modeling.html",
+      "html_sha256": "e0768338ae46661d12c81218b5f04d1f96451b3851469cf3397e908096b32899",
+      "authored_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
+      "metadata_sha256": "3710d2ed4e3c1c8f0bee2b36fd95d6cb6d2e3f171116006158d66469ea6209cc",
+      "programs": [
+        {
+          "code_sha256": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "slot updates: 4.000000 8.000000\nmasked slot 0: 1.000000 0.600000 0.700000 0.800000\nfuture slot 1: 5.300000\nrisk with/without X: 2.500000 2.500000\ncollapsed prediction loss: 0.000000\ncollapsed CF discrepancy: 0.154818\ntwo-point CF discrepancy: 0.004386\nbounded actions: a=1.000000 a=1.000000\nterminal state/cost: 2.000000 1.500000\nchecks: passed\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
+      "file": "lecture-03-state-space-models-and-transformers.html",
+      "html_sha256": "3dde530d1a7be1f67ecbb4306c7b0d7cac6a63138b8a1f04816f5e79cbd259ef",
+      "authored_body_sha256": "22b7065c80b65f9948b929f1cd12d0ec26b786575dc0ec75fd8434e34bc48a74",
+      "metadata_sha256": "2f5285f6d9a36b3456c8c481919e790c9745a5814b51c3c6b150063d81147260",
+      "programs": [
+        {
+          "code_sha256": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "serial / scan / unrolled states: [2.0, 2.0, 7.0, 4.5]\nconstant-input coefficients: 0.5 0.25\nselected positions: [0, 2] ; expanded: [2.0, 2.0, 5.0, 5.0]\nequal byte-normalized losses: 1.000000 bits/byte\noff-diagonal ratio loss: 0.960000\nUTF-8 bytes for one code point: 2\nfinite recall requirement: 520 bits > 512 state bits\nAll recurrence, causality and 18 input checks passed.\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
+      "file": "lecture-04-training-at-gpu-scale.html",
+      "html_sha256": "3c7e768a9336a8296ab3c396d5be66dfc2481193e52ab7ecfed043acd8b7a198",
+      "authored_body_sha256": "f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066",
+      "metadata_sha256": "f3ac305807b2b01eb49ab9d8e08c0f5526dd8b37c9666c04af011d0552c55e0f",
+      "programs": [
+        {
+          "code_sha256": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "collective adjoint inner products: 100.0 = 100.0\nAG then RS: [[2.0, 4.0], [6.0, 8.0]]; not identity\nglobal mean: weighted=5.0, mean-of-means=4.0\ncolumn TP output=[[19.0, 22.0], [43.0, 50.0]]; dX=[[11.0, 15.0], [11.0, 15.0]]; dW=[[4.0, 4.0], [6.0, 6.0]]\nsequence-local gamma gradients=[[2, -3], [-5, 7]]; sum=[-3.0, 4.0]\nonline attention=3.060390192; flat/reversed agree\n7B model state GB at R=8: 112.00, 38.50, 26.25, 14.00\nAFAB p=4 m=8: makespan=22, utilization=0.727273\nexpert loads=[4, 2, 1, 1]; max/mean=2.0\ninvalid-input contracts: 25 rejected\n"
+        }
+      ],
+      "exercises": 6,
+      "solutions": 6
+    },
+    {
+      "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
+      "html_sha256": "b760ffc669c747b4b075c139e4d19d11d9c0968793fd539f08ffc5553944a3be",
+      "authored_body_sha256": "28dddb9244837d888447519eef04b1ab853b767578f9fb4e3750b1809c3345d6",
+      "metadata_sha256": "1fbfc80797340042ed4daa9444de4f8eab19bebf3c16b61a159db0fbaaa25182",
+      "programs": [
+        {
+          "code_sha256": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
+          "status": "passed",
+          "printed_output_matches": true,
+          "stdout": "inverse explicit lookup: ['pump']\none-round deduction: True\nrestricted NLL: 0.693147 -> 0.000000 nats\nconditional evidence accuracy: 0.76\ncandidate coverage: 0.300 distinct; 0.271 replacement\nAll chapter 6 finite-fixture and input checks passed.\n"
         }
       ],
       "exercises": 6,
@@ -71,10 +135,10 @@
   ],
   "static": {
     "status": "passed",
-    "html_files": 6,
-    "local_links_checked": 51,
-    "timestamps_checked": 20,
-    "chapter_pages_with_dollar_math": 1,
+    "html_files": 10,
+    "local_links_checked": 125,
+    "timestamps_checked": 101,
+    "chapter_pages_with_dollar_math": 5,
     "failures": [],
     "warnings": []
   },
@@ -115,6 +179,78 @@
         "controls": true,
         "emptyToc": false,
         "file": "lecture-01-overview-of-transformers.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 375,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-02-representation-learning-and-world-modeling.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 375,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-02-representation-learning-and-world-modeling.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 316,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-03-state-space-models-and-transformers.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 316,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-03-state-space-models-and-transformers.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 297,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-04-training-at-gpu-scale.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 297,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-04-training-at-gpu-scale.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 234,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 234,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
         "viewport": 390
       },
       {
@@ -180,35 +316,47 @@
     "status": "passed",
     "js_python_parity_cases": 24,
     "native_controls_and_invalid_input": "passed",
-    "code_sha256": "882f902c724ed91bea6eef762d3192ed3d9e19305a36d3d193dfd36c766479cf",
-    "stdout": "causal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\n"
+    "code_sha256": "8a41261967eb66e76513362e3b821e4a16fae47de027174381a8835c7e0ebdea",
+    "stdout": "Chapter 1:\ncausal outputs: [0.0, 4.5, 7.0]\nunmasked first output: 7.0\nmean NLL: 1.386294 nats; perplexity: 4.0\ntoy allocation: 8.0 pretrain; 4.0 index\npreference loss at log(3): 0.287682\nevidence labels: ['true', 'unknown'] ; action permitted: False\nAll chapter 1 numerical and input checks passed.\nChapter 2:\nslot updates: 4.000000 8.000000\nmasked slot 0: 1.000000 0.600000 0.700000 0.800000\nfuture slot 1: 5.300000\nrisk with/without X: 2.500000 2.500000\ncollapsed prediction loss: 0.000000\ncollapsed CF discrepancy: 0.154818\ntwo-point CF discrepancy: 0.004386\nbounded actions: a=1.000000 a=1.000000\nterminal state/cost: 2.000000 1.500000\nchecks: passed\nChapter 3:\nserial / scan / unrolled states: [2.0, 2.0, 7.0, 4.5]\nconstant-input coefficients: 0.5 0.25\nselected positions: [0, 2] ; expanded: [2.0, 2.0, 5.0, 5.0]\nequal byte-normalized losses: 1.000000 bits/byte\noff-diagonal ratio loss: 0.960000\nUTF-8 bytes for one code point: 2\nfinite recall requirement: 520 bits > 512 state bits\nAll recurrence, causality and 18 input checks passed.\nChapter 4:\ncollective adjoint inner products: 100.0 = 100.0\nAG then RS: [[2.0, 4.0], [6.0, 8.0]]; not identity\nglobal mean: weighted=5.0, mean-of-means=4.0\ncolumn TP output=[[19.0, 22.0], [43.0, 50.0]]; dX=[[11.0, 15.0], [11.0, 15.0]]; dW=[[4.0, 4.0], [6.0, 6.0]]\nsequence-local gamma gradients=[[2, -3], [-5, 7]]; sum=[-3.0, 4.0]\nonline attention=3.060390192; flat/reversed agree\n7B model state GB at R=8: 112.00, 38.50, 26.25, 14.00\nAFAB p=4 m=8: makespan=22, utilization=0.727273\nexpert loads=[4, 2, 1, 1]; max/mean=2.0\ninvalid-input contracts: 25 rejected\nChapter 6:\ninverse explicit lookup: ['pump']\none-round deduction: True\nrestricted NLL: 0.693147 -> 0.000000 nats\nconditional evidence accuracy: 0.76\ncandidate coverage: 0.300 distinct; 0.271 replacement\nAll chapter 6 finite-fixture and input checks passed.\nAll 5 reviewed chapter programs passed their finite checks.\n"
   },
   "privacy": {
     "status": "passed",
-    "files_checked": 23
+    "files_checked": 35
   },
   "artifacts_sha256": {
+    "chapter02.py": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
+    "chapter03.py": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
+    "chapter04.py": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
+    "chapter06.py": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
+    "lecture-02-representation-learning-and-world-modeling.html": "e0768338ae46661d12c81218b5f04d1f96451b3851469cf3397e908096b32899",
+    "lecture-02-representation-learning-and-world-modeling.meta.json": "3710d2ed4e3c1c8f0bee2b36fd95d6cb6d2e3f171116006158d66469ea6209cc",
+    "lecture-03-state-space-models-and-transformers.html": "3dde530d1a7be1f67ecbb4306c7b0d7cac6a63138b8a1f04816f5e79cbd259ef",
+    "lecture-03-state-space-models-and-transformers.meta.json": "2f5285f6d9a36b3456c8c481919e790c9745a5814b51c3c6b150063d81147260",
+    "lecture-04-training-at-gpu-scale.html": "3c7e768a9336a8296ab3c396d5be66dfc2481193e52ab7ecfed043acd8b7a198",
+    "lecture-04-training-at-gpu-scale.meta.json": "f3ac305807b2b01eb49ab9d8e08c0f5526dd8b37c9666c04af011d0552c55e0f",
+    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html": "b760ffc669c747b4b075c139e4d19d11d9c0968793fd539f08ffc5553944a3be",
+    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.meta.json": "1fbfc80797340042ed4daa9444de4f8eab19bebf3c16b61a159db0fbaaa25182",
     ".gitattributes": "c3f9fe541cd8d6ca6ae2a5a0ec1e340681dd2208264c8dcaa107415cc7972f6e",
     ".gitignore": "dea959feab84d9e515447340b5668c754a40eb8ce3406a4fc3b4c24149cb1e5d",
-    "README.md": "4ae392d20eb912281601cdae24630dcda86dfc0415becf9bc3f296dfdba16c71",
+    "README.md": "b724355a59bd97c5718decedd70a91ae2ad463bfe4c32016aa50eca6d395761a",
     "assets/book.css": "3a626f4bac6ee017ff33edf20ee09cb6121fe94bfffe4b3b602f8cdff017d3de",
     "assets/book.js": "7a7c3ba2766e09ceae27bd5f960fa43c33289c647d800de4d1b3777533aaaad7",
     "assets/lab.js": "fd913ee2019f35da5a8900fbfb8c642299ea6ec7f38646e9f8ea3278f44fa543",
     "assets/mathjax-LICENSE": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
     "assets/mathjax-tex-svg.js": "d4295dc33744836935c1399feece5159577b34c5c8ffb9f1c6324cd82e03a882",
-    "assets/preview-mobile.png": "b6e8128378cd1d7a0a35375e28a6c7c91d938affdedf968b571c756dc0b8b18e",
-    "assets/preview.png": "9d4076ff757c84c67acad99c2faa4a153614e52e71efdb47d6eee1c6f1c14c94",
-    "book-overview.html": "72b481c7f481a4ef50957fa96c78d18f2b0333f53e71379b9e895870cc258ff7",
+    "assets/preview-mobile.png": "f11d4fbabf2d1200cd5dd1e3dd86f136ee91faa3ea93a323988d13d6ec09c13b",
+    "assets/preview.png": "605e7064eabb847252007b7d95218a8aca4436f49b26f80112af75d01c1aa73e",
+    "book-overview.html": "2d47a1e4710b1ebc10a3b1577875e0785995d0c44adf5e61ab6bd3f634a8a380",
     "chapter01.py": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
-    "index.html": "683d7c290720cc945e3b69ee8f712576205cbbacad6e18f14081d7d4a0f6c975",
-    "lecture-01-overview-of-transformers.html": "88e67c07c7b3ea5c498055ddc9636aec9ab91fdb57052870aa6be22af514937e",
+    "index.html": "b35b9e089bc00ed5934d305ea0ecf11ceb3b0df913aa023500b44be3b04df32c",
+    "lecture-01-overview-of-transformers.html": "df00dae6be07a4ab37ebb8088637aaab263a7c80cf7c3c1a5aefb9e1b75f0aee",
     "lecture-01-overview-of-transformers.meta.json": "8b6a7d93d8a812535d8237c1974464201115619ed660f9923a10aa8ccd6e6ac4",
-    "numerical-lab.html": "5603306c91d176030c54094b9cec395bd060e66befcd20eab0844c4bec56e3aa",
-    "numerical_lab.py": "882f902c724ed91bea6eef762d3192ed3d9e19305a36d3d193dfd36c766479cf",
-    "references.html": "9db949cd52de3362b3cd01c103c9e472dfa16a5512509d5d6b23601d8460d43f",
-    "source-manifest.json": "8168017ddc104546b7f99487e07c63910c0d78679f9e5df26aa9b625e62411e6",
-    "source-map.html": "0b8a1c7aa517d858cbdedf179d871fb0457a9b7fe8b7f4bcd90aa783353b0e2f",
-    "source-map.json": "1b68c8188468977e47cdb4874e0ffd0eb09a2a7e0d0976acf2f1c5f5b320d49d"
+    "numerical-lab.html": "52ca0ae025e67a93f9502129ee869fb3fe6fe1c66f67e4356d8358ed62db8b08",
+    "numerical_lab.py": "8a41261967eb66e76513362e3b821e4a16fae47de027174381a8835c7e0ebdea",
+    "references.html": "3eafc65c599aaa3f489b20fb0ec56b539510f3e9187ef5836d9ed41b97ab16a7",
+    "source-manifest.json": "aa93fb8440971753cbcd243fcf2467796270a91c7126956a49cc2b58605e53c1",
+    "source-map.html": "505829017b3b97f3f59f749248eeecb91bdab184bc282416bb3cfb343747f0dd",
+    "source-map.json": "b8e0612de7da333ec941bc269725e1c27f40f804433c7a3dca8a2f69cd1afb97"
   },
   "human_screen_reader_audit": "not performed",
   "publication": "not published",

@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><meta name="book-content-sha256" content="22b7065c80b65f9948b929f1cd12d0ec26b786575dc0ec75fd8434e34bc48a74"><title>On the Tradeoffs of State-Space Models and Transformers · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout"><aside class="toc" id="chapter-toc" aria-label="On this page"><h2>On this page</h2></aside><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><!-- BOOK-CONTENT-START -->
+<header><p class="eyebrow">CS25 · Chapter 3 · April 16, 2026</p><h1>On the Tradeoffs of State-Space Models and Transformers</h1><p class="subtitle">What a model retains, what it can recover, and where a hierarchy spends its computation</p></header>
+<p>A maintenance assistant reads a continuous stream: vibration measurements, short operator notes, replacement-part serial numbers, and revisions to a safety procedure. Two queries expose different requirements. “Has the pump's vibration risen since yesterday?” asks for a persistent summary. “Which exact serial number was entered before the last shutdown?” asks for a particular historical item. A model that retains a useful trend can fail the second question; a model that stores every note can spend substantial resources reading irrelevant history.</p>
+<p>The design problem is to choose what persists between observations. We will keep this stream and these two queries fixed while changing the representation of history. A recurrent state, a cache of contextual vectors, a hierarchy of learned chunks, and an external document store provide different interfaces to the same past. Their costs and information losses follow from those interfaces. Successful prediction, exact recall, timely updates, and safe action remain separate outcomes.</p>
+<aside class="callout"><strong>Sources and scope.</strong> The topic sequence follows <a href="https://www.youtube.com/watch?v=OyimE74UMF8">Albert Gu's CS25 talk</a>, including its academic Q&amp;A and a separately attributed sponsor presentation. Timestamps use local machine transcription, not publisher captions. No official deck is available; the mathematical notation and diagram-dependent explanations below are checked against named original papers, rather than unseen talk animations. The maintenance stream, proofs, fixtures and exercises are original teaching constructions. Familiarity with chapter 1, matrix multiplication, probability and differentiation is assumed. Speaker biographies and promotional event logistics are omitted.</aside>
+
+<section id="landscape"><h2>1. Classify the computation before comparing model names <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=65">1:05</a></h2>
+<p><dfn>Autoregressive modeling</dfn> assigns a conditional distribution to the next discrete observation from an available prefix. Let $u_t\in\mathcal V$ be observation $t$ in vocabulary $\mathcal V$, and let $\theta$ denote trained parameters. The prediction is $p_\theta(u_{t+1}\mid u_1,\ldots,u_t)$. Training commonly scores observed next items; generation repeatedly samples from this distribution and appends the sample. A change of architecture changes how the prefix is represented, while the prediction objective can stay the same.</p>
+<p>The talk groups several modern recurrent architectures under “state-space models.” This is a useful umbrella for discussing persistent compressed state, not a claim that Mamba, gated DeltaNet, test-time-training updates and every recurrent network implement one identical operator. A <dfn>state-space model</dfn>, in our mathematical development, will have an explicit state update and readout. We will distinguish a structured affine recurrent core from the nonlinear network surrounding it.</p>
+<p>Gu's April 16, 2026 comparisons of Mamba-2, gated DeltaNet and the newly introduced Mamba-3 are <strong>speaker judgments at that date</strong>. They are not a present-day ranking across hardware, model sizes or downstream tasks. The <a href="https://arxiv.org/pdf/2603.15569v1">March 16 Mamba-3 preprint</a> develops improved discretization, complex-valued dynamics and multiple input/output channels (PDF pp. 1, 3–4; research extension). Those changes illustrate why “linear recurrent model” is a family description rather than a frozen implementation. A result on one configuration must name its state size, training recipe and evaluation.</p>
+<p>The dated landscape also names xLSTM, DeltaNet and test-time-training approaches as recurrent lineages, alongside hybrid commercial examples. In this context, test-time training views a state update as online optimization of a memory objective; it need not mean retraining every language-model weight at each generated token. The named deployments motivate the discussion, but this chapter does not certify every product's current architecture. The common question is what information passes through the persistent state.</p>
+<p>For the assistant, the useful first comparison is operational: what must be retained after the latest measurement, which operations read that retained object, and which facts can be lost? Model names answer none of these questions by themselves. The next sections establish a common accounting system before discussing empirical tradeoffs.</p>
+</section>
+
+<section id="decode"><h2>2. Account for one update and for an entire generation <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=323">5:23</a></h2>
+<p>Let $n$ be a processed sequence length and $t$ its current position. In a causal attention head, chapter 1's key and value widths are $d_k,d_v$. Each processed position contributes a key and a value to the <dfn>KV cache</dfn>: stored contextual vectors reused for later queries. Reading a new query against $t$ keys needs order $t d_k$ score arithmetic and $t d_v$ weighted-value arithmetic. Projection, feedforward and vocabulary-head work are additional costs, held fixed here. A cache is not a copy of an infallible database: its vectors are learned representations and its eventual query may retrieve the wrong item.</p>
+<p>When a fresh query after each consumed observation reads positions $1,\ldots,t$, the total number of query/key pairs through position $n$ is</p>
+\[\sum_{t=1}^{n}t=\frac{n(n+1)}2.\]
+<p>The sum follows by pairing the first and last terms, then the second and next-to-last; each pair has sum $n+1$. At $n=4096$ there are 8,390,656 permitted pairs. Doubling the length approximately quadruples this total. The persistent cache itself grows linearly, not quadratically: it contains $n(d_k+d_v)$ scalar entries per head.</p>
+<p>For an illustrative head with $d_k=d_v=64$ and two stored bytes per scalar, length 4096 requires $4096\cdot128\cdot2=1,048,576$ bytes, or 1 MiB. This counts keys and values only, for one head and one sequence; it excludes allocations, batching and other layers. It is an <strong>engineering check</strong>, not a GPU memory measurement. Exact attention kernels can reduce temporary memory without removing the pairwise operator's arithmetic.</p>
+<p><dfn>Prefill</dfn> processes an existing prompt; <dfn>decode</dfn> produces additional observations one at a time. For a prompt of length $p$ followed by $g$ next-item queries, the queried prefix lengths are $p,p+1,\ldots,p+g-1$. They sum to $gp+g(g-1)/2$. A 1024-item prompt and 128 queries require 139,200 prefix comparisons in this convention. Calling this entire process “quadratic” hides the distinction between the prompt and the generated tail; calling one step “linear” hides its increasing history cost.</p>
+<p>A recurrent update instead operates on a state of fixed dimension. Its per-item cost is constant <em>in the history length</em> when model width, state dimension, precision and architecture are fixed. Processing $n$ items then takes order $n$ recurrent work. This says nothing about constant factors or accelerator utilization. Increasing the state as the stream grows changes the premise. Our assistant could process vibration indefinitely at a fixed update rate, but it does not follow that it can recall every serial number encountered indefinitely.</p>
+</section>
+
+<section id="recurrence"><h2>3. Derive the information path through a recurrent state <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=521">8:41</a></h2>
+<p>Begin with a single scalar feature $x_t\in\mathbb R$ extracted from observation $u_t$. Use column vectors locally: the state $h_t\in\mathbb R^N$ has expansion dimension $N\ge1$, the transition $A_t\in\mathbb R^{N\times N}$, and injection/readout vectors $B_t,C_t\in\mathbb R^N$. Here $A_t$ is a state transition, distinct from chapter 1's attention weight $A_{ij}$; its indices and dimensions identify the local role. Our discrete recurrent core is</p>
+\[h_t=A_t h_{t-1}+B_t x_t,\qquad y_t=C_t^\top h_t.\]
+<p>The scalar $y_t$ is a feature readout, not already a next-token probability. A complete language model uses multiple features, projections, nonlinearities and a probability head. The <a href="https://arxiv.org/pdf/2312.00752v2">original Mamba paper</a> distinguishes this structured recurrent core, its per-channel state expansion and the surrounding architecture (PDF pp. 3–5). With $d$ independently expanded channels, the state has $dN$ entries. Thus a large expanded state can have a substantial constant memory cost even while remaining independent of $n$.</p>
+<p>A local scalar continuous-time teaching model explains one source of recurrent coefficients. Its state and fixed input $h,x$ are dimensionless real numbers; time has an arbitrary model-time unit. Over an interval of length $\Delta&gt;0$, let $\dot h=-\lambda h+b x$ with decay rate $\lambda&gt;0$ and coupling $b\in\mathbb R$, both in inverse model-time units, and initial value $h_{\mathrm{old}}\in\mathbb R$. Multiplying by the integrating factor $e^{\lambda \tau}$, where $\tau$ is elapsed model time, and integrating from 0 to $\Delta$ gives $h_{\mathrm{new}}=e^{-\lambda\Delta}h_{\mathrm{old}}+\frac b\lambda(1-e^{-\lambda\Delta})x$. The integration uses a constant input and constant coefficients on that interval. It does not prove the same exact formula for arbitrary continuously varying coefficients.</p>
+<p>As $\Delta$ tends to zero, retention approaches 1 and the injection gain approaches $b\Delta$; a long interval forgets the initial state and approaches equilibrium $bx/\lambda$. For $\lambda=2$, $\Delta=(\log2)/2$ and $b=1$, the two coefficients are $1/2$ and $1/4$. Initial state 2 and input 4 produce 2, correctly preserving equilibrium. For a small interval exponent $z=\lambda\Delta$, the code computes the gain as $b\Delta[-\operatorname{expm1}(-z)/z]$, using the ratio's limit 1 when the product rounds to zero. This avoids subtracting nearly equal numbers and preserves a representable injection even when the exponent underflows. Binary exponent scaling also prevents an intermediate product from overflowing or underflowing when its final coefficient is representable. For a larger interval the code uses the equivalent $(b/\lambda)[-\operatorname{expm1}(-z)]$ with the same scaling. A nonfinite interval exponent or unrepresentable final gain is rejected; a gain smaller than the representable subnormal range can round to zero. This checks the exact scalar constant-input formula with floating-point arithmetic, not every Mamba implementation's injection rule. The Mamba-3 source explicitly discusses differing discretization approximations (PDF pp. 3–4).</p>
+<p>Unrolling exposes how earlier observations reach a present readout. Set $h_0=0$ and define an empty matrix product as the identity $I_N$. Direct substitution gives $h_2=A_2B_1x_1+B_2x_2$. Inductively, multiplying the previous expansion by $A_t$ and adding the newest injection produces</p>
+\[h_t=\sum_{j=1}^{t}(A_tA_{t-1}\cdots A_{j+1})B_jx_j,\qquad
+y_t=\sum_{j=1}^{t}C_t^\top(A_t\cdots A_{j+1})B_jx_j.\]
+<p>The order matters: matrix multiplication is generally noncommutative. Each observation is written through $B_j$, transformed by every subsequent transition, and read through $C_t$. For a scalar constant transition $a=1/2$, injections equal to the input and readout 1, the inputs $(1,0,0)$ yield $(1,1/2,1/4)$. A measurement's influence decays with age. Moving the 1 to the last position yields $(0,0,1)$, so the recurrent operator retains temporal order without positional embeddings.</p>
+<p>When $A,B,C$ are constant, the coefficient on $x_j$ depends only on lag $t-j$: $C^\top A^{t-j}B$. This is a causal convolution, meaning a lag-indexed linear filter. That equivalence is for the declared linear time-invariant core and initial-state convention. Making coefficients depend on content destroys that fixed convolution kernel. It does not destroy the explicit recurrent computation.</p>
+<p><dfn>Selectivity</dfn> makes coefficients functions of the current input representation. In a scalar teaching model, retaining the past without accepting an irrelevant measurement uses $a_t=1$ and injection 0; replacing it with a new value uses $a_t=0$ and that value as injection. The latter transition annihilates all earlier information in this coordinate. A noise packet can therefore leave the running state unchanged, while an authorized recalibration resets the baseline. Exact 0/1 gates illustrate the logic; smooth finite learned gates need not attain those endpoints.</p>
+<p>There is an essential distinction in the word “linear.” For fixed realized coefficients, the update is affine in the previous state and linear in its injection. If coefficients depend on $x_t$, the complete input-to-output map is generally nonlinear. For example, $h_t=x_t h_{t-1}+x_t$ contains input-dependent products; superposition of input sequences fails. Scan algorithms exploit the affine state update after coefficients are computed. They do not prove that a selective model is a globally linear function of its input.</p>
+<p>Even the fixed core's memory has a numerical horizon. In the scalar example an input's coefficient after $k$ steps is $2^{-k}$. At $k=20$ it is about $9.54\times10^{-7}$, before noise, quantization and later readout. A slow-decay coordinate retains different information from a reset coordinate. Successful long-range modeling therefore requires both enough state capacity and a learned write/retain/read strategy; state expansion alone does not specify which serial number survives.</p>
+</section>
+
+<section id="scan"><h2>4. Parallelize affine composition without reversing time <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=751">12:31</a></h2>
+<p>The apparent obstacle to training a recurrence is its serial definition: $h_t$ requires $h_{t-1}$. During a full-sequence training pass, however, each layer already has its input sequence. If its coefficients can be computed from these available representations without sequential dependence on that layer's unfinished state, every update can be represented as an affine map. Let $r_t=B_tx_t$ and denote the map $h\mapsto A_t h+r_t$ by the pair $(A_t,r_t)$.</p>
+<p>Define chronological composition $\star$ so that the left pair acts first:</p>
+\[(A,r)\star(D,s)=(DA,Dr+s).\]
+<p>For three maps $(A,r),(D,s),(E,v)$, either grouping gives $(EDA,EDr+Es+v)$. This proves associativity with all vector/matrix domains fixed. Associativity allows a balanced tree to combine adjacent intervals; it does not allow permuting their order. In a scalar check, $(2,1)\star(3,4)=(6,7)$ whereas reversing them gives $(6,9)$. The same total transition can have a different accumulated injection.</p>
+<p>A <dfn>prefix scan</dfn> returns the composition of maps 1 through $t$ for every $t$. Applying each prefix to $h_0$ produces all states. A work-efficient tree algorithm takes order $n$ compositions in total and order $\log n$ dependent levels, with enough processors and a fixed-cost composition. For dense $N\times N$ transitions, composing matrices is expensive; diagonal or scalar-times-identity structure makes the operation much cheaper. A theoretical span bound is not a measured speedup on a particular GPU.</p>
+<p>Take scalar transitions $(1/2,1,0,1/2)$ and injections $(2,0,7,1)$. The serial states from zero are $(2,2,7,4.5)$. The first two updates combine to $(1/2,2)$; the last two combine to $(0,4.5)$. Their combined transition is zero and their total injection 4.5, agreeing with the final serial state. This calculation remains valid when a gate is zero. A shortcut that divides by a prefix product to recover interval products can fail at exactly that reset; our executable checks avoid such division.</p>
+<p>For a generic nonlinear recurrence $h_t=\tanh(Ah_{t-1}+r_t)$, composing two steps usually cannot be represented by one pair of the same finite matrix/vector form. The sequential dependence remains unless another special structure is available. One cannot remove the nonlinear activation from an LSTM, use the affine scan, and claim to have computed the unchanged LSTM. The restriction buys parallel training while constraining the update family.</p>
+<p>The <a href="https://arxiv.org/pdf/2401.13660v1">MambaByte original</a> spells out affine scan composition (PDF p. 4). Mamba's implementation also manages the expanded-state movement through accelerator memory; scan algebra alone does not accomplish that. A full materialization of all $n dN$ intermediate state entries can be too expensive, even though the persistent decode state has only $dN$ entries. Training activations, temporary memory, bandwidth and decode state are different quantities.</p>
+</section>
+
+<section id="ssd"><h2>5. Understand the precise state-space/attention duality <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=879">14:39</a></h2>
+<p>Unrolling a scalar-times-identity transition gives a bridge to a matrix computation. Let $A_t=a_tI_N$, retain $B_t,C_t\in\mathbb R^N$, and condition on their realized values. Define a lower-triangular matrix $M\in\mathbb R^{n\times n}$ by $M_{tj}=0$ for $j&gt;t$ and</p>
+\[M_{tj}=(C_t^\top B_j)\prod_{k=j+1}^{t}a_k\quad(j\le t).\]
+<p>Then the sequence of scalar outputs is $y=Mx$. The proof is exactly the recurrent expansion in section 3: scalar transitions commute with each other and can be pulled outside the dot product. Define $L_{tj}$ as the same decay product below the diagonal and zero above it. If rows of matrices $C,B\in\mathbb R^{n\times N}$ are $C_t^\top,B_t^\top$, then $M=L\odot(CB^\top)$, where $\odot$ denotes elementwise multiplication.</p>
+<p>This is the restricted <dfn>structured state-space duality</dfn> used to connect a recurrent computation with a masked pairwise computation in <a href="https://arxiv.org/pdf/2405.21060v1">Mamba-2/SSD</a> (PDF pp. 5–8). There is no row softmax here. Entries of $M$ can be negative, and rows need not sum to one. For $N=1$, $B_t=C_t=1$ and $a_t=1/2$, the third row is $(1/4,1/2,1)$, whose sum is 1.75. Calling that row an attention probability distribution would be wrong.</p>
+<p>The useful structure is in information crossing an interval boundary. Split time at position $k$. Every earlier input contributes to the future through the same $N$-dimensional state $h_k$. The block mapping inputs before that cut to later outputs factors into a map to $h_k$ and a map from $h_k$ to future outputs, so its rank is at most $N$. This statement concerns a wholly cross-cut block, not every arbitrary submatrix of a causal operator. It explains why a large pairwise matrix can admit a compact recurrent representation.</p>
+<p>A chunked algorithm computes within-chunk interactions with matrix multiplication and represents interactions between chunks through their boundary states. Increasing chunk width increases the dense local work while reducing the number of boundary transfers. With fixed chunk width, the number of chunks is proportional to $n$; local quadratic work per chunk is a constant in $n$. Choosing chunk width proportional to $n$ changes that complexity. The appropriate size also depends on hardware; an operation count alone cannot select it.</p>
+<p>The maintenance example now has two views of the same restricted operator. The recurrence carries a compact baseline forward. The matrix form shows how each old measurement contributes to today's baseline. That correspondence is exact for its stated coefficient sequence. For a selective model, $M$ itself changes when inputs change, so $M$ is a conditional computational view, not a fixed global linear model. Nor does the paper title establish that arbitrary softmax transformers equal arbitrary SSMs.</p>
+</section>
+
+<section id="bottleneck"><h2>6. Prove a finite-memory boundary before invoking an analogy <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=992">16:32</a></h2>
+<p>Between two observations, a recurrent model retains state, while an attention model retains its cache. Gu's <a href="https://goombalab.github.io/blog/2025/tradeoffs/">speaker-authored July 2025 essay</a> compares these interfaces to a compressive memory and an explicit record store. This is a <strong>speaker's heuristic</strong>, not a neuroscientific equivalence. Both interfaces can be useful; a mathematical capacity argument is more precise than saying that one resembles a brain.</p>
+<p>Suppose a deterministic state has $K$ coordinates, each with at most $2^\beta$ representable states. The whole state has at most $2^{K\beta}$ values. Here $\beta$ is a bit budget per coordinate, not an assertion that every floating-point bit configuration is valid or equally usable. Let a history consist of $m$ independent symbols from an alphabet of size $q\ge2$. There are $q^m$ histories. If a later query can demand any symbol at any position and every answer must be exact, two distinct histories cannot end in the same state: the histories differ somewhere, and that position's query would require different answers from the identical state.</p>
+<p>Injectivity therefore requires $q^m\le2^{K\beta}$, or</p>
+\[m\log_2q\le K\beta.\]
+<p>This is an original counting theorem for the specified exact-recall task. With 64 coordinates and 8 bits each, a state has at most 512 bits. Sixty-five arbitrary bytes require 520 bits, so exact recovery of any byte from every such history is impossible through that state alone. This does not mean that every 65-byte sentence fails: natural data is structured, some histories are more likely, and an application may ask only for a summary.</p>
+<p>A two-bit state can represent pump mode and alarm status perfectly in a toy system with four combinations. Eight equally possible three-bit serial histories cannot all fit injectively into those same four states. Preserving the alarm while losing the serial is success on one query and failure on another. More state postpones the worst-case boundary; it does not eliminate it under fixed finite precision.</p>
+<p>Over ideal real numbers, a single coordinate can encode arbitrarily many bits in its expansion. The finite counting proof then does not apply. Such an encoding may require unbounded precision and an increasingly delicate decoder, and is not a guarantee for finite hardware. Precision or distinguishability under noise must be stated before asserting an information bound. Similarly, supplying the original log through external retrieval changes the system's retained information and invalidates a state-only lower bound.</p>
+<p>A growing cache spends memory to preserve distinct positions, but that is not sufficient for exact recall either: projections can discard distinctions, the context can be truncated, and attention can select incorrectly. A useful evaluation therefore includes both a running-statistic task and an exact-identifier task, with controlled distractor lengths. The distinction between “can consume an indefinitely long stream” and “can recover any item from that stream” is the operational meaning of different long-context claims.</p>
+</section>
+
+<section id="hybrids"><h2>7. Allocate explicit recall within a hybrid model <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=1238">20:38</a></h2>
+<p>A <dfn>hybrid</dfn> interleaves recurrent and attention layers. Recurrent layers compress and update features; attention layers expose representations of selected past positions to later queries. This combines operators inside a network. It is different from giving a model a tool that fetches an external file, although both can augment the available information. A hybrid's attention caches still grow with context unless their own policy changes.</p>
+<p>The talk describes older recurrent-to-attention ratios near 10:1 and newer designs nearer 3:1 or 4:1. These are <strong>dated speaker summaries</strong> of particular modeling experiments, largely framed in perplexity. They are not a theorem that ten recurrent layers and one attention layer minimize a general objective, and this chapter does not certify the unseen ratio table. Layer counts also do not equal FLOPs, cache bytes, or parameter allocation: one attention layer can have different head widths and cost from one recurrent layer.</p>
+<p>For the assistant, ask which representation reaches the recall layer. If a preceding recurrent stack has already removed a serial-number distinction at every retained position, adding attention later cannot reconstruct it from nothing. If those contextual positions retain the distinction, attention can select the relevant record. Conversely, an attention layer followed by a small state must decide which retrieved result to retain for subsequent updates. “Add a little attention” leaves these placement and information-path questions unresolved.</p>
+<p>An original ablation would compare pure recurrence, pure attention and two hybrid placements using a common byte stream, training exposure and evaluation. Measure likelihood, identifier recovery, trend error, cache/state memory and decode latency separately. For example, a lower likelihood loss can coexist with more serial-number substitutions if serials are rare in the training objective. To claim a best hybrid, specify a decision rule weighting those outcomes and constrain a resource budget. Without that rule, a Pareto tradeoff is a more accurate description than a single winner.</p>
+</section>
+
+<section id="resolution"><h2>8. Choose the input unit without confusing it with meaning <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=1379">22:59</a></h2>
+<p>Attention operates on the positions it receives. A tokenizer maps text into discrete units; <dfn>byte-pair encoding</dfn> (BPE) constructs a vocabulary of recurring merged units rather than retaining every input byte as one position. Digital image patching likewise groups pixels before attention. In the <a href="https://arxiv.org/pdf/2010.11929v2">ViT original</a> (PDF p. 3), flattened patches are linearly projected, given positions, and processed by the transformer. These are concrete representation choices, not proofs that an individual patch or BPE token has a complete semantic interpretation.</p>
+<p>Changing resolution changes several costs simultaneously. If a fixed byte sequence of length $n$ becomes $n/r$ coarse positions, a full pairwise score count changes from order $n^2$ to order $n^2/r^2$, while per-position projections change from order $n$ to order $n/r$ at fixed width. A fivefold reduction in positions gives a 25-fold reduction in this particular dense pair count. It does not promise 25-fold end-to-end throughput: the encoder, width changes, feedforward layers and hardware remain.</p>
+<p>The serial-number query provides a counterexample to indiscriminate coarsening. A summary that maps “part 1037” and “part 1073” to the same generic “replacement part” feature has saved positions but erased the requested distinction. On the trend query, grouping repeated vibration samples may preserve everything needed. Good resolution is task dependent. A shorter representation is useful only when its omitted distinctions are irrelevant to the eventual query or available through another route.</p>
+<p>A byte is one of 256 possible eight-bit units; it is not generally a Unicode character. UTF-8 encodes “é” as two bytes even though it is one code point. A grapheme displayed as one character can itself contain multiple code points. Byte-level modeling avoids a learned subword vocabulary but still chooses an encoding and normalization policy. A repeated measurement serialized with different punctuation or numeric precision also changes the byte stream. An end-to-end model does not remove the data pipeline.</p>
+<p>The talk's argument for learned input abstraction is a <strong>research motivation</strong>: fixed segmentation can impose awkward boundaries, and learned compression may adapt them. It is not an established implication that every tokenizer harms every task. Later contextual layers combine information across input positions, so an attention vector is not forever restricted to the meaning of its original character. Keep that qualification when using the heuristic that meaningful units are easier to attend to.</p>
+</section>
+
+<section id="bytes"><h2>9. Compare likelihood on a common byte denominator <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=1601">26:41</a></h2>
+<p>Different input units produce different denominators in mean loss. Let $\mathcal L_{\mathrm{sum}}=-\log p_\theta(s)$ be total natural-log loss for the scored representation of a fixed text $s$, and let $n_{\mathrm{byte}}>0$ be the number of encoded bytes assigned to the same scored content. Define <dfn>bits per byte</dfn> (BPB) as</p>
+\[\mathrm{BPB}=\frac{\mathcal L_{\mathrm{sum}}}{n_{\mathrm{byte}}\log2}.\]
+<p>The factor $\log2$ converts nats to bits. In a teaching example, a four-byte ASCII string has probability $1/16$. A single coarse token with that probability has token perplexity 16. Four byte tokens, each with conditional probability $1/2$, have the same sequence probability and token perplexity 2. Both give BPB 1. The token perplexities differ because their unit differs; neither implies a factual or recall advantage.</p>
+<p>BPB aligns a denominator, not the entire experimental protocol. Models must score the same content, with compatible beginning/end treatment and context, to make that alignment meaningful. Different segmentation models need not assign equal probabilities to the same string. A finite model vocabulary can also impose a particular segmentation rather than marginalizing every possible segmentation. BPB does not automatically correct differing data, padding, truncation or evaluation windows.</p>
+<p><a href="https://arxiv.org/pdf/2401.13660v1">MambaByte</a> establishes token-free recurrent modeling on 8192-byte sequences and distinguishes parameter-matched from compute-matched comparisons (PDF pp. 1, 4–5; <strong>empirical results</strong>). The curve shown in Gu's discussion is a later reproduction in H-Net's FineWeb-Edu setting, not the original PG19 experiment. It must not inherit the original paper's compute multiplier merely because both use the name MambaByte.</p>
+<p>The <a href="https://arxiv.org/pdf/2507.07955v1">H-Net original</a> describes this reproduction with a 1024-position sliding-window attention baseline and a global attention baseline using roughly twice the FLOPs (PDF pp. 11–13). Its plotted training curves favor the recurrent byte model over these isotropic baselines over the shown training regime. The final Large-scale table nevertheless rounds both MambaByte and global LlamaByte to 0.845 BPB, while sliding-window LlamaByte is 0.859. The table and curve answer different questions; a statement that one is strictly better at every endpoint would exceed this evidence.</p>
+<p>For maintenance logs, preserve the byte stream, context length, total bytes seen and FLOPs-per-byte calculation when changing the backbone. Report exact-serial and trend outcomes beside BPB. If one model sees twice as much data, a lower BPB is a result for that recipe, not a controlled architectural effect. The numerical lab tests the unit conversion only; it does not train or reproduce any of these neural benchmarks.</p>
+</section>
+
+<section id="heuristics"><h2>10. Turn abstraction heuristics into testable hypotheses <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=1773">29:33</a></h2>
+<p>Two useful questions from the talk are whether it is worth retaining every input position and whether selecting one such position would help a query. In the assistant's log, a particular serial-number field has a natural retrieval role; a single vibration character or a redundant punctuation byte often does not. A compressed running feature may be more useful than separately attending to every digit of every sample. This motivates a representation, but it is not a formal characterization of what softmax attention can learn.</p>
+<p><dfn>Hard attention</dfn> selects an individual position; soft attention mixes positions by weights. Soft attention can approximate a concentrated selection when one logit dominates, but it can also combine several items. Subsequent representations can already summarize a prefix. “This raw unit has little standalone meaning” therefore does not imply “a transformer cannot use it.” In genomics, even one nucleotide change can be consequential. Any abstraction heuristic must preserve the fine distinctions required by its task.</p>
+<p>An original test adds distractor samples while holding relevant events fixed. Train or evaluate on paired streams with identical authorized part changes and trend segments, then insert irrelevant noise at different rates. Compare a cache model and a compressive model on exact recall and running summaries. If compression helps only when distractors rise, that supports a noise-filtering explanation. If learned hierarchy helps with no distractors, its effect may involve representing useful multi-item patterns. Neither observation alone proves the broad “meaningful token” thesis.</p>
+<p>The transcript mentions a graph assigning about 10% of early Mamba applications to language. Its collection method and denominator are not established by the available graph description, so no usage-share statistic is adopted here. What remains is the dated qualitative observation that recurrent models were being explored across modalities. A citation count or a paper-category pie chart would not directly measure deployment, accuracy or economic usefulness.</p>
+</section>
+
+<section id="router"><h2>11. Learn a boundary without inventing a vocabulary table <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=2023">33:43</a></h2>
+<p>A <dfn>hierarchical network</dfn>, or H-Net, places a lightweight sequence encoder before a main network and a decoder after it. A learned routing module reduces the number of representations sent to the main network. The decoder returns to the original prediction resolution. Hwang, Wang and Gu's <a href="https://arxiv.org/pdf/2507.07955v1">H-Net original</a> defines the actual routing and reconstruction mechanisms (PDF pp. 5–10), supplementing the talk's high-level description.</p>
+<p>Let the encoder's causal output after byte $t$ be the row vector $e_t\in\mathbb R^d$. “Causal” means it depends only on bytes $1,\ldots,t$. Define learned projections $W_{\mathrm{rq}},W_{\mathrm{rk}}\in\mathbb R^{d\times d}$ and rows $q_t=e_tW_{\mathrm{rq}}$, $k_t=e_tW_{\mathrm{rk}}$. For $t&gt;1$, suppose both norms in the denominator are nonzero. A router score and its hard decision are</p>
+\[\rho_t=\frac12\left(1-\frac{q_tk_{t-1}^\top}{\|q_t\|_2\|k_{t-1}\|_2}\right),\qquad
+b_t=\mathbf1\{\rho_t\ge1/2\},\qquad \rho_1=b_1=1.\]
+<p>Here $\|\cdot\|_2$ is Euclidean norm, $b_t$ is a boundary indicator, and $\mathbf1$ is 1 when its condition holds and 0 otherwise. The cosine lies in $[-1,1]$ by the Cauchy–Schwarz inequality, so $\rho_t\in[0,1]$. Parallel unit vectors give score 0; perpendicular vectors give $1/2$; opposite unit vectors give 1. A zero vector requires an explicit normalization convention in an implementation: the displayed quotient is undefined there. We do not silently extend this formula to zero norms.</p>
+<p>The selected positions, in increasing order, are $s_1,\ldots,s_m$, where $b_{s_j}=1$ and $s_1=1$. Downsampling retains $e_{s_j}$; it does not average every byte in a yet-unfinished segment. These are already contextual representations. A vector at a boundary can summarize the prefix that has been observed at that position. “Chunk” therefore names a learned processing unit, not a guarantee that a selected vector is a lossless representation of all raw bytes assigned to a linguistic word.</p>
+<p>A main network sees the shorter sequence of continuous vectors. It does not need an embedding-table entry for every possible new string. The first byte lookup has 256 choices; later vectors lie in a learned continuous representation space, which permits context-dependent boundaries and representations for unseen combinations. This answers the dynamic-vocabulary question without postulating an infinite discrete table.</p>
+<p>The actual static boundary examples in the primary paper show selected spaces, word fragments and larger groupings (PDF p. 15, Figure 4; <strong>qualitative empirical evidence</strong>). We inspected that original figure, not the talk's training animation. A few examples do not establish that every boundary is linguistically correct or universally semantic. For the maintenance assistant, a boundary around a serial-number field is useful only if the representation preserves its exact digits or a separate fine-resolution route retains them.</p>
+</section>
+
+<section id="causal-chunks"><h2>12. Return coarse information to fine positions causally <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=2224">37:04</a></h2>
+<p>Suppose the causal main network produces a column vector $z_j\in\mathbb R^{d'}$ from selected inputs 1 through $j$, with $d'$ its output width. Let $\bar z_0=0$ and use the selected confidence $\rho_{s_j}$ to smooth its output:</p>
+\[\bar z_j=\rho_{s_j}z_j+(1-\rho_{s_j})\bar z_{j-1}.\]
+<p>A confident boundary near 1 mostly accepts the new coarse feature; a less confident selected boundary blends it with the previous feature. The coefficients sum to one, so this particular smoothing step is a convex combination. That property belongs to the EMA, not to every SSM dependency matrix. It does not make the feature a calibrated probability or a safety assessment.</p>
+<p>For raw position $t$, let $j(t)=\sum_{i=1}^{t}b_i$ be the number of boundaries already observed. Causal upsampling returns $\bar z_{j(t)}$. It repeats the most recent available coarse output until another selected position appears. With scalar boundary features $(2,6)$ and confidences $(1,3/4)$, the smoothed values are 2 and $3/4\cdot6+1/4\cdot2=5$. For boundary indicators $(1,0,1,0)$, the expanded values are $(2,2,5,5)$.</p>
+<p>To prove causality, consider any two byte sequences identical through position $t$. Their causal encoders have identical $e_1,\ldots,e_t$. The router compares only current and previous representations, so boundary decisions through $t$ match. The same selected prefix reaches the causal main network, yielding the same $z_1,\ldots,z_{j(t)}$ and smoothed prefix. Upsampling at $t$ uses the same index. Thus its result at $t$ is unchanged by altering bytes after $t$. A causal fine-resolution decoder and a next-byte head preserve this property. The proof requires every component to respect the stated prefix condition.</p>
+<p>The failure of a plausible shortcut makes that hypothesis concrete. Group scalar inputs $(0,10)$ into one chunk, average it to 5, and expand the average to both positions. At the first position the representation is 5 even though only 0 has been observed. Changing the future 10 to 20 changes that first result to 10. This procedure leaks future information for next-byte prediction after the first input. It may be legitimate for a noncausal classification task, but it computes a different operator.</p>
+<p>The <a href="https://arxiv.org/pdf/2507.07955v1">original H-Net equations and inference procedure</a> retain selected encoder positions and repeat already available coarse features (PDF pp. 6–10). A prediction after input byte $t$ scores byte $t+1$; it must not ingest that target to improve the representation at $t$. The word “summarize a chunk” can obscure this indexing. Our executable fixture explicitly tests prefix invariance rather than relying on a verbal assurance that the network is autoregressive.</p>
+<p>H-Net also carries a fine-resolution encoder-to-decoder residual projection. The coarse path can therefore compress aggressively while the decoder still receives local detail. This is important for a one-digit difference in a serial field: the hierarchy's main sequence is not the system's only information route. The design does not contradict the earlier state-only capacity theorem, whose premise excluded other retained or externally supplied information.</p>
+</section>
+
+<section id="learning-chunks"><h2>13. Separate a discrete forward decision from its training surrogate <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=2426">40:26</a></h2>
+<p>The threshold decision $b_t$ jumps when $\rho_t$ crosses $1/2$. Away from that threshold, the derivative of the hard decision with respect to its score is zero; at the threshold it is undefined. Backpropagating through a naïve hard selector gives little useful signal about whether moving a boundary would improve the next-byte objective. H-Net combines smoothing with a straight-through estimator and a compression regularizer (original PDF pp. 7–9). These are training mechanisms, not a proof that every desired segmentation is recovered.</p>
+<p>Define a decision-confidence scalar $c_t=\rho_t$ for a retained position and $c_t=1-\rho_t$ otherwise. Its straight-through factor is $\mathrm{ST}(c_t)=c_t+\operatorname{stopgrad}(1-c_t)$. The operator $\operatorname{stopgrad}$ keeps its argument's forward value and supplies zero backward derivative. Thus the factor equals 1 in the forward computation, while the prescribed backward derivative with respect to $c_t$ is 1. It is inaccurate to say this factor attenuates a forward value by $c_t$; the confidence-weighted smoothing is a separate operation.</p>
+<p>This backward prescription is a surrogate for learning discrete routing. It is not the ordinary derivative of the forward constant 1, nor an automatically unbiased estimator of a discrete objective's gradient. Its usefulness is an empirical property of the optimization recipe. The original fixture below implements the causal forward smoothing and expansion only; it does not pretend to implement the trained router, its surrogate backward pass or the full H-Net optimizer.</p>
+<p>Compression has its own tradeoff. Retaining everything removes much of the computational saving; retaining almost nothing can discard predictive information. Let $F=n^{-1}\sum_tb_t$ be the selected fraction and $G=n^{-1}\sum_t\rho_t$ the mean router score. For target compression $R&gt;1$, the paper's ratio penalty is</p>
+\[\mathcal L_{\mathrm{ratio}}=
+\frac{R}{R-1}\left((R-1)FG+(1-F)(1-G)\right).\]
+<p>Here $R$ is a target raw-position-to-selected-position ratio, not the realized ratio $1/F$. On the diagonal $F=G=f$, the expression is $\frac{R}{R-1}(Rf^2-2f+1)$. Its derivative is $\frac{2R}{R-1}(Rf-1)$ and its second derivative is positive. The diagonal minimum is at $f=1/R$ with value 1. That calculation does not prove a global unconstrained lower bound of 1: at $R=2$, $F=0.6,G=0.4$ give 0.96.</p>
+<p>The off-diagonal example is compatible with thresholded scores: among ten positions, use one score 1, five scores $1/2$, and four scores $1/8$. Six positions are retained and the score sum is 4. The diagonal minimization is over abstract $f\in[0,1]$; a finite sequence with its first boundary forced has $F,G\ge1/n$, so some targets may be unattainable. Holding hard decisions fixed, the derivative with respect to $G$ is $\frac{R}{R-1}(RF-1)$. It pushes mean scores down when too many positions are selected and up when too few are selected. Subsequent crossings change $F$ discretely. This is feedback toward a rate, not a differentiable identity forcing an exact compression factor.</p>
+<p>A two-level hierarchy can target $R_0$ and $R_1$, but its actual inner length depends on both learned selected fractions. Its main network may itself be another H-Net. For the assistant, the first level could form fields and local events, and a second could form intervals of operation; those are proposed interpretations, not supervised labels guaranteed by the architecture. The original static figure supports qualitative grouping, while quantitative predictive and resource measurements must decide whether those groups are useful.</p>
+</section>
+
+<section id="empirical-hierarchy"><h2>14. Read the hierarchy experiment with its matching protocol <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=2655">44:15</a></h2>
+<p>The H-Net paper's central language comparisons match underlying training data and estimated FLOPs per byte, not all parameter counts (PDF pp. 11–13; <strong>empirical results</strong>). Its Large-scale tokenized transformer has 760M parameters, while the one-stage and two-stage byte H-Nets have 680M and 870M. Byte models process 8192 UTF-8 bytes per sequence; the GPT-2-tokenized baseline uses 1792 tokens, roughly corresponding to that byte span. The paper measures BPB and separately reports downstream tasks.</p>
+<p>The Table 2 Large results are 0.756 BPB and 53.3 average downstream accuracy for the tokenized transformer, versus 0.743 and 55.5 for the two-stage H-Net. The absolute BPB difference is 0.013; it is not a 1.3-percentage-point accuracy change. The accuracy difference is 2.2 points on that particular averaged task collection, whose individual results differ. At XL scale, the paper's Figure 3 places the two-stage crossover around 30B training bytes. A crossover in this recipe is not a universal minimum-data requirement for every learned tokenizer.</p>
+<p>The encoder/decoder ablations answer a related but distinct question. The paper replaces one transformer layer by two Mamba-2 layers to approximately match their layer parameter budgets. In the pure-transformer outer configuration, routing compresses poorly and more positions reach the main network, so the model uses <em>more</em> FLOPs (PDF pp. 18–19). The talk's informal compute-matching description should not be carried over as an exact characterization of this ablation. Matching allocated parameters does not automatically match realized compute when routing changes.</p>
+<p>Figure 10 on primary PDF page 19 uses BPE input yet still favors outer configurations containing recurrent layers over the pure-transformer outer configuration. That supports an architectural-role hypothesis: recurrence may help the hierarchy form compressed representations beyond its advantage on fine raw inputs. It does not isolate a single causal explanation for that advantage. Different optimization, routing rates, recurrent parameterization and encoder capacity remain coupled. The compression interpretation is the authors' hypothesis beside an observed ablation, not a theorem that compression itself increases intelligence.</p>
+<p>An experiment for our stream would log actual selected fractions and FLOPs, not only target ratios. Hold training bytes fixed, report total parameters and the allocation between outer and inner stages, and distinguish a compute-budget comparison from a same-architecture routing ablation. Evaluate held-out serial recall and trend forecasts in addition to BPB. A coarse main network may model events well while the fine decoder preserves exact local digits; either route can explain an improved application score.</p>
+<p>The appropriate conclusion is scoped: in the retained July 2025 recipe, learned hierarchical chunking improves several controlled comparisons. The academic Q&amp;A explicitly leaves much larger-scale validation open. An observed pattern over the tested budgets is a reason to design another experiment, not a license to extrapolate indefinite advantages or production reliability.</p>
+</section>
+
+<section id="dna"><h2>15. Extend the accounting to genomic resolution <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=2847">47:27</a></h2>
+<p>DNA supplies a small raw alphabet, usually $\{A,C,G,T\}$ in the simplified model, but does not supply whitespace between biological functional units. One nucleotide can matter, while motifs and long-range context also matter. Tokenization and dynamic chunking must therefore preserve different scales of dependence. The talk's argument that a lone base has “no meaning” is a heuristic about useful representation scale; it cannot be a biological claim that individual substitutions have no effect.</p>
+<p>The original Mamba HG38 model-size sweep used context length 1024, about 10B training base-pair tokens and varying parameter counts (PDF p. 13, Figure 5; <strong>empirical result</strong>). At its high-size end, the authors describe roughly three- to fourfold fewer parameters to reach a similar baseline perplexity. This is not a generic threefold runtime or compute saving. Its separate context-length sweep holds model size and total training tokens fixed; these are different comparisons.</p>
+<p>The later <a href="https://arxiv.org/pdf/2602.10603v3">dnaHNet original</a>, retained arXiv v3 of April 9, 2026 with a printed April 13 preprint date, is a primary research extension matching the talk's new DNA topic. We do not certify that its Figure 3 is the exact unseen slide. It trains on filtered prokaryotic genomic data and sweeps model sizes and training tokens under compute budgets from $4\times10^{18}$ to $8\times10^{19}$ FLOPs (PDF pp. 5–6). Its fitted perplexity exponents describe that protocol and range, not a universal law of biological sequence learning.</p>
+<p>Let a raw sequence have length $n$ and realized coarse length approximately $n/r$. A main attention network's pair term changes from order $n^2$ to order $(n/r)^2$, but outer-network work remains. A schematic total is $c_{\mathrm{outer}}n+c_{\mathrm{main}}(n/r)^2$, with nonnegative cost constants fixed by the architectures. At $r=6$, the main pair term is divided by 36; the whole cost is not generally divided by 36. Even with fixed $r$, the quadratic term remains quadratic asymptotically as $n$ grows.</p>
+<p>The dnaHNet paper fits perplexity as a power of compute over its tested budget range (PDF p. 6), with reported exponents 0.06, 0.04 and 0.01 for its dnaHNet, StripedHyena2 and transformer configurations. In a normalized teaching form, $\mathrm{PPL}(C)=\mathrm{PPL}(C_0)(C/C_0)^{-\alpha}$ uses compute $C&gt;0$, reference compute $C_0&gt;0$ and fitted exponent $\alpha&gt;0$. Doubling compute with $\alpha=0.06$ multiplies predicted perplexity by $2^{-0.06}\approx0.959264$. This is an in-range empirical fit, not an asymptotic theorem: extending it indefinitely predicts perplexity below 1, impossible for a normalized distribution scored with nonnegative negative-log loss. A broader model would need a floor or another regime.</p>
+<p>The dnaHNet paper reports a 3.89-fold FLOP reduction for its 218M configuration against a 166M StripedHyena2 configuration at one million nucleotides (PDF p. 6). That is a reported engineering comparison for named models, not measured wall-clock latency and not a proof of sublinear total work. It also reports predictive evaluations using likelihood differences for variant fitness and essentiality (PDF p. 7). Such associations do not establish experimental interventions, a diagnostic certificate or that every learned chunk corresponds to a biological mechanism.</p>
+<p>For the assistant, the analogous lesson is to keep expensive computation at a useful resolution while retaining a fine route for rare consequential details. A learned boundary around “1037” is not automatically a correct part-compatibility judgment, just as a genomic boundary is not automatically an experimentally validated functional unit. Resource savings and scientific interpretation need different evidence.</p>
+</section>
+
+<section id="synthesis"><h2>16. Select a model by the information the task requires <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=2956">49:16</a></h2>
+<p>The competing mechanisms spend computation on different representations of history. A recurrent state must decide online what to retain. A cache preserves positions for later access. A hierarchy learns which positions should advance a more expensive inner model, while keeping outer computations and possibly residual detail. An external store can provide a second path to exact records. These descriptions locate both their strengths and their failure boundaries.</p>
+<table><thead><tr><th>Required outcome</th><th>Relevant retained object</th><th>Concrete failure to test</th></tr></thead><tbody><tr><td>Track a running trend</td><td>Updated summary state</td><td>A reset/noise gate overwrites the baseline</td></tr><tr><td>Recover an exact identifier</td><td>Distinct record or contextual cache vector</td><td>Compression merges two serial histories</td></tr><tr><td>Model raw bytes efficiently</td><td>Fine encoder plus learned coarse path</td><td>A boundary discards predictive detail or leaks a target</td></tr><tr><td>Answer from a revised document</td><td>Versioned external page and metadata</td><td>Similarity retrieves an obsolete authoritative-looking page</td></tr></tbody></table>
+<p>The central architecture question is how a training budget becomes a set of application capabilities. This can be formalized as a constrained comparison, but there is no natural scalar called “intelligence” supplied by an operation count. Choose measured outputs such as BPB, recall error, forecast error and latency, then declare any acceptable thresholds. A design with less memory may dominate for streaming summaries and fail a hard exact-recall constraint. More computation is warranted when the task requires distinctions that a smaller state cannot preserve.</p>
+<p>Compression can be an inductive bias as well as a saving: restricting memory encourages a model to form useful summaries. It can also irreversibly erase a needed distinction. Attention's explicit positions facilitate retrieval but may be an expensive way to process high-resolution redundant data. Neither observation is a universal ordering of architectures. The controlled comparison is between specified tasks and budgets, with their representation and precision assumptions visible.</p>
+<p>A consequential boundary for maintenance is action. Better BPB or faster trend updates do not supply a current lockout observation, verified compatibility or operator authorization. Those preconditions must arrive through applicable evidence and an execution policy, as in chapter 1. Architecture can improve how evidence is represented; it cannot turn an unknown precondition into an established fact by optimizing a likelihood.</p>
+</section>
+
+<section id="bptt"><h2>17. Q&amp;A: distinguish a truncated gradient from impossible learning <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=3271">54:31</a></h2>
+<p>The academic discussion asks how recurrence, accelerator design and backpropagation constrain one another. <dfn>Backpropagation through time</dfn> differentiates a recurrent computation by following its dependency graph over successive positions. Even if inference retains a fixed state, training may need activations, checkpoints or recomputation to supply gradients. Constant persistent inference memory does not imply constant training memory.</p>
+<p>In a scalar fixed recurrence $h_t=ah_{t-1}+x_t$ with loss $\ell=h_n^2/2$, the derivative with respect to an earlier input is $h_n a^{n-j}$. The factor arises from the product of transition derivatives along the path; it can decay, persist or grow. When $a=1$, $x_1=1$ and all later inputs are zero, $h_n=1$ and the derivative with respect to $x_1$ is 1. A computational graph that detaches a later state from all earlier inputs returns zero through that detached path, even though the mathematical full-sequence derivative is nonzero.</p>
+<p><dfn>Truncated BPTT</dfn> stops such gradients beyond a chosen horizon. That removes the direct training signal through this path, not every possible way to learn long dependencies. Shared parameters can learn from shorter examples; curricula, auxiliary losses, checkpointing and other algorithms change the situation. Gu's concern about memory-limited training is a <strong>research judgment</strong>. It should not be restated as a theorem that any dependency longer than a stored activation window is universally unlearnable.</p>
+<p>The affine scan restrictions likewise couple expressivity to computation. A more general state-dependent nonlinear update may be attractive for modeling but harder to parallelize. Changing hardware or learning algorithms could alter which restrictions are worthwhile. The talk discusses alternatives to current backpropagation and “true recurrence” as promising directions, not completed demonstrations that an alternative solves the assistant's long-term memory problem.</p>
+</section>
+
+<section id="future-chunking"><h2>18. Q&amp;A: keep the scale limitation attached to the proposal <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=3495">58:15</a></h2>
+<p>The follow-up on dynamic chunking asks whether it will become a fundamental modeling primitive. Gu's answer combines conviction about the direction with a concrete limitation: the published H-Net is an initial design and has not established the same result at much larger scales. These are compatible statements. A promising mechanism can have informative controlled experiments while its production-scale behavior remains unknown.</p>
+<p>For an extension to the maintenance stream, the next test should change one bottleneck at a time. Increase stream length at fixed state/precision; increase data at fixed FLOP-accounted architecture; then test larger widths and hierarchy depths. Record learned rates rather than assuming target ratios are achieved. Measure whether the serial-identifier failure improves through the coarse route, the fine residual or external records. This produces a research program whose results could refute the compression interpretation, rather than simply presuming that more hierarchy must help.</p>
+</section>
+
+<section id="vocabulary"><h2>19. Q&amp;A: dynamic chunks are continuous features <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=3562">59:22</a></h2>
+<p>A learned chunk can differ with context, so a static string-to-embedding dictionary is the wrong description of the inner interface. The first layer embeds the raw vocabulary; the encoder transforms those embeddings, and the router selects a shorter sequence of its outputs. A chunk corresponding to the same visible characters on two occasions may produce different continuous vectors because their prefixes differ. This does not require inserting a new dictionary entry during inference.</p>
+<p>For the assistant, “open” can occur in “open valve” or “circuit open.” A contextual encoder can send different features for those prefixes even if the final raw characters match. Conversely, two distinct serial numbers can still become too similar to distinguish. Continuous embeddings remove a fixed discrete inner vocabulary, not the finite-precision information constraint. The readout must still preserve distinctions relevant to the requested decision.</p>
+<p>The Q&amp;A mentions selection or pooling as ways to imagine the interface. The implemented mechanism in the retained H-Net version selects boundary-marked encoder outputs. Pooling is an alternative architecture that needs its own causal definition; replacing selection by future-looking pooling cannot be justified by the conversational description. The source's implemented equations govern our technical explanation.</p>
+</section>
+
+<section id="memory"><h2>20. Q&amp;A: a hierarchy of memories remains a proposal <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=3730">1:02:10</a></h2>
+<p>The brain analogy is explicitly qualified in the academic discussion. It supplies inspiration about persistent summaries and external records, not evidence that these architectures reproduce human memory or neural learning. The suggested long-context extension is to iterate chunking into increasingly coarse memories, letting an inner model inspect fewer items at a higher resolution of meaning. The speaker reports no completed progress on that particular extension.</p>
+<p>One possible assistant design keeps a running pump-state vector, event-level summaries and links to immutable source records. Each summary should carry enough metadata to retrieve its underlying observations when a query needs exact detail. A hierarchy can thereby trade immediate processing against later access. This is an original system-design proposal. It changes the available information through an external route and has maintenance costs: versioning, deletion, invalidation and access policy.</p>
+<p>Loss of detail is detectable only against an explicit query distribution. Evaluate exact identifier lookups, correction of a prior statement, summary continuity and source-revision conflicts separately. Repeatedly compressing a flawed summary can preserve its mistake while deleting the evidence needed to correct it. More hierarchy levels therefore do not establish more reliable memory by construction.</p>
+</section>
+
+<section id="small-models"><h2>21. Q&amp;A: preserve an unanswered comparison <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=3815">1:03:35</a></h2>
+<p>Asked whether SSMs or transformers are preferable in small-model or data-constrained regimes, Gu explicitly says he does not know a general answer. The subsequent parameter-golf example is a dated anecdote about a submission that reportedly benefited from some attention. Its recipe and ablations are not verified in the available talk visuals, so it is not adopted as a benchmark result or a recommendation.</p>
+<p>The question deserves a controlled design. Fix data quality and bytes seen, specify model-parameter or training-FLOP matching, and vary recurrence/attention placement across repeated seeds. Report uncertainty for each task instead of selecting whichever metric favors a desired story. Small models may have insufficient state capacity, while large models can be limited by data; those are different failure modes. An unanswered lecture question should remain an open question until the relevant experiment is supplied.</p>
+</section>
+
+<section id="dependency-maps"><h2>22. Q&amp;A: interpret a dependency map at the right level <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=3904">1:05:04</a></h2>
+<p>A recurrent operator can be unrolled into pairwise coefficients such as $M_{tj}$ in section 5. Displaying those coefficients makes temporal influence inspectable even when the implementation uses states. The coefficients can be diffuse, signed or large. They are not normalized attention probabilities, and their visualization alone does not prove which observation caused an application's final answer.</p>
+<p>For a selective operator, there is another distinction: coefficients evaluated on one input are not generally its total input Jacobian. In a two-step teaching recurrence, let $h_1=x_1$ and $h_2=x_2h_1+x_2$. At a realized input, $h_2=(x_2,1)(x_1,x_2)^\top$, so the conditional coefficient on the second input is 1. Differentiating the whole map instead gives $\partial h_2/\partial x_2=x_1+1$. At $(x_1,x_2)=(2,3)$ the output is 9 and the derivative is 3. The missing term comes from changing the transition itself.</p>
+<p>For a maintenance forecast, a map can generate hypotheses about which past measurement is read or retained. Test them by interventions that preserve the queried task and distinguish a content change from a changed gate. Replacing a serial digit may alter both representation and selection, so its total effect need not equal one frozen coefficient. Even a validated input effect on a model is not an intervention on the physical machine. The talk identifies interpretability as ongoing work; no unidentified visualization paper or unseen map is falsely certified here.</p>
+</section>
+
+<section id="sponsor"><h2>23. Sponsor technical segment: represent a document before retrieving it <a class="timestamp" href="https://www.youtube.com/watch?v=OyimE74UMF8&amp;t=3992">1:06:32</a></h2>
+<p><strong>Separate voice and date.</strong> This section preserves the substantive MongoDB sponsor presentation following Gu's academic Q&amp;A on April 16, 2026. The transcript describes an insurance workflow with 10,000 claims per day, image queries and a damaged-windshield dashboard. The volume is a scenario premise, and the dashboard is a described demonstration; neither is an independently measured workload or retrieval result in this chapter. Uncertain personal-name recognition is unnecessary to identify the commercial source.</p>
+<p>Optical character recognition (OCR) extracts text from document images. A text-only pipeline can discard a damage photograph, spatial table relationships or handwritten detail before retrieval begins. The proposed alternative embeds page images, optionally together with text, retrieves similar pages, and supplies the actual page images to a vision-capable answer model. This is another resolution choice: a page vector summarizes a rich object, while the retrieved original page remains available for detailed inspection.</p>
+<p>Let an embedding function return nonzero vectors $f(q),f(d)\in\mathbb R^k$ for query $q$ and document page $d$, with width $k$. Cosine retrieval scores $f(q)^\top f(d)/(\|f(q)\|_2\|f(d)\|_2)$; an index returns high-scoring candidates according to its algorithm and filtering policy. Similarity is not an entailment test. Two cracked windshields can resemble each other while their policy terms, repair costs or dates differ. Retrieving five plausible pages does not verify a generated loss estimate.</p>
+<p>The sponsor contrasts two-tower CLIP-like architectures with Voyage's unified encoder. The claim that separate towers necessarily produce incomparable vectors is incorrect. The <a href="https://arxiv.org/pdf/2103.00020v1">CLIP original</a> explicitly trains image and text encoders into a shared multimodal embedding space using paired contrastive objectives (PDF p. 4). Distinct encoders can learn aligned coordinates. A modality gap or weak retrieval can arise empirically, but architecture alone does not prove that cross-modal retrieval is impossible or universally unreliable.</p>
+<p>The <a href="https://blog.voyageai.com/2026/01/15/voyage-multimodal-3-5/">January 15, 2026 Voyage announcement</a> describes a single transformer encoder and interleaved text/image inputs, corroborating the named product design as a <strong>product claim</strong>. It does not establish the accuracy of this insurance demonstration. A shared encoder also does not guarantee that every modality, language or document layout is represented equally well. Evaluate page retrieval and answer support separately, including cases with a salient photograph but a disqualifying clause elsewhere on the page.</p>
+<p>The sponsor further proposes storing vectors alongside operational document metadata. Co-location can simplify record association and some synchronization paths. It does not abolish embedding refreshes when a source changes, index updates, authorization filters, consistency boundaries or failed writes. A useful record includes source-page identity, applicable revision, embedding-model version, permissions and retrieval score. “Stored in the same document” is a layout property, not a proof that all system state is always synchronized.</p>
+<p>For our maintenance assistant, the analogous system should retrieve the actual revision page and preserve the link between the vector and that revision. Test both visually similar wrong-revision pages and textually similar incompatible-part pages. Require the answer's concrete statements to be supported by the retrieved evidence, and leave physical actuation behind verified preconditions. The sponsor's engineering example thus extends the chapter's state/cache distinction while retaining its commercial attribution and evidence boundary. Startup credits, recruiting, meals, QR links and event announcements are omitted as administration.</p>
+</section>
+
+<section id="lab"><h2>24. Executable checks: composition, causality and comparable units</h2>
+<p>The downloadable <a href="chapter03.py">standard-library Python program</a> implements scalar affine recurrence by a serial loop, a balanced prefix scan and direct unrolling. It also implements a forward-only selected-boundary smoother/expander, a stable scalar discretization check, BPB conversion and the ratio penalty. These are original finite models of the mathematical hinges above. They do not train Mamba, H-Net or a retrieval model, implement a GPU kernel, or establish a benchmark advantage.</p>
+<p>Inputs are nonempty equally sized sequences of finite real numbers representable as Python floats; booleans and unsupported types are excluded. Scores lie in $[0,1]$, with the first boundary score exactly 1. Byte counts are positive integers. The code converts supported numeric inputs to binary64 and raises <code>ValueError</code> for invalid inputs or nonfinite computed intermediates. Finite inputs can overflow during composition, so passing the initial domain check is not a promise that every subsequent operation is representable.</p>
+<p>The scan is a work-efficient tree expressed by ordinary Python loops, so this implementation executes serially. Its algebra exposes parallel dependency levels but supplies no accelerator timing claim. Different floating-point association can change rounding; agreement checks use a numerical tolerance rather than asserting bitwise associativity. The chunk test assumes supplied causal encoder values and router scores. It tests the forward operator's prefix property, not whether an arbitrary learned encoder is causal.</p>
+<p>The program writes only its printed evidence. It rejects ragged lengths, zero bytes, scores outside the allowed range, huge integers that cannot become floats, and overflowing products. A future-value perturbation preserves the earlier expanded outputs; a reset transition is checked without dividing by zero. The exact output below is captured from the actual downloadable program.</p>
+<pre><code class="language-python">&quot;&quot;&quot;Original finite checks for recurrence, routing and likelihood units.&quot;&quot;&quot;
+import math
+
+
+def finite_real(value, name=&quot;value&quot;):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(name + &quot; must be a real int or float&quot;)
+    try:
+        result = float(value)
+    except (OverflowError, ValueError) as error:
+        raise ValueError(name + &quot; is not representable&quot;) from error
+    if not math.isfinite(result):
+        raise ValueError(name + &quot; must be finite&quot;)
+    return result
+
+
+def real_sequence(values, name):
+    if not isinstance(values, (list, tuple)) or not values:
+        raise ValueError(name + &quot; must be a nonempty list or tuple&quot;)
+    return [finite_real(value, name) for value in values]
+
+
+def coefficients(transitions, injections):
+    a = real_sequence(transitions, &quot;transition&quot;)
+    r = real_sequence(injections, &quot;injection&quot;)
+    if len(a) != len(r):
+        raise ValueError(&quot;coefficient lengths must agree&quot;)
+    return a, r
+
+
+def compose(earlier, later):
+    &quot;&quot;&quot;Chronological affine composition; later acts after earlier.&quot;&quot;&quot;
+    if not all(isinstance(pair, (list, tuple)) and len(pair) == 2
+               for pair in (earlier, later)):
+        raise ValueError(&quot;each affine pair must have two entries&quot;)
+    a, r = (finite_real(value) for value in earlier)
+    d, s = (finite_real(value) for value in later)
+    return finite_real(d*a, &quot;transition product&quot;), finite_real(d*r+s)
+
+
+def serial_states(transitions, injections, initial=0):
+    a, r = coefficients(transitions, injections)
+    state = finite_real(initial, &quot;initial state&quot;)
+    outputs = []
+    for transition, injection in zip(a, r):
+        state = finite_real(transition*state + injection, &quot;state&quot;)
+        outputs.append(state)
+    return outputs
+
+
+def scan_states(transitions, injections, initial=0):
+    &quot;&quot;&quot;Blelloch-style tree: O(n) composition work, serial Python loops.&quot;&quot;&quot;
+    a, r = coefficients(transitions, injections)
+    initial = finite_real(initial, &quot;initial state&quot;)
+    pairs = list(zip(a, r))
+    size = 1
+    while size &lt; len(pairs):
+        size *= 2
+    tree = pairs + [(1.0, 0.0)]*(size - len(pairs))
+    stride = 2
+    while stride &lt;= size:
+        for right in range(stride - 1, size, stride):
+            left = right - stride//2
+            tree[right] = compose(tree[left], tree[right])
+        stride *= 2
+    tree[-1] = (1.0, 0.0)
+    stride = size
+    while stride &gt;= 2:
+        for right in range(stride - 1, size, stride):
+            left = right - stride//2
+            old_left, prefix = tree[left], tree[right]
+            tree[left] = prefix
+            tree[right] = compose(prefix, old_left)
+        stride //= 2
+    outputs = []
+    for prefix, pair in zip(tree, pairs):
+        transition, injection = compose(prefix, pair)
+        outputs.append(finite_real(transition*initial + injection))
+    return outputs
+
+
+def unrolled_states(transitions, injections, initial=0):
+    &quot;&quot;&quot;Independent quadratic expansion; products never divide by gates.&quot;&quot;&quot;
+    a, r = coefficients(transitions, injections)
+    initial = finite_real(initial, &quot;initial state&quot;)
+    outputs = []
+    for last in range(len(a)):
+        contribution = 0.0
+        product = 1.0
+        for first in range(last, -1, -1):
+            contribution = finite_real(contribution + product*r[first])
+            product = finite_real(product*a[first])
+        outputs.append(finite_real(contribution + product*initial))
+    return outputs
+
+
+def zoh_coefficients(decay_rate, step, coupling):
+    &quot;&quot;&quot;Scalar constant-input formula, including underflowed interval exponents.
+
+    Use a limiting ratio near zero and binary scaling for the gain products.
+    A final unrepresentable coefficient or nonfinite exponent is rejected.
+    &quot;&quot;&quot;
+    rate = finite_real(decay_rate, &quot;decay rate&quot;)
+    step = finite_real(step, &quot;step&quot;)
+    coupling = finite_real(coupling, &quot;coupling&quot;)
+    if rate &lt;= 0 or step &lt; 0:
+        raise ValueError(&quot;positive rate and nonnegative step required&quot;)
+    exponent = finite_real(rate*step, &quot;interval exponent&quot;)
+    transition = math.exp(-exponent)
+    if step == 0 or coupling == 0:
+        return transition, 0.0
+    if exponent &lt;= 1:
+        ratio = 1.0 if exponent == 0 else -math.expm1(-exponent)/exponent
+        c_mantissa, c_power = math.frexp(coupling)
+        s_mantissa, s_power = math.frexp(step)
+        r_mantissa, r_power = math.frexp(ratio)
+        mantissa = c_mantissa*s_mantissa*r_mantissa
+        power = c_power+s_power+r_power
+    else:
+        c_mantissa, c_power = math.frexp(coupling)
+        f_mantissa, f_power = math.frexp(-math.expm1(-exponent))
+        d_mantissa, d_power = math.frexp(rate)
+        mantissa = c_mantissa*f_mantissa/d_mantissa
+        power = c_power+f_power-d_power
+    try:
+        gain = finite_real(math.ldexp(mantissa, power), &quot;injection gain&quot;)
+    except OverflowError:
+        raise ValueError(&quot;injection gain is not representable&quot;) from None
+    return transition, gain
+
+
+def causal_expand(values, scores):
+    &quot;&quot;&quot;Identity main network, selected EMA, latest-boundary expansion.&quot;&quot;&quot;
+    values = real_sequence(values, &quot;encoder value&quot;)
+    scores = real_sequence(scores, &quot;boundary score&quot;)
+    if len(values) != len(scores):
+        raise ValueError(&quot;value and score lengths must agree&quot;)
+    if scores[0] != 1 or any(not 0 &lt;= score &lt;= 1 for score in scores):
+        raise ValueError(&quot;scores in [0, 1], first score exactly 1&quot;)
+    latest = 0.0
+    selected = []
+    expanded = []
+    for position, (value, score) in enumerate(zip(values, scores)):
+        if score &gt;= 0.5:
+            latest = finite_real(score*value + (1-score)*latest)
+            selected.append(position)
+        expanded.append(latest)
+    return selected, expanded
+
+
+def bits_per_byte(probabilities, byte_count):
+    probabilities = real_sequence(probabilities, &quot;probability&quot;)
+    if (isinstance(byte_count, bool) or not isinstance(byte_count, int)
+            or byte_count &lt;= 0):
+        raise ValueError(&quot;byte count must be a positive integer&quot;)
+    count = finite_real(byte_count, &quot;byte count&quot;)
+    if any(not 0 &lt; value &lt;= 1 for value in probabilities):
+        raise ValueError(&quot;probabilities must lie in (0, 1]&quot;)
+    loss = finite_real(math.fsum(-math.log(p) for p in probabilities))
+    return finite_real(loss/count/math.log(2))
+
+
+def ratio_loss(selected_fraction, mean_score, target):
+    fraction = finite_real(selected_fraction, &quot;selected fraction&quot;)
+    mean = finite_real(mean_score, &quot;mean score&quot;)
+    target = finite_real(target, &quot;target ratio&quot;)
+    if not (0 &lt;= fraction &lt;= 1 and 0 &lt;= mean &lt;= 1 and target &gt; 1):
+        raise ValueError(&quot;fractions in [0, 1] and target greater than 1&quot;)
+    return finite_real(target*fraction*mean
+                       + target/(target-1)*(1-fraction)*(1-mean))
+
+
+def close_lists(first, second):
+    assert len(first) == len(second)
+    assert all(math.isclose(a, b, rel_tol=1e-10, abs_tol=1e-10)
+               for a, b in zip(first, second))
+
+
+def run():
+    a = [0.5, 1, 0, 0.5]
+    r = [2, 0, 7, 1]
+    serial = serial_states(a, r)
+    close_lists(serial, [2, 2, 7, 4.5])
+    close_lists(scan_states(a, r), serial)
+    close_lists(unrolled_states(a, r), serial)
+    for initial in [0, -3, 8]:
+        for count in range(1, 9):
+            a = [0.5, 1, 0, -0.5]*2
+            r = [2, 0, 7, 1]*2
+            close_lists(scan_states(a[:count], r[:count], initial),
+                        unrolled_states(a[:count], r[:count], initial))
+    assert compose((2, 1), (3, 4)) == (6, 7)
+    assert compose((3, 4), (2, 1)) == (6, 9)
+    transition, gain = zoh_coefficients(2, math.log(2)/2, 1)
+    assert math.isclose(transition, 0.5)
+    assert math.isclose(gain, 0.25)
+    assert zoh_coefficients(2, 0, 1) == (1, 0)
+    assert zoh_coefficients(2, 1e-20, 1)[1] &gt; 0
+    assert math.isclose(zoh_coefficients(1e-300, 1e-300, 1)[1],
+                        1e-300, rel_tol=1e-14, abs_tol=0)
+    assert math.isclose(zoh_coefficients(1e-300, 1e-200, 1e100)[1],
+                        1e-100, rel_tol=1e-14, abs_tol=0)
+    assert math.isclose(zoh_coefficients(.5, 2, 1e308)[1],
+                        -math.expm1(-1)*2e307*10, rel_tol=1e-14, abs_tol=0)
+    scores = [1, 0.1, 0.75, 0.1]
+    selected, expanded = causal_expand([2, 99, 6, -99], scores)
+    assert selected == [0, 2]
+    close_lists(expanded, [2, 2, 5, 5])
+    for future in [-1e6, 0, 1000]:
+        changed = causal_expand([2, 99, 6, future], scores)[1]
+        close_lists(changed[:3], expanded[:3])
+        selected_future = causal_expand(
+            [2, 99, 6, future], [1, 0.1, 0.75, 0.9])[1]
+        close_lists(selected_future[:3], expanded[:3])
+    assert sum([0, 10])/2 != sum([0, 20])/2
+    assert math.isclose(bits_per_byte([1/16], 4), 1)
+    assert math.isclose(bits_per_byte([0.5]*4, 4), 1)
+    assert len(&quot;é&quot;) == 1 and len(&quot;é&quot;.encode(&quot;utf-8&quot;)) == 2
+    assert math.isclose(ratio_loss(0.5, 0.5, 2), 1)
+    assert math.isclose(ratio_loss(0.6, 0.4, 2), 0.96)
+    assert math.isclose(2**(-0.06), 0.9592641193252643)
+    assert 4096*4097//2 == 8390656
+    assert 4096*128*2 == 1048576
+    assert 1024*128 + 128*127//2 == 139200
+    assert 65*8 &gt; 64*8
+    invalid = [
+        lambda: serial_states([], []),
+        lambda: scan_states([1], [1, 2]),
+        lambda: serial_states([True], [1]),
+        lambda: scan_states([math.inf], [1]),
+        lambda: scan_states([10**1000], [1]),
+        lambda: compose((1e308, 0), (1e308, 0)),
+        lambda: causal_expand([1], [0]),
+        lambda: causal_expand([1, 2], [1, -0.1]),
+        lambda: causal_expand([1], [1, 0]),
+        lambda: bits_per_byte([0.5], 0),
+        lambda: bits_per_byte([0.5], True),
+        lambda: bits_per_byte([0], 1),
+        lambda: bits_per_byte([1.1], 1),
+        lambda: bits_per_byte([0.5], 10**1000),
+        lambda: ratio_loss(0.5, 0.5, 1),
+        lambda: ratio_loss(math.nan, 0.5, 2),
+        lambda: zoh_coefficients(0, 1, 1),
+        lambda: zoh_coefficients(1, -1, 1),
+    ]
+    for invalid_call in invalid:
+        try:
+            invalid_call()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(&quot;invalid input was accepted&quot;)
+    print(&quot;serial / scan / unrolled states:&quot;, serial)
+    print(&quot;constant-input coefficients:&quot;, transition, gain)
+    print(&quot;selected positions:&quot;, selected, &quot;; expanded:&quot;, expanded)
+    print(&quot;equal byte-normalized losses: 1.000000 bits/byte&quot;)
+    print(&quot;off-diagonal ratio loss: 0.960000&quot;)
+    print(&quot;UTF-8 bytes for one code point:&quot;, len(&quot;é&quot;.encode(&quot;utf-8&quot;)))
+    print(&quot;finite recall requirement: 520 bits &gt; 512 state bits&quot;)
+    print(&quot;All recurrence, causality and 18 input checks passed.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    run()
+</code></pre>
+<pre><code class="language-text">serial / scan / unrolled states: [2.0, 2.0, 7.0, 4.5]
+constant-input coefficients: 0.5 0.25
+selected positions: [0, 2] ; expanded: [2.0, 2.0, 5.0, 5.0]
+equal byte-normalized losses: 1.000000 bits/byte
+off-diagonal ratio loss: 0.960000
+UTF-8 bytes for one code point: 2
+finite recall requirement: 520 bits &gt; 512 state bits
+All recurrence, causality and 18 input checks passed.
+</code></pre>
+</section>
+
+<section id="exercises"><h2>25. Six exercises with complete solutions</h2>
+<p class="exercise">Exercise 1 · History cost and finite recall</p>
+<p>Count the causal query/key pairs through length 4096 and the cache bytes for one head with key/value widths 64 and two bytes per scalar. Compare a 64-channel recurrent state with expansion 64 at the same storage precision. Separately prove that 64 eight-bit coordinates cannot guarantee arbitrary exact recall from every 65-byte history. Why is it incorrect to infer that this recurrent model must fail every trend prediction?</p>
+<details class="solution"><summary>Solution</summary><p>The pair count is $4096\cdot4097/2=8,390,656$. The head cache contains $4096(64+64)$ scalars and takes 1,048,576 bytes, or 1 MiB. The illustrative recurrent state has $64\cdot64=4096$ entries and takes 8192 bytes, or 8 KiB. This compares only these retained objects, not equally capable full architectures or total training memory. The recurrent example here has 16-bit storage; the separate recall question stipulates eight-bit coordinates and must not silently borrow its capacity.</p><p>Under the latter stipulation there are at most $2^{512}$ states and $256^{65}=2^{520}$ histories. Two histories must collide. They differ at some position; asking for that byte requires distinct answers, but identical state and query cannot produce both. The contradiction proves that no deterministic state-only decoder can succeed on every such query. A trend query can depend on far less than all history bits; a four-state pump-status machine may solve its task exactly. The theorem concerns worst-case arbitrary recall under fixed finite precision, not typical natural streams, approximate recovery or systems with an external record path.</p></details>
+
+<p class="exercise">Exercise 2 · Scan, reset and a signed dependency map</p>
+<p>Prove associativity of chronological affine composition. Compute states from zero for transitions $(1/2,1,0,1/2)$ and injections $(2,0,7,1)$ using two length-two chunks. Then form the first three rows of the scalar recurrent dependency matrix for constant transition $1/2$ and unit injection/readout. Is this matrix an attention probability map? What changes if the third readout is -1?</p>
+<details class="solution"><summary>Solution</summary><p>For pairs $(A,r),(D,s),(E,v)$, composing either way gives transition $EDA$ and injection $EDr+Es+v$. This follows from distributivity and the associativity of matrix multiplication, with the chronological order unchanged. The first chunk composes to $(1/2,2)$; the second composes $(0,7)$ with $(1/2,1)$, giving $(0,4.5)$. Applied after the first chunk it still returns 4.5 because its transition is zero. The individual states are 2, 2, 7 and 4.5. A ratio of prefix products would divide by zero at the reset and is unnecessary.</p><p>The three-row matrix is $\begin{pmatrix}1&amp;0&amp;0\\1/2&amp;1&amp;0\\1/4&amp;1/2&amp;1\end{pmatrix}$. Its last row sums to 1.75, so it is not a normalized attention row. A third readout of -1 negates that last row; its entries then become negative. The matrix correctly expresses this fixed core's sequence map. An input-dependent coefficient model needs additional derivative terms when inputs are perturbed, and neither matrix visualization by itself is a causal explanation of a neural decision.</p></details>
+
+<p class="exercise">Exercise 3 · A comparable likelihood unit</p>
+<p>A six-byte ASCII string receives total probability $1/64$. One tokenizer represents it by one token; another represents it by three tokens with probabilities $1/2,1/4,1/8$. Compute both token perplexities and BPB. Explain what changes when a string contains “é,” and list three protocol differences that BPB alone cannot repair.</p>
+<details class="solution"><summary>Solution</summary><p>The first tokenizer has token loss $\log64$ and perplexity 64. The second has the same summed loss but mean loss $\log64/3=\log4$, giving perplexity 4. For both stipulated models, dividing total loss by six bytes and $\log2$ gives BPB 1. They were assigned the same string probability in this exercise; a different segmentation model need not actually assign it that probability. The denominator conversion is not an invariance theorem for trained language models.</p><p>UTF-8 “é” occupies two bytes while containing one code point. A byte count must come from the specified encoding, not a count of displayed characters. Normalization can change the byte stream, and end markers require an agreed scoring rule. BPB cannot by itself repair different held-out text, different available context or window stride, or different training exposure/compute. Even a controlled BPB advantage measures predictive distribution fit; exact serial recovery, compatibility and safe action require their own tests.</p></details>
+
+<p class="exercise">Exercise 4 · Causal expansion and a surrogate gradient</p>
+<p>Given causal scalar encoder values $(2,99,6,-99)$ and boundary scores $(1,0.1,0.75,0.1)$, select at threshold $1/2$, smooth and expand. Change the last value to 1000. Which outputs stay fixed? Contrast this with averaging $(0,10)$ and copying the average to both positions. Compute the forward value and prescribed derivative of $\mathrm{ST}(c)=c+\operatorname{stopgrad}(1-c)$.</p>
+<details class="solution"><summary>Solution</summary><p>The selected zero-based positions are 0 and 2, with values 2 and 6. First smoothing gives 2; the second gives $0.75\cdot6+0.25\cdot2=5$. Expansion gives $(2,2,5,5)$. The changed final value is not selected, so all four outputs happen to stay fixed in this supplied-value fixture. In general causality promises only that outputs before a changed future input stay fixed; a selected later input or the fine decoder can change later outputs. This fixture does not establish invariance to every possible learned representation change.</p><p>Averaging $(0,10)$ gives $(5,5)$ after repetition. Changing the second input to 20 gives $(10,10)$ and changes the first output using unseen information. That operator is unsuitable for causal prediction at the first position. Finally ST has forward value 1 and prescribed derivative 1 with respect to $c$. The ordinary derivative of its forward constant would be zero; the stop-gradient rule intentionally supplies a surrogate. It need not be unbiased and does not guarantee an optimal segmentation. Prefix causality and optimization quality are distinct questions.</p></details>
+
+<p class="exercise">Exercise 5 · Rate regularization and resource saving</p>
+<p>Derive the ratio-loss minimum under $F=G=f$ for target $R&gt;1$. Give a threshold-compatible example with $R=2$ and loss below 1. Suppose an illustrative uncompressed computation has outer cost 100 and main pair cost 3600; compression by six leaves the outer cost fixed and divides only the main pair cost by 36. Compute the total saving and explain why it does not establish runtime improvement.</p>
+<details class="solution"><summary>Solution</summary><p>On the diagonal the loss is $\frac{R}{R-1}(Rf^2-2f+1)$. Its derivative vanishes at $f=1/R$ and its second derivative $2R^2/(R-1)$ is positive, so that is the unique diagonal minimum with value 1. With ten scores $(1,1/2,1/2,1/2,1/2,1/2,1/8,1/8,1/8,1/8)$, six are retained and the average score is 0.4. Thus $F=0.6,G=0.4$ and the $R=2$ loss is $2(0.24+0.24)=0.96$. A diagonal result cannot be promoted to an unrestricted global lower bound.</p><p>The original total is 3700 and the compressed total is $100+3600/36=200$, a factor of 18.5 rather than 36. This arithmetic assumes exactly the named cost terms and unchanged constants; widths, routing, residual work or variable compression could change them. A GPU's throughput also depends on utilization, bandwidth, batching and kernels. FLOPs describe an accounting model, not a stopwatch. A measured runtime claim needs named hardware and workload as well as the prediction/recall outcomes.</p></details>
+
+<p class="exercise">Exercise 6 · Interpretability and a decision-relevant ablation</p>
+<p>For $h_1=x_1$, $h_2=x_2h_1+x_2$, calculate the output and total derivative with respect to $x_2$ at $(2,3)$. Compare it with the frozen recurrent coefficient. Design a comparison for pure recurrence, attention and a hierarchy on maintenance logs that could distinguish summary quality from exact recall. State why two CLIP towers do not imply incompatible embedding spaces and why retrieved visual similarity cannot authorize opening a valve.</p>
+<details class="solution"><summary>Solution</summary><p>The output is 9. Holding realized coefficients fixed gives conditional row $(3,1)$, so its second coefficient is 1. Differentiating the full input-dependent expression $x_1x_2+x_2$ gives $x_1+1=3$. The changed input alters the transition as well as the direct injection. A plotted fixed-coefficient map therefore omits a real contribution to the total derivative; even that derivative remains a statement about the model, not about a physical intervention.</p><p>Use identical serialized streams and held-out machines, with explicit training bytes, precision, parameter/FLOP budgets and repeated seeds. Independently vary distractor rate and identifier-query distance. Score running-trend error, exact serial recovery, BPB, realized selected fractions, retained memory and actual decode latency. Compare a hierarchy with and without its fine residual or external record path to locate the information route. Report uncertainty and per-task outcomes; a BPB winner need not meet a hard recall constraint.</p><p>CLIP's separate image/text encoders are jointly trained with a paired objective into a shared embedding space. Distinct networks can output aligned coordinates, though empirical modality gaps remain possible. A high image/page cosine score supplies candidates, not proof of an applicable procedure. Opening the valve additionally requires a current authoritative revision, verified lockout and compatibility, and operator authorization. Neither an architecture choice nor a retrieval score establishes those preconditions.</p></details>
+</section>
+
+<section id="references"><h2>26. Primary sources and limits</h2>
+<p>These sources support the named mechanisms and scoped experiments above. Claim-bearing pages were checked; this bibliography is not a claim of full-paper comprehension, benchmark reproduction or inspection of absent talk visuals.</p>
+<ul>
+<li><a href="https://goombalab.github.io/blog/2025/tradeoffs/">Albert Gu, On the Tradeoffs of SSMs and Transformers</a> (July 2025): the speaker's recurrence, state/cache framing and expressly heuristic abstraction argument.</li>
+<li><a href="https://arxiv.org/pdf/2312.00752v2">Gu and Dao, Mamba: Linear-Time Sequence Modeling with Selective State Spaces</a>: recurrent core, state expansion, input selection and the scoped HG38 parameter/context sweeps (PDF pp. 3–5, 12–13).</li>
+<li><a href="https://arxiv.org/pdf/2405.21060v1">Dao and Gu, Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality</a>: the restricted scalar-transition duality and recurrent/matrix representations (PDF pp. 3–8).</li>
+<li><a href="https://arxiv.org/pdf/2401.13660v1">Wang et al., MambaByte: Token-free Selective State Space Model</a>: affine scan and the original byte-model experiment's comparison protocols (PDF pp. 1, 3–5).</li>
+<li><a href="https://arxiv.org/pdf/2507.07955v1">Hwang, Wang and Gu, Dynamic Chunking for End-to-End Hierarchical Sequence Modeling</a>: causal selection/smoothing/expansion, training surrogates, hierarchy experiments and outer-layer ablations (PDF pp. 1–13, 15–19). Its originals supply the inspected diagrams.</li>
+<li><a href="https://arxiv.org/pdf/2603.15569v1">Lahoti et al., Mamba-3: Improved Sequence Modeling using State Space Principles</a> (March 16, 2026): named architectural innovations, not a universal current ranking (PDF pp. 1, 3–4).</li>
+<li><a href="https://arxiv.org/pdf/2602.10603v3">Shah et al., dnaHNet: A Scalable and Hierarchical Foundation Model for Genomic Sequence Learning</a>: retained arXiv April 9, 2026 version, printed April 13 preprint; genomic hierarchy, compute accounting and bounded evaluations (PDF pp. 1, 3–7). Exact unseen slide identity remains unconfirmed.</li>
+<li><a href="https://arxiv.org/pdf/2010.11929v2">Dosovitskiy et al., An Image is Worth 16x16 Words</a>: actual patch projection and positional interface (PDF p. 3).</li>
+<li><a href="https://arxiv.org/pdf/2103.00020v1">Radford et al., Learning Transferable Visual Models From Natural Language Supervision</a>: CLIP's jointly aligned image/text embedding space, correcting the sponsor's architectural overstatement (PDF p. 4).</li>
+<li><a href="https://blog.voyageai.com/2026/01/15/voyage-multimodal-3-5/">Voyage AI, voyage-multimodal-3.5 announcement</a> (January 15, 2026): official single-encoder/interleaved-input product description. Insurance-demo accuracy and synchronization guarantees are not independently verified.</li>
+</ul>
+</section>
+<!-- BOOK-CONTENT-END --></article><nav class="page-turn" aria-label="Chapter navigation"><a rel="prev" href="lecture-02-representation-learning-and-world-modeling.html">Previous available chapter</a><a href="index.html">Lecture index</a><a rel="next" href="lecture-04-training-at-gpu-scale.html">Next available chapter</a></nav></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

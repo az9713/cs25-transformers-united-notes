@@ -1,0 +1,1321 @@
+{
+  "video_id": "GBd7iuJkW08",
+  "title": "From Representation Learning to World Modeling",
+  "chapter_order": 2,
+  "recording_lecture_number": 2,
+  "recording_title": "Stanford CS25: Transformers United V6 I From Representation Learning to World Modeling",
+  "speaker": [
+    "Heejeong Nam",
+    "Lucas Maes"
+  ],
+  "date": "2026-04-09",
+  "date_boundary": "CS25 recording date; Lucas reused subdeck cover states NVIDIA April6.",
+  "status": "Independently reviewed chapter; local reader validation recorded separately; course completion pending",
+  "transcript_provenance": "local machine transcription; not publisher captions",
+  "transcription_model": "Systran/faster-whisper-small.en",
+  "audio_sha256": "54e00ec72bb2dff5b2d5610a7515045291bf06a182d71d4e41babde4675c5c46",
+  "audio_duration_seconds": 4262.881,
+  "transcription_audio_duration_seconds": 4262.8693125,
+  "playlist_duration_seconds": 4263,
+  "transcript_sha256": "fb372a417be9b8f44f9a7f2faa9186ac94d470a0983ac11d2a85965a9db3f98e",
+  "transcript_text_sha256": "d94c7b6ad12580e53511e6b31527eeaf8a559d069629837faa7d164f3ae5fc7d",
+  "transcript_segment_count": 150,
+  "transcript_first_start_seconds": 4.78,
+  "transcript_last_end_seconds": 4258.35,
+  "slides": {
+    "lecture": 2,
+    "drive_id": "1bF5Yfzf-FG5iNIAgsXn2DwVD3l3ymvZW",
+    "url": "https://drive.google.com/uc?export=download&id=1bF5Yfzf-FG5iNIAgsXn2DwVD3l3ymvZW",
+    "bytes": 9640056,
+    "pages": 55,
+    "sha256": "5259e63fab1e586cd232e61120562410c7672bf5eb51633041ffdae678a168d1",
+    "status": "acquired and extracted",
+    "text_pages_read": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "visually_inspected_pdf_pages": [
+      15,
+      16,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      42,
+      43,
+      44,
+      46,
+      47,
+      49,
+      50,
+      51,
+      52
+    ],
+    "inspection_boundary": "Static rendered pages; no embedded-video playback."
+  },
+  "sections": [
+    {
+      "section": "world-model",
+      "title": "1. Decide what a world model must preserve 1:57",
+      "start": 117.81,
+      "end": 289.73,
+      "segments": [
+        4,
+        9
+      ],
+      "lecture_material": "Action-conditioned world evolution; distinction between representation and transition; generative video examples as context.",
+      "research_extension": null,
+      "teaching_construction": "Original bounded pushing case, observation/physical-state/history domains and task sufficiency.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Original bounded pushing case, observation/physical-state/history domains and task sufficiency.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Action-conditioned world evolution; distinction between representation and transition; generative video examples as context.",
+          "origin": "Recording"
+        }
+      ]
+    },
+    {
+      "section": "jepa",
+      "title": "2. Learn compatibility in representation space 4:49",
+      "start": 289.73,
+      "end": 437.23,
+      "segments": [
+        10,
+        14
+      ],
+      "lecture_material": "Pixel prediction versus latent compatibility, irrelevant detail and constant-code collapse; historical2022 JEPA credit.",
+      "research_extension": "V-JEPA primary formulation and target-update mechanism.",
+      "teaching_construction": "Explicit energy/discrepancy domains and constant-encoder construction.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Explicit energy/discrepancy domains and constant-encoder construction.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Pixel prediction versus latent compatibility, irrelevant detail and constant-code collapse; historical2022 JEPA credit.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "V-JEPA primary formulation and target-update mechanism.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "recipes",
+      "title": "3. Separate three actual target recipes 7:17",
+      "start": 437.23,
+      "end": 588.78,
+      "segments": [
+        15,
+        19
+      ],
+      "lecture_material": "V-JEPA masking/EMA, V-JEPA2 action-conditioned post-training, frozen-DINO patch dynamics.",
+      "research_extension": "Actual L1 losses, frozen target/input modalities and decoder separation from original papers.",
+      "teaching_construction": "Generic EMA equation, teacher-forcing versus free-rollout explanation and comparison table.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Generic EMA equation, teacher-forcing versus free-rollout explanation and comparison table.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "V-JEPA masking/EMA, V-JEPA2 action-conditioned post-training, frozen-DINO patch dynamics.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Actual L1 losses, frozen target/input modalities and decoder separation from original papers.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "tasks",
+      "title": "4. Use reasoning, control and rollout tasks to ask different questions 9:48",
+      "start": 588.78,
+      "end": 716.21,
+      "segments": [
+        20,
+        23
+      ],
+      "lecture_material": "Object-centric C-JEPA and PushT/CLEVRER/PHYRE tasks.",
+      "research_extension": "Frozen object representation and task setup in C-JEPA v1.",
+      "teaching_construction": "Separate evaluation questions; information masking versus physical object removal.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Separate evaluation questions; information masking versus physical object removal.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Object-centric C-JEPA and PushT/CLEVRER/PHYRE tasks.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Frozen object representation and task setup in C-JEPA v1.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "slots",
+      "title": "5. Bind image features to slots through competition 11:58",
+      "start": 718.77,
+      "end": 859.18,
+      "segments": [
+        24,
+        28
+      ],
+      "lecture_material": "Slot binding from image features, keys/values, iterative updates and continuity.",
+      "research_extension": "Slot Attention equations, GRU update and permutation proposition.",
+      "teaching_construction": "First-use dimensions, explicit normalization axes, two-input numerical check and tracking limitation.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Slot feature dimensions, two normalization axes, shared GRU/MLP updates and stated tracking limitation",
+          "origin": "Original teaching and pinned Slot Attention formulation"
+        },
+        {
+          "class": "theorem",
+          "claim": "Input-permutation invariance and slot-permutation equivariance under consistently transformed inputs and shared updates",
+          "origin": "Pinned Slot Attention proposition and original derivation"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Two-input weighted slot means 4 and 8",
+          "origin": "Original fixture"
+        }
+      ]
+    },
+    {
+      "section": "masking",
+      "title": "6. Hide an object through time while preserving its identity 14:19",
+      "start": 859.18,
+      "end": 1199.31,
+      "segments": [
+        29,
+        39
+      ],
+      "lecture_material": "Whole-object masking removes interpolation shortcuts; temporal codes, slot exchangeability and earliest identity anchor.",
+      "research_extension": "Actual C-JEPA v1 vector anchor/mask formula and history/future loss.",
+      "teaching_construction": "Scalar anchor fixture, information-boundary explanation and normalized illustrative loss.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Whole-object masking, temporal codes, earliest identity anchor and actual history/future-loss domains",
+          "origin": "Recording and pinned C-JEPA formulation"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Scalar anchor fixture and distinction between information masking and physical removal",
+          "origin": "Original fixture"
+        }
+      ]
+    },
+    {
+      "section": "action-nodes",
+      "title": "7. Make the source of action information explicit 20:02",
+      "start": 1202.16,
+      "end": 1324.67,
+      "segments": [
+        40,
+        43
+      ],
+      "lecture_material": "Repeated action concatenation versus separate auxiliaries; final predictor pipeline.",
+      "research_extension": "DINO-WM concatenation and C-JEPA auxiliary conditioning from actual originals.",
+      "teaching_construction": "Action versus measured-state distinction and action-coverage example.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Action versus measured-state distinction and action-coverage example.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Repeated action concatenation versus separate auxiliaries; final predictor pipeline.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "DINO-WM concatenation and C-JEPA auxiliary conditioning from actual originals.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "c-jepa-results",
+      "title": "8. Read gains together with their denominators and losses 22:04",
+      "start": 1324.67,
+      "end": 1728.11,
+      "segments": [
+        44,
+        56
+      ],
+      "lecture_material": "CLEVRER and PushT comparisons, action ablation, PHYRE support failure and attention probing; bounded temporal causal interpretation.",
+      "research_extension": "Archived tables/figures and mask-count declines, preserving non-winning result.",
+      "teaching_construction": "Per-question/option denominators, percentage-point and feature/token-ratio arithmetic.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Archived CLEVRER/PushT/PHYRE results, action ablations, attention probes and mask-count declines, including non-winning comparisons",
+          "origin": "Recording and pinned C-JEPA tables/figures"
+        },
+        {
+          "class": "engineering check",
+          "claim": "21.13/9.14/15.33/28/12.67 percentage-point subtractions; 1.0204 percent scalar features versus 3.0612 percent tokens",
+          "origin": "Original arithmetic from pinned table entries and dimensions"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Temporal attention and masking are suggestive interaction probes, not causal identification",
+          "origin": "Recording interpretation with original scope qualification"
+        }
+      ]
+    },
+    {
+      "section": "influence",
+      "title": "9. Derive predictive influence without claiming causal identification 28:48",
+      "start": 1728.11,
+      "end": 2012.21,
+      "segments": [
+        57,
+        65
+      ],
+      "lecture_material": "Predictively sufficient influence sets, four assumptions, confounding/history allowance and representation limits.",
+      "research_extension": "C-JEPA v1 formal claim/proof and explicitly later v2 comparison; neither supplies the missing mean-relevance premise.",
+      "teaching_construction": "Conditional risk decomposition, nested information proof, mean-relevance repair and heteroscedastic counterexample.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Predictively sufficient influence sets, stated four assumptions, confounding/history allowance and representation limits",
+          "origin": "Recording and pinned C-JEPA v1/v2 statements"
+        },
+        {
+          "class": "definition",
+          "claim": "C-JEPA v1 formal theorem statement and assumptions, with separately dated v2 comparison",
+          "origin": "Pinned C-JEPA source formulation"
+        },
+        {
+          "class": "theorem",
+          "claim": "Conditional-risk orthogonality identity, nested-information risk gap and strict gap exactly when conditional means differ on positive probability",
+          "origin": "Original proof under square-integrability and nested-information assumptions"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Actual proof audit and heteroscedastic counterexample: distributional relevance does not supply the missing conditional-mean relevance premise",
+          "origin": "Original counterexample and inspection of pinned C-JEPA v1/v2 proofs"
+        }
+      ]
+    },
+    {
+      "section": "collapse",
+      "title": "10. Diagnose collapse before celebrating prediction accuracy 33:35",
+      "start": 2015.86,
+      "end": 2203.28,
+      "segments": [
+        66,
+        72
+      ],
+      "lecture_material": "Zero-code collapse despite prediction loss; need nondegenerate representation.",
+      "research_extension": null,
+      "teaching_construction": "Pushing-goal indistinguishability and partial-collapse diagnosis.",
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Pushing-goal indistinguishability and partial-collapse diagnosis.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Zero-code collapse despite prediction loss; need nondegenerate representation.",
+          "origin": "Recording"
+        }
+      ]
+    },
+    {
+      "section": "prior-losses",
+      "title": "11. Compare collapse prevention by the constraint it supplies 36:43",
+      "start": 2203.28,
+      "end": 2315.7,
+      "segments": [
+        73,
+        76
+      ],
+      "lecture_material": "EMA/frozen encoder versus PLDM regularized end-to-end recipes.",
+      "research_extension": "Actual archived PLDM component objective; avoid universal loss-count claim.",
+      "teaching_construction": "Covariance dimensions and each constraint benefit/failure.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Covariance dimensions and each constraint benefit/failure.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "EMA/frozen encoder versus PLDM regularized end-to-end recipes.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Actual archived PLDM component objective; avoid universal loss-count claim.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "lewm",
+      "title": "12. Couple next-code prediction to a distributional target 38:35",
+      "start": 2315.7,
+      "end": 2483.46,
+      "segments": [
+        77,
+        82
+      ],
+      "lecture_material": "Joint pixel encoder/predictor; two losses, approximate15M model and one trade-off coefficient.",
+      "research_extension": "Actual LeWM v2 architecture, target gradients, global code and normalization choices.",
+      "teaching_construction": "Explicit target/parameter/domain equation and task sufficiency distinction.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Explicit target/parameter/domain equation and task sufficiency distinction.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "definition",
+          "claim": "Joint pixel encoder/predictor; two losses, approximate15M model and one trade-off coefficient.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Actual LeWM v2 architecture, target gradients, global code and normalization choices.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "sigreg",
+      "title": "13. Distinguish a finite projection loss from a population theorem 41:23",
+      "start": 2483.46,
+      "end": 2632.66,
+      "segments": [
+        83,
+        88
+      ],
+      "lecture_material": "Gaussian target, random scalar projections, normality comparison and Cramer-Wold motivation.",
+      "research_extension": "LeJEPA all-direction/mesh premises and Epps-Pulley formula; LeWM numerical approximation/defaults.",
+      "teaching_construction": "Characteristic-function identification hinge, explicit X-shaped probability model, finite-frequency arithmetic and bisection conditions.",
+      "evidence_class": "theorem",
+      "claim_provenance": [
+        {
+          "class": "theorem",
+          "claim": "All-direction characteristic-function identification and nonGaussian joint distribution with Gaussian coordinates; refining-mesh premise required by the source theorem",
+          "origin": "Pinned LeJEPA theorem and original counterexample/proof"
+        },
+        {
+          "class": "definition",
+          "claim": "Epps-Pulley statistic, finite SIGReg surrogate and LeWM defaults M=1024 and lambda=0.1",
+          "origin": "Pinned LeJEPA/LeWM formulations and numerical recipe"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Finite characteristic-function arithmetic, fixed-direction insufficiency and bracketing conditions for numerical bisection",
+          "origin": "Original fixtures and numerical method analysis"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Logarithmic-search suggestion, scoped separately from the source theorem premises",
+          "origin": "Recording"
+        }
+      ]
+    },
+    {
+      "section": "planning",
+      "title": "14. Optimize a bounded trajectory, then return to observation 43:53",
+      "start": 2633.23,
+      "end": 2798.32,
+      "segments": [
+        89,
+        94
+      ],
+      "lecture_material": "Current/goal encoding, imagined rollouts and action-sequence optimization; evaluation tasks.",
+      "research_extension": "Actual LeWM CEM/execution chunk compared with V-JEPA2 first-action protocol.",
+      "teaching_construction": "Bounded domains, projected-gradient option, additive convex reduction, unique clipped optimum and unreachable goal.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Bounded action domain, projected-gradient option, CEM algorithm and MPC execution-chunk conventions",
+          "origin": "Original teaching and pinned LeWM/V-JEPA 2 protocols"
+        },
+        {
+          "class": "theorem",
+          "claim": "Unique clipped equal-action optimum under additive scalar dynamics, identical box bounds and positive effort coefficient",
+          "origin": "Original proof"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Saturated actions (1,1), terminal state 2 and cost 1.5; interior actions 4/9 and cost 1/9; unreachable goal",
+          "origin": "Original fixture"
+        }
+      ]
+    },
+    {
+      "section": "control-results",
+      "title": "15. Preserve the non-winning control comparisons 46:38",
+      "start": 2798.32,
+      "end": 2976.3,
+      "segments": [
+        95,
+        101
+      ],
+      "lecture_material": "Cube and other control comparisons, proprioception/prior-data differences, TwoRoom non-win and dimensionality hypothesis.",
+      "research_extension": "Actual archived LeWM mixed result rows and bounded intrinsic-dimension explanation.",
+      "teaching_construction": "Separate cross-paper/protocol attribution and task-specific interpretation.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Archived LeWM mixed task-specific control rows, including Cube and TwoRoom non-wins",
+          "origin": "Recording and pinned LeWM result tables"
+        },
+        {
+          "class": "definition",
+          "claim": "Cross-paper protocol, proprioception and prior-data distinctions",
+          "origin": "Pinned source setup and original comparison construction"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Intrinsic-dimension explanation remains a bounded hypothesis",
+          "origin": "Recording and original qualification"
+        }
+      ]
+    },
+    {
+      "section": "planning-cost",
+      "title": "16. Measure speed under a stated planning budget 49:36",
+      "start": 2976.3,
+      "end": 3085.9,
+      "segments": [
+        102,
+        105
+      ],
+      "lecture_material": "47s/subsecond planning comparison, compact global code and matched-compute outcomes.",
+      "research_extension": "Actual fifty-run mean, fixed-FLOP rows, L40S/CEM/block/horizon protocol.",
+      "teaching_construction": "Candidate/horizon/iteration work accounting, timing division and whole-loop timescale.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Actual fifty-run timing means and fixed-FLOP outcome comparisons under the reported setup",
+          "origin": "Recording and pinned LeWM results"
+        },
+        {
+          "class": "definition",
+          "claim": "L40S/CEM candidate, elite, iteration, horizon/block and execution protocol",
+          "origin": "Pinned LeWM evaluation recipe"
+        },
+        {
+          "class": "engineering check",
+          "claim": "Candidate-times-horizon-times-iteration work accounting and 47/0.98 timing arithmetic",
+          "origin": "Original arithmetic"
+        }
+      ]
+    },
+    {
+      "section": "diagnostics",
+      "title": "17. Test recoverability, surprise and failure separately 51:25",
+      "start": 3085.9,
+      "end": 3420.3,
+      "segments": [
+        106,
+        118
+      ],
+      "lecture_material": "Linear/MLP physical probes, color/teleport surprise, geometry and decoded gripper-angle failure.",
+      "research_extension": "LeWM checked rows/protocol/figures and correctly resolved intuitive-physics original framework.",
+      "teaching_construction": "Probe/surprise/decoder distinctions, scale and confounder cautions; t-SNE is not isometry.",
+      "evidence_class": "empirical result",
+      "claim_provenance": [
+        {
+          "class": "empirical result",
+          "claim": "Actual physical probe rows, color/teleport surprise and decoded gripper-angle failure",
+          "origin": "Recording and pinned LeWM/intuitive-physics results"
+        },
+        {
+          "class": "definition",
+          "claim": "Recoverability, surprise and decoder diagnostics ask different questions",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "engineering check",
+          "claim": "A t-SNE display does not establish isometry or remove scale/confounder dependence",
+          "origin": "Original diagnostic limitation"
+        }
+      ]
+    },
+    {
+      "section": "limits",
+      "title": "18. Include the trajectory in the task contract 57:00",
+      "start": 3420.3,
+      "end": 3592.59,
+      "segments": [
+        119,
+        124
+      ],
+      "lecture_material": "Short horizons, hierarchy, visual goals/trajectory quality, offline coverage, toy settings and stable-worldmodel context.",
+      "research_extension": "Actual dated research-ecosystem factors of variation; no current software certification.",
+      "teaching_construction": "Terminal/running costs, path constraints and latent information needed to score them.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Terminal/running costs, path constraints and latent information needed to score them.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Short horizons, hierarchy, visual goals/trajectory quality, offline coverage, toy settings and stable-worldmodel context.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Actual dated research-ecosystem factors of variation; no current software certification.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "policy-evaluation",
+      "title": "19. Treat policy evaluation and action generation as separate uses 59:52",
+      "start": 3592.59,
+      "end": 3835.15,
+      "segments": [
+        125,
+        133
+      ],
+      "lecture_material": "Q&A VLA skepticism, policy evaluation by world model and masking as interaction bias.",
+      "research_extension": null,
+      "teaching_construction": "Separate proposal/evaluation functions and held-out physical evidence.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Separate proposal/evaluation functions and held-out physical evidence.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Q&A VLA skepticism, policy evaluation by world model and masking as interaction bias.",
+          "origin": "Recording"
+        }
+      ]
+    },
+    {
+      "section": "grounding",
+      "title": "20. Keep model grounding conditional on evidence and admissible inputs 1:03:57",
+      "start": 3837.78,
+      "end": 4117.71,
+      "segments": [
+        134,
+        143
+      ],
+      "lecture_material": "Q&A native agents/tool arrangements, transformer/diffusion compatibility and out-of-range prediction.",
+      "research_extension": null,
+      "teaching_construction": "Bound/support distinction, explicit agent functional boundary and measured feedback.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Bound/support distinction, explicit agent functional boundary and measured feedback.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Q&A native agents/tool arrangements, transformer/diffusion compatibility and out-of-range prediction.",
+          "origin": "Recording"
+        }
+      ]
+    },
+    {
+      "section": "distillation",
+      "title": "21. Distill planning only after specifying what transfers 1:08:39",
+      "start": 4119.34,
+      "end": 4258.35,
+      "segments": [
+        144,
+        149
+      ],
+      "lecture_material": "Q&A planning-to-policy transfer, model-based RL and fast/slow policy-planner proposals.",
+      "research_extension": "Distinct latent-action original on inferred codes, information bottleneck and embodiment limits.",
+      "teaching_construction": "Teacher/model-error transfer and reward-free training versus task-cost selection.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Teacher/model-error transfer and reward-free training versus task-cost selection.",
+          "origin": "Original teaching construction"
+        },
+        {
+          "class": "speaker judgment",
+          "claim": "Q&A planning-to-policy transfer, model-based RL and fast/slow policy-planner proposals.",
+          "origin": "Recording"
+        },
+        {
+          "class": "definition",
+          "claim": "Distinct latent-action original on inferred codes, information bottleneck and embodiment limits.",
+          "origin": "Research extension; pinned primary source audit"
+        }
+      ]
+    },
+    {
+      "section": "lab",
+      "title": "22. Check the information and action boundaries in executable form",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original standard-library finite executable; no benchmark simulation.",
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Original standard-library finite executable; no benchmark simulation.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    },
+    {
+      "section": "exercises",
+      "title": "23. Six exercises with complete solutions",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Six original exercises/complete solutions: aggregation, masking, risk/counterexample, projections, constrained planning and study design.",
+      "evidence_class": "engineering check",
+      "claim_provenance": [
+        {
+          "class": "engineering check",
+          "claim": "Original aggregation, masking, finite risk/projection arithmetic and study-design solutions",
+          "origin": "Original exercises"
+        },
+        {
+          "class": "theorem",
+          "claim": "Conditional-risk identity/counterexample and constrained-planning optimum under explicitly stated assumptions",
+          "origin": "Original exercises and proofs"
+        }
+      ]
+    },
+    {
+      "section": "synthesis",
+      "title": "24. A useful latent world model must repay its abstraction",
+      "start": null,
+      "end": null,
+      "segments": null,
+      "lecture_material": null,
+      "research_extension": null,
+      "teaching_construction": "Original integration of representation, objective, prediction, feasible planning and feedback boundaries.",
+      "evidence_class": "definition",
+      "claim_provenance": [
+        {
+          "class": "definition",
+          "claim": "Original integration of representation, objective, prediction, feasible planning and feedback boundaries.",
+          "origin": "Original teaching construction"
+        }
+      ]
+    }
+  ],
+  "segment_index_base": 0,
+  "omitted_material": [
+    {
+      "segments": [
+        0,
+        3
+      ],
+      "start": 4.78,
+      "end": 117.81,
+      "reason": "Introductions and logistics; no substantive teaching omitted."
+    },
+    {
+      "segments": null,
+      "reason": "Collaborator acknowledgments, audience greetings and thanks within retained intervals omitted; substantive discussion retained."
+    }
+  ],
+  "coverage_check": {
+    "complete_sequential_read": true,
+    "mapped_substantive_segments": 146,
+    "explicitly_omitted_administrative_segments": 4,
+    "unique_partition_all_segments": true,
+    "original_sections_with_null_spans": [
+      "lab",
+      "exercises",
+      "synthesis"
+    ]
+  },
+  "primary_source_audit": {
+    "status": "All cited claim portions checked by author; independent review pending.",
+    "sources": [
+      {
+        "version": "2006.15055v1",
+        "title": "Object-Centric Learning with Slot Attention",
+        "url": "https://arxiv.org/pdf/2006.15055v1",
+        "sha256": "0899d9edb21fa3d684a1c8b10406a3442ee0624d6f312ca25a1a52b058fb6134",
+        "page_count": 24,
+        "checked_pdf_pages": [
+          1,
+          2,
+          3
+        ],
+        "visually_inspected_pdf_pages": [
+          2,
+          3
+        ],
+        "supports": "Input-to-slot competition, weighted mean over inputs, GRU refinement and permutation properties.",
+        "limitation": "One aggregation fixture does not validate trained entity binding or video identity.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2404.08471v1",
+        "title": "Revisiting Feature Prediction for Learning Visual Representations from Video",
+        "url": "https://arxiv.org/pdf/2404.08471v1",
+        "sha256": "fb84f79be128e7425263e8674fbc3f2ec991575c4b5880556cfb8f5fa9fd91ba",
+        "page_count": 23,
+        "checked_pdf_pages": [
+          1,
+          3,
+          4
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "JEPA context/target formulation, L1 feature loss, EMA/stop-gradient target, temporal block masking.",
+        "limitation": "Particular recipe; no blanket collapse or physical-control guarantee.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2411.04983v1",
+        "title": "DINO-WM: World Models on Pre-Trained Visual Features Enable Zero-Shot Planning",
+        "url": "https://arxiv.org/pdf/2411.04983v1",
+        "sha256": "a6efa898394ced692124bf4db0d2fcc09e741aced20d9f4dde18ba59b6c6365b",
+        "page_count": 22,
+        "checked_pdf_pages": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "Frozen DINOv2 patch encoder, time-causal prediction, repeated action/proprioception concatenation and separately trained optional decoder.",
+        "limitation": "Comparison protocols differ across papers; pretraining and input modalities matter.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2502.11831v1",
+        "title": "Intuitive physics understanding emerges from self-supervised pretraining on natural videos",
+        "url": "https://arxiv.org/pdf/2502.11831v1",
+        "sha256": "8ec7320af6b22e8bf91dae7372a6c1c567f217f23debaf4459cbe8d39b9f620d",
+        "page_count": 24,
+        "checked_pdf_pages": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "Possible/impossible paired-video evaluation and feature-prediction discrepancy as violation-of-expectation diagnostic.",
+        "limitation": "No benchmark number imported; finite diagnostic does not certify general physical competence.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2502.14819v3",
+        "title": "Learning from Reward-Free Offline Data: A Case for Planning with Latent Dynamics Models",
+        "url": "https://arxiv.org/pdf/2502.14819v3",
+        "sha256": "fe1689a04c553d231e69a4ddc1688bd1af25fbb8ea5a6d01300ee2f2618f1272",
+        "page_count": 28,
+        "checked_pdf_pages": [
+          1,
+          3,
+          4,
+          5,
+          19,
+          26
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "Reward-free offline setting, PLDM latent prediction and archived variance/covariance/temporal/inverse-dynamics objective.",
+        "limitation": "Original PLDM terms differ from LeWM reproduction; no universal six-term count.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2506.09985v1",
+        "title": "V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning",
+        "url": "https://arxiv.org/pdf/2506.09985v1",
+        "sha256": "9cfcfde5fb0d9730637da5b9e7317825c3f3d09e91f3553e22eeba42c74d2226",
+        "page_count": 48,
+        "checked_pdf_pages": [
+          1,
+          6,
+          7,
+          9,
+          10
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "Frozen post-training encoder, action/proprioception inputs, teacher forcing plus two-step rollout loss, first-action MPC execution.",
+        "limitation": "No post-training or robot benchmark reproduced; no implication that every JEPA has this recipe.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2511.08544v1",
+        "title": "LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics",
+        "url": "https://arxiv.org/pdf/2511.08544v1",
+        "sha256": "43dbfdaf731c19f57ae9db321f0df368f50a756a59653d460bbdf4ea135bd91d",
+        "page_count": 50,
+        "checked_pdf_pages": [
+          1,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          36,
+          37
+        ],
+        "visually_inspected_pdf_pages": [
+          3,
+          7,
+          8,
+          9
+        ],
+        "supports": "Gaussian projection motivation, all-direction Cramer-Wold premise, X-shaped counterexample, Epps-Pulley characteristic-function statistic and refining-mesh condition in Appendix B.9.",
+        "limitation": "Finite directions/frequencies/batches are a surrogate; source IID/asymptotic conditions are not automatically met by temporally dependent learned codes.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2601.05230v1",
+        "title": "Learning Latent Action World Models In The Wild",
+        "url": "https://arxiv.org/pdf/2601.05230v1",
+        "sha256": "5535ab5d50c8abf6bf2e3756bde06d64a0d74bd502e5e641943f954a5879399a",
+        "page_count": 37,
+        "checked_pdf_pages": [
+          1,
+          2,
+          3
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "Inverse/forward latent-action framework, information bottleneck and embodiment/controller-transfer limits.",
+        "limitation": "Different source from intuitive physics; no action-transfer result or numeric benchmark imported.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2602.08968v1",
+        "title": "stable-worldmodel-V1: Reproducible World Modeling Research and Evaluation",
+        "url": "https://arxiv.org/pdf/2602.08968v1",
+        "sha256": "aef7d16c14a98bf50dde7f0800edccc63fc2fc174375931cdde5022c475e6cee",
+        "page_count": 11,
+        "checked_pdf_pages": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "Dated shared environment/data/evaluation ecosystem and controlled visual/geometric/physical factors of variation.",
+        "limitation": "No current API installation, software statistics or compatibility claim.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2602.11389v1",
+        "title": "Causal-JEPA: Learning World Models through Object-Level Latent Interventions",
+        "url": "https://arxiv.org/pdf/2602.11389v1",
+        "sha256": "559be7ac89d76f128a9f2ae7cd97561aebb7c91bd8d55bc4aea107b420fc1c15",
+        "page_count": 23,
+        "checked_pdf_pages": [
+          1,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          22,
+          23
+        ],
+        "visually_inspected_pdf_pages": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          22
+        ],
+        "supports": "Frozen aligned slots, masked identity anchor formula, object/history/future loss, auxiliaries, CLEVRER/PushT tables, four assumptions and conditional-mean theorem.",
+        "limitation": "Strict MSE necessity requires extra conditional-mean relevance absent from distributional minimality; feature budget is not token ratio; attention is not causal identification.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2602.11389v2",
+        "title": "Causal-JEPA: Learning World Models through Object-Level Latent Masking",
+        "url": "https://arxiv.org/pdf/2602.11389v2",
+        "sha256": "956e136d92c4c944a53e3c2d9cd826aebc96b06af542cd767a0a213e47fb609b",
+        "page_count": 25,
+        "checked_pdf_pages": [
+          1,
+          4,
+          7,
+          8
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "May28 later title/framing change and corresponding theorem comparison.",
+        "limitation": "Later evidence only, not April lecture result; p8 still needs conditional-mean relevance.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2603.19312v2",
+        "title": "LeWorldModel: Stable End-to-End Joint-Embedding Predictive Architecture from Pixels",
+        "url": "https://arxiv.org/pdf/2603.19312v2",
+        "sha256": "58dd56c906a98b9871dbbf6c7f7aa6954da1ee923fe5f17f584c6e22d953433a",
+        "page_count": 29,
+        "checked_pdf_pages": [
+          1,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          14,
+          15,
+          16,
+          20,
+          22
+        ],
+        "visually_inspected_pdf_pages": [
+          3,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "supports": "March24 lecture-era joint encoder/predictor loss, architecture, SIGReg, CEM/MPC, mixed control/timing rows, probes, perturbations, geometry, decoded failure and actual planning protocol.",
+        "limitation": "Approximate15M and47/.98 mean ratio are setup-specific; fixed-FLOP outcomes differ; Gaussian prior and bisection claims have stated limits.",
+        "cited_in_chapter": true,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      },
+      {
+        "version": "2603.19312v3",
+        "title": "LeWorldModel: Stable End-to-End Joint-Embedding Predictive Architecture from Pixels",
+        "url": "https://arxiv.org/pdf/2603.19312v3",
+        "sha256": "553a01501ac74ec56721cfdb936d3825ac941734133a1fd761f614c01b6887e9",
+        "page_count": 28,
+        "checked_pdf_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "visually_inspected_pdf_pages": [],
+        "supports": "June3 later core formula, comparison-row and layout comparison.",
+        "limitation": "Not cited as April evidence; no whole-paper later-version attestation.",
+        "cited_in_chapter": false,
+        "reading_boundary": "Claim-bearing pages inspected; not whole-paper certification."
+      }
+    ],
+    "unavailable_original": {
+      "source": "LeCun2022",
+      "verified": false,
+      "cause": "HTTP403 and OpenReview browser-verification challenge; no original PDF pages read.",
+      "scope": "Historical attribution only; taught mechanisms cite separately inspected originals."
+    }
+  },
+  "source_version_boundaries": [
+    "C-JEPA v1 February11 supplies April lecture claims; May28 v2 explicitly later and still requires conditional-mean relevance.",
+    "LeWM v2 March24 supplies April results; June3 v3 inspected only for selected later comparison/layout, not substituted.",
+    "Slide50 intuitive-physics source2502.11831 differs from latent-action source2601.05230."
+  ],
+  "author_allocation": "Inherited available GPT-6-based Codex author; no unsupported historical model attestation.",
+  "original_teaching_work": {
+    "running_case": "Bounded visual pushing controller; consequential orientation/contact/history limits.",
+    "original_derivations": [
+      "nested conditional risk",
+      "mean-relevance counterexample",
+      "slot normalization arithmetic",
+      "anchor permutation fixture",
+      "characteristic projection model",
+      "bounded strictly convex planning"
+    ],
+    "benchmark_replication": false
+  },
+  "prose_word_count_without_math_code_svg": 11240,
+  "exercise_count": 6,
+  "original_code": {
+    "filename": "chapter02.py",
+    "file": "chapter02.py",
+    "sha256": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
+    "stdlib_only": true,
+    "dependencies": "Python standard library only",
+    "embedded_byte_identity": true,
+    "stdout": "slot updates: 4.000000 8.000000\nmasked slot 0: 1.000000 0.600000 0.700000 0.800000\nfuture slot 1: 5.300000\nrisk with/without X: 2.500000 2.500000\ncollapsed prediction loss: 0.000000\ncollapsed CF discrepancy: 0.154818\ntwo-point CF discrepancy: 0.004386\nbounded actions: a=1.000000 a=1.000000\nterminal state/cost: 2.000000 1.500000\nchecks: passed\n",
+    "embedded_code_exact": true,
+    "isolated_execution_exit_code": 0,
+    "displayed_stdout_exact": true,
+    "stdout_sha256": "e51bc030eae0d7c86f4d03ef85212be8c196b54c080593e9ea48381cb9c9f01c",
+    "effects": "No network, file writes, neural training or physics simulation.",
+    "numerical_boundary": "finite representable int/float excludingbool; explicit magnitude/horizon domains"
+  },
+  "authored_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
+  "quality_passes": [
+    {
+      "result": "All150 segments sequentially read,55-page slide text read; full substantive spine and Q&A directly authored.",
+      "pass": "1-2"
+    },
+    {
+      "result": "Notation, derivational hinges, numerical checks, code and six full mixed solutions author checked.",
+      "pass": "3-6"
+    },
+    {
+      "result": "26 listed deck pages and listed primary pages actually rendered/viewed; static still boundary.",
+      "pass": "6a"
+    },
+    {
+      "result": "Claim-bearing portions of12 cited archived originals checked;2022 original403 scoped to historical attribution and privately recorded.",
+      "pass": "6c"
+    },
+    {
+      "result": "Pending DIFFERENT independent editor; no author self-acceptance.",
+      "pass": "6b"
+    },
+    {
+      "result": "Author prose/notation/parity reread against accepted pilot and previously read CS230ch9/CS231Nch14; independent review pending.",
+      "pass": "7-8"
+    },
+    {
+      "result": "Author exact embedded/output and static checks; root runtime/reader integration pending.",
+      "pass": "9"
+    },
+    {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; reviewed scientific body retained; source and finite-code boundaries remain explicit"
+    },
+    {
+      "pass": "6b,7,8",
+      "result": "Different-agent editorial/prose/parity acceptance; reviewed body retained; source and finite-code limits remain explicit"
+    }
+  ],
+  "gate6b": {
+    "status": "accepted",
+    "blocking_findings": 0,
+    "independent_reviewer": "Different agent from chapter author",
+    "accepted_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
+    "accepted_metadata_sha256": "b4628d115969759b57af87c65c90c722c6263249f23a19f1d7acf715098b97b1"
+  },
+  "publication": "local only; not published",
+  "permission_errors_current_author_task": [],
+  "references": [
+    {
+      "id": "2006.15055",
+      "title": "Object-Centric Learning with Slot Attention",
+      "url": "https://arxiv.org/pdf/2006.15055v1",
+      "version": "2006.15055v1",
+      "sha256": "0899d9edb21fa3d684a1c8b10406a3442ee0624d6f312ca25a1a52b058fb6134",
+      "supports": "PDF pp. 1, 2, 3: Input-to-slot competition, weighted mean over inputs, GRU refinement and permutation properties."
+    },
+    {
+      "id": "2404.08471",
+      "title": "Revisiting Feature Prediction for Learning Visual Representations from Video",
+      "url": "https://arxiv.org/pdf/2404.08471v1",
+      "version": "2404.08471v1",
+      "sha256": "fb84f79be128e7425263e8674fbc3f2ec991575c4b5880556cfb8f5fa9fd91ba",
+      "supports": "PDF pp. 1, 3, 4: JEPA context/target formulation, L1 feature loss, EMA/stop-gradient target, temporal block masking."
+    },
+    {
+      "id": "2411.04983",
+      "title": "DINO-WM: World Models on Pre-Trained Visual Features Enable Zero-Shot Planning",
+      "url": "https://arxiv.org/pdf/2411.04983v1",
+      "version": "2411.04983v1",
+      "sha256": "a6efa898394ced692124bf4db0d2fcc09e741aced20d9f4dde18ba59b6c6365b",
+      "supports": "PDF pp. 1, 3, 4, 5: Frozen DINOv2 patch encoder, time-causal prediction, repeated action/proprioception concatenation and separately trained optional decoder."
+    },
+    {
+      "id": "2502.11831",
+      "title": "Intuitive physics understanding emerges from self-supervised pretraining on natural videos",
+      "url": "https://arxiv.org/pdf/2502.11831v1",
+      "version": "2502.11831v1",
+      "sha256": "8ec7320af6b22e8bf91dae7372a6c1c567f217f23debaf4459cbe8d39b9f620d",
+      "supports": "PDF pp. 1, 2, 3, 4: Possible/impossible paired-video evaluation and feature-prediction discrepancy as violation-of-expectation diagnostic."
+    },
+    {
+      "id": "2502.14819",
+      "title": "Learning from Reward-Free Offline Data: A Case for Planning with Latent Dynamics Models",
+      "url": "https://arxiv.org/pdf/2502.14819v3",
+      "version": "2502.14819v3",
+      "sha256": "fe1689a04c553d231e69a4ddc1688bd1af25fbb8ea5a6d01300ee2f2618f1272",
+      "supports": "PDF pp. 1, 3, 4, 5, 19, 26: Reward-free offline setting, PLDM latent prediction and archived variance/covariance/temporal/inverse-dynamics objective."
+    },
+    {
+      "id": "2506.09985",
+      "title": "V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning",
+      "url": "https://arxiv.org/pdf/2506.09985v1",
+      "version": "2506.09985v1",
+      "sha256": "9cfcfde5fb0d9730637da5b9e7317825c3f3d09e91f3553e22eeba42c74d2226",
+      "supports": "PDF pp. 1, 6, 7, 9, 10: Frozen post-training encoder, action/proprioception inputs, teacher forcing plus two-step rollout loss, first-action MPC execution."
+    },
+    {
+      "id": "2511.08544",
+      "title": "LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics",
+      "url": "https://arxiv.org/pdf/2511.08544v1",
+      "version": "2511.08544v1",
+      "sha256": "43dbfdaf731c19f57ae9db321f0df368f50a756a59653d460bbdf4ea135bd91d",
+      "supports": "PDF pp. 1, 3, 4, 5, 6, 7, 8, 9, 36, 37: Gaussian projection motivation, all-direction Cramer-Wold premise, X-shaped counterexample, Epps-Pulley characteristic-function statistic and refining-mesh condition in Appendix B.9."
+    },
+    {
+      "id": "2601.05230",
+      "title": "Learning Latent Action World Models In The Wild",
+      "url": "https://arxiv.org/pdf/2601.05230v1",
+      "version": "2601.05230v1",
+      "sha256": "5535ab5d50c8abf6bf2e3756bde06d64a0d74bd502e5e641943f954a5879399a",
+      "supports": "PDF pp. 1, 2, 3: Inverse/forward latent-action framework, information bottleneck and embodiment/controller-transfer limits."
+    },
+    {
+      "id": "2602.08968",
+      "title": "stable-worldmodel-V1: Reproducible World Modeling Research and Evaluation",
+      "url": "https://arxiv.org/pdf/2602.08968v1",
+      "version": "2602.08968v1",
+      "sha256": "aef7d16c14a98bf50dde7f0800edccc63fc2fc174375931cdde5022c475e6cee",
+      "supports": "PDF pp. 1, 2, 3, 4: Dated shared environment/data/evaluation ecosystem and controlled visual/geometric/physical factors of variation."
+    },
+    {
+      "id": "2602.11389",
+      "title": "Causal-JEPA: Learning World Models through Object-Level Latent Interventions",
+      "url": "https://arxiv.org/pdf/2602.11389v1",
+      "version": "2602.11389v1",
+      "sha256": "559be7ac89d76f128a9f2ae7cd97561aebb7c91bd8d55bc4aea107b420fc1c15",
+      "supports": "PDF pp. 1, 3, 4, 5, 6, 7, 8, 22, 23: Frozen aligned slots, masked identity anchor formula, object/history/future loss, auxiliaries, CLEVRER/PushT tables, four assumptions and conditional-mean theorem."
+    },
+    {
+      "id": "2602.11389",
+      "title": "Causal-JEPA: Learning World Models through Object-Level Latent Masking",
+      "url": "https://arxiv.org/pdf/2602.11389v2",
+      "version": "2602.11389v2",
+      "sha256": "956e136d92c4c944a53e3c2d9cd826aebc96b06af542cd767a0a213e47fb609b",
+      "supports": "PDF pp. 1, 4, 7, 8: May28 later title/framing change and corresponding theorem comparison."
+    },
+    {
+      "id": "2603.19312",
+      "title": "LeWorldModel: Stable End-to-End Joint-Embedding Predictive Architecture from Pixels",
+      "url": "https://arxiv.org/pdf/2603.19312v2",
+      "version": "2603.19312v2",
+      "sha256": "58dd56c906a98b9871dbbf6c7f7aa6954da1ee923fe5f17f584c6e22d953433a",
+      "supports": "PDF pp. 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 20, 22: March24 lecture-era joint encoder/predictor loss, architecture, SIGReg, CEM/MPC, mixed control/timing rows, probes, perturbations, geometry, decoded failure and actual planning protocol."
+    }
+  ]
+}

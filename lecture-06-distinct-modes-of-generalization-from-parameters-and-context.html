@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><meta name="book-content-sha256" content="28dddb9244837d888447519eef04b1ab853b767578f9fb4e3750b1809c3345d6"><title>Distinct Modes of Generalization from Parameters and Context · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout"><aside class="toc" id="chapter-toc" aria-label="On this page"><h2>On this page</h2></aside><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><!-- BOOK-CONTENT-START -->
+<header><p class="eyebrow">CS25: Transformers United V6 · Chapter 6 · Spring 2026</p><h1>Distinct Modes of Generalization from Parameters and Context</h1><p class="subtitle">Knowing a fact, accessing its inverse, and deciding when to retrieve or reason</p></header>
+<p>A maintenance assistant has been trained on “the Luma pump requires the Kestrel seal.” It answers correctly when asked which seal fits the pump. A technician then asks which pump needs the spare Kestrel seal. The relationship has not changed, but the direction of access has. Another question asks whether the latest procedure permits installation while a machine is powered. Here even a correctly recalled part relationship is insufficient: the assistant needs the current procedure and the relevant action preconditions.</p>
+<p>This original case follows the lecture's distinction between knowledge learned into parameters and knowledge available in context. We will separately measure acquisition of a fact, flexible deduction from it, retrieval of its supporting episode, and the cost of making it accessible. None of these measures alone certifies the maintenance decision.</p>
+<p>Andrew Lampinen's May 7, 2026 talk develops three routes toward flexible reuse: augment training with contextual deductions, retrieve earlier learning experiences, and train a model to spend computation reasoning at test time. The recording supplies the sequence and Q&A. The reported findings are tied to their retained paper versions and experimental conditions. The graph examples, information calculation, cost model, program and exercises below are original teaching constructions.</p>
+
+<section id="modes"><h2>1. Separate parameter learning from contextual access <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=4">0:04</a></h2>
+<p>Let $\theta$ denote a model's parameters, $D$ its training dataset, $C$ the context supplied for a particular query $q$, and $y$ a candidate response. Its response distribution is $p_\theta(y\mid q,C)$. <dfn>Parametric learning</dfn> changes $\theta$ using training examples. <dfn>Finetuning</dfn> is additional parameter learning after an earlier training phase. <dfn>In-context learning</dfn>, or ICL, changes the response computation by supplying examples or information in $C$ while holding $\theta$ fixed during that inference. An activation can change without a persistent parameter update.</p>
+<p>These modes have different reuse patterns. Updating parameters can integrate many observations into shared representations available to many later queries. Context can expose one observation in its original form, alongside the question that makes a previously irrelevant implication useful. A fact's presence in training does not imply that every logically licensed query about it receives substantial output probability.</p>
+<p>The same distinction applies to our assistant without assuming that it implements a database. After finetuning on thousands of pump descriptions, it may predict familiar continuations well. A retrieved manual paragraph supplies a directly inspectable sentence at the time of the question. The parameterized model still supplies the language and reasoning abilities needed to interpret that paragraph. Neither route makes the other unnecessary.</p>
+<p>The lecture asks for mechanisms that support generalization rather than treating one aggregate score as intelligence. We need a query whose answer follows from the learning experience, an explicit account of which evidence was accessible, and a test excluding direct exposure to that answer. Without those distinctions, remembering an extra sentence can masquerade as deduction.</p></section>
+
+<section id="reversal"><h2>2. Relation inversion is a change in access direction <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=214">3:34</a></h2>
+<p>The <a href="https://arxiv.org/pdf/2309.12288v1">original Reversal Curse paper, pp. 1–2</a>, studies failures to answer reversed questions after one-directional factual finetuning. Its controlled fictitious facts distinguish direct completion from retrieving the entity through its description. Its claims concern the studied models, datasets and prompting procedures; a failure mode is not an impossibility theorem for every autoregressive architecture.</p>
+<p>Be precise about the logic. For a relation $R$, define its inverse by $R^{-1}(b,a)\iff R(a,b)$. “Luma requires Kestrel” therefore licenses “Kestrel is required by Luma.” It does not license “Kestrel requires Luma”: that keeps the original relation while swapping its arguments. A parent relationship, a fits relationship and an equality relationship have different logical properties. Natural language can hide this distinction by expressing an inverse with a different phrase.</p>
+<p>The neural prediction problem is also directional. The probabilities $p_\theta(b\mid a,C)$ and $p_\theta(a\mid b,C)$ have different conditioning events and denominators. Even when a joint distribution is coherent, recovering the inverse requires the relevant marginal information. For discrete variables with $p(b)&gt;0$, Bayes' rule gives $p(a\mid b)=p(b\mid a)p(a)/p(b)$. Knowing one high forward conditional without the prior and competing entities does not determine a high inverse conditional.</p>
+<p>A perfect deterministic lookup offers an instructive boundary. If two pumps both require Kestrel, the inverse answer is a set, not a unique pump. The relation remains valid, while a benchmark demanding one entity needs a uniqueness convention. Our program deliberately returns all matching subjects and never interprets an empty result as proof that no real pump fits the seal.</p>
+<p>The lecture mentions work connecting ICL to gradient descent. <a href="https://arxiv.org/pdf/2212.07677v1">von Oswald et al., pp. 1–2</a>, construct and study that correspondence in restricted regression and linear self-attention settings. A forward pass can implement an update to an implicit predictor while the transformer's learned weights stay fixed. This does not establish that arbitrary language-model reasoning is identical to ordinary finetuning.</p></section>
+
+<section id="controlled"><h2>3. Match evidence before comparing learning modes <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=306">5:06</a></h2>
+<p><a href="https://arxiv.org/pdf/2505.00661v3">The controlled study, November 2025 v3, pp. 1–7</a>, introduces novel factual datasets so that direct pretraining familiarity cannot easily explain answers. It compares finetuning and contextual exposure using controlled information. Relevant settings include fictional celebrity relationships, categorical properties and semantic structures built around novel names.</p>
+<p>The study uses multiple-choice likelihood scoring without appending the answer choices to contextual evidence. Its fictional-celebrity reversal test ranks four names (one correct plus three distractors); the simple reversal and syllogism tasks use different choice sets. This differs from open-ended generation scored by exact string matching. Good ranking among four options need not imply that a model would independently produce the right name from a large vocabulary. Conversely, a correct answer expressed differently can fail a brittle exact-match test.</p>
+<p>“Data matched” is not “all resource costs matched.” Parameter updates repeatedly process examples; inference may carry many examples in a long context. The largest contextual dataset was randomly subsampled by a factor of eight because redundant full contexts could interfere. Sentence splitting also varies across experimental conditions: the semantic baseline is stronger without that split. A fair account must preserve these choices rather than claim that every method always saw an identical complete prompt.</p>
+<p>The broad result is greater flexibility from contextual evidence on the studied deductions, with important exceptions. Finetuning can support some reversed semantic queries when the knowledge structure supplies alternative cues. In our assistant, “Luma is a pump” and “all pumps need pressure isolation” could support an answer through category structure even when a directly memorized one-to-one inverse is difficult. This is different from making an inaccessible isolated fact perfectly invertible.</p>
+<p>A valid syllogism also needs its quantifiers. From $A\subseteq B$ and $B\subseteq C$, infer $A\subseteq C$: every member of $A$ is in $B$, hence in $C$. If $A$ is empty, that universal conclusion remains true, but “some $A$ is a $C$” does not follow without existence. From $A\subseteq B$ and $B\cap C\ne\varnothing$, one cannot infer $A\cap C\ne\varnothing$. The overlapping $B$ members may all lie outside $A$. Fluent familiarity with pumps does not repair an invalid inference pattern.</p></section>
+
+<section id="latent"><h2>4. A training objective can miss future uses of an experience <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=522">8:42</a></h2>
+<p><dfn>Latent learning</dfn> concerns experience that is not useful for the current task but may become useful for a later one. Here “latent” does not mean a particular hidden vector. The lecture uses controlled language and navigation tasks to ask whether a learner can reuse information for a new goal after successfully acquiring the directly trained behavior.</p>
+<p>In <a href="https://arxiv.org/pdf/2509.16189v3">Latent Learning, December 2025 v3, p. 11</a>, the synthetic reversal experiment uses 20,000 forward relations. Reverse training covers 19,800 of them; the remaining 200 reversed relations are held out. Thus a reverse format is well represented in training, but the particular tested inverse facts are not. Learning the task format and learning a particular fact's inverse are separate requirements.</p>
+<p>A codebook makes the difference explicit. Suppose training teaches that symbol ZEM maps to “release latch,” then separately teaches a rule about which action releases a fixture. Knowing the symbol's meaning and knowing the action rule do not guarantee that a model composes them for an unseen instruction. A test should score the component facts and the composition on the same controlled inventory. Otherwise failure may be ordinary missing knowledge rather than inflexible access.</p>
+<p>For our assistant, record whether Luma's part relationship is recalled in the trained direction, whether Kestrel retrieves the corresponding pump, and whether the inferred procedure remains correct after changing the query goal. A random identifier reduces familiar semantic shortcuts but can increase tokenization difficulty. Renaming every object does not automatically hold the learning problem constant.</p>
+<p>Training loss explains why a limitation is possible, without proving it inevitable. If the loss rewards correct continuation only after the pump name, there is no explicit penalty for an inverse query absent from that training distribution. Shared representations might nonetheless generalize. The experimental question is whether they do, under the architecture, data and optimization regime actually used.</p></section>
+
+<section id="scope"><h2>5. Architecture, tokenization and task construction matter <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=732">12:12</a></h2>
+<p>The first Q&A tests the scope of the reversal result. A pretrained language model, a model trained from scratch and a model trained on formal symbol sequences do not start with the same priors. Different next-token objectives, training mixtures and architectures can make relations easier or harder to reuse. The talk's observed failures do not identify one invariant law of neural memory.</p>
+<p>Controlled nonsense names help separate the new dataset from known facts. They can also fragment into different numbers of tokens, accidentally resemble familiar words, or change the distribution of rare token combinations. Use multiple balanced renamings and report token lengths. If an apparent reasoning improvement disappears when the names are permuted, it needs a different explanation.</p>
+<p>The speaker does not know every detail of a proprietary model's pretraining cutoff or mixture. That uncertainty belongs in the interpretation. A clean synthetic study can reduce contamination while still sharing pretrained linguistic knowledge. It does not reproduce the same learning trajectory as a child, an untrained transformer or a formal theorem prover.</p>
+<p>The practical diagnostic is a crossed design: vary fact direction and query direction while preserving the entity inventory; include trained-direction recall, held-out inverse questions and a contextual-evidence condition. Add a category-structured condition to detect alternative cues. Keep chance levels, choice sets and scoring rules explicit. These controls reveal which access route failed without requiring a story about an unseen mechanism.</p></section>
+
+<section id="geometry"><h2>6. Shared structure can make some deductions cheap <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=914">15:14</a></h2>
+<p>Parametric learning can provide useful abstractions for later context use. This is why the lecture's distinction is complementary rather than a demand to store every past experience verbatim in a prompt. A model may learn concepts, transformation rules and recurring structure that make a new episode interpretable.</p>
+<p><a href="https://arxiv.org/pdf/2510.26745v1">Deep Sequence Models Tend to Memorize Geometrically, pp. 1–2</a>, gives a controlled counterpoint to treating parametric facts as nothing more than unrelated pairwise associations. Its graph tasks expose global relationships through learned representations. The setting does not prove that a production assistant encodes all of its manuals in a similarly useful geometry. It does show why “weights only memorize local pairs” is too strong an explanation.</p>
+<p>An original construction makes the role of representation visible. Suppose a family of parts lies on a line with known positions $z(a)\in\mathbb R$. For a stated threshold $\delta\ge0$, if compatibility is stipulated to mean $|z(a)-z(b)|\le\delta$, a query can exploit the same geometry in either direction. This symmetry comes from the stipulated distance rule, not from every relation in engineering. A directed dependency graph requires a different representation.</p>
+<p>Compression creates a choice about what to preserve. A maintenance model can represent “all powered assets require isolation” economically, while losing distinctions among rarely seen revision exceptions. A new query may make the discarded exception central. The ability to predict common continuations and the ability to recover every future-relevant detail are different optimization targets.</p>
+<p>For the rest of the chapter, ask whether an intervention changes the knowledge itself, its representation, or the route by which the question accesses it. Extra evidence, an additional training deduction and a longer reasoning trace can all improve an answer while acting at different points in that chain.</p></section>
+
+<section id="cues"><h2>7. A correlated cue can bypass the intended deduction <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=1132">18:52</a></h2>
+<p>The lecture distinguishes relational reasoning from shortcuts supplied by co-occurrence and prior knowledge. If every training paragraph mentions both Luma and Kestrel, a model might associate their names without learning which object requires which. When the question reverses direction, the association can succeed even though the desired relation was never represented explicitly.</p>
+<p>For an original test, use two relations over the same entities: “Luma requires Kestrel” and “Luma stores Falcon.” Ask inverse questions for both and switch the relation while holding the names fixed. A system that returns Luma for every seal-related cue can look competent on a poorly balanced dataset while failing the distinction that matters.</p>
+<p>Statistical induction also differs from entailment. Observing that most birds in a dataset fly can support a high-probability prediction about a new bird. It does not make “every bird flies” logically valid. A maintenance category rule can be reliable on ordinary cases but have explicitly recorded exceptions. The query may be asking about exactly such an exception.</p>
+<p>Suppose a shortcut predicts the right answer with probability $.95$ on common assets, which occur with probability $.9$, but is wrong on every rare asset. Its aggregate accuracy is $.9\times.95=.855$. An assistant evaluated only by that aggregate could be selected even though its accuracy on the rare subgroup is zero. This calculation does not assign those rates to any paper; it explains why the test distribution must match the consequences being assessed.</p>
+<p>A counterfactual test changes the association while preserving the inference pattern: rename the parts, rebalance the relation, or place a valid exception into context. The result can reveal reliance on a cue. It does not on its own identify a unique internal circuit, because multiple representations can produce the same input-output behavior.</p></section>
+
+<section id="augmentation"><h2>8. Expose deductions during training <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=1396">23:16</a></h2>
+<p>The first intervention uses contextual reasoning to construct additional training material. A model or other procedure reads facts together, draws relevant consequences and writes them into an augmented dataset $D'=D\cup A(D)$. The augmentation $A(D)$ can include inverse statements, categorical deductions or explanatory traces. The eventual finetuned model is then explicitly exposed to information that its original continuation loss did not reward accessing in that form.</p>
+<p>The controlled study's contextual augmentation improves several reported deductions. That finding is conditional on the augmentation procedure and task distribution. It does not imply that adding any long explanation is useful. If the teacher makes an incorrect inverse or drops a negation, the extra training can make the corresponding error more persistent.</p>
+<p>In the maintenance case, augment “Luma is a powered asset” and “every powered asset requires isolation” with “Luma requires isolation.” This is a licensed deduction only if the rule and category membership hold for the same applicable revision. Combining a current membership statement with an obsolete universal rule could create a superficially coherent but invalid instruction.</p>
+<p>Transitive closure illustrates why exhaustively materializing consequences can be expensive. For $n$ named entities, a directed relation can contain up to $n^2$ ordered pairs. A chain containing $n-1$ direct is-a edges entails $n(n-1)/2$ strict ancestor pairs. Summing the possible targets, $(n-1)+(n-2)+\cdots+1$, gives that count. A compact original graph may therefore generate a quadratic number of explicit consequences even before natural-language paraphrases.</p>
+<p>Our program adds only consequences of the explicitly stipulated is-a transitivity rule. One synchronous round uses the facts present at the beginning of that round. A four-node chain needs a second round to expose its end-to-end edge. A bounded run can stop before full closure, and it does not infer transitivity for “requires.” This distinction keeps the teaching construction from laundering an engineering assumption into a generic graph operation.</p>
+<p>The evaluation split must precede augmentation design. If an augmentation prompt includes held-out answers or a procedure tuned to the exact test questions, better scores can reflect leakage. Separate the facts permitted during training from the query family withheld for evaluation. The experiment is about flexible reuse, so knowing a fact is permitted even when a particular way of querying it is withheld.</p></section>
+
+<section id="information"><h2>9. Computation can expose information without creating observations <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=1580">26:20</a></h2>
+<p>The audience raises a data-processing objection: how can reasoning over existing facts add information? For discrete random variables $X,Y$, Shannon mutual information is $I(X;Y)=H(Y)-H(Y\mid X)$, with entropy $H(Y)=-\sum_y p(y)\log p(y)$ and natural logarithms. If $T=g(X)$ is a deterministic transformation, conditioning on $X$ gives everything $T$ can reveal. Thus $H(Y\mid X,T)=H(Y\mid X)$ and $I(X,T;Y)=I(X;Y)$. No new observation was created.</p>
+<p>The qualification is the observer's computational restriction. <a href="https://arxiv.org/pdf/2002.10689v1">Usable Information under Computational Constraints, pp. 2–4</a>, defines information through a specified family of predictors. Let $\mathcal F$ be a family of conditional probability maps and let its unconditional counterpart permit ignoring the input. Define the best expected log losses:</p>
+\[H_{\mathcal F}(Y)=\inf_{f\in\mathcal F}\mathbb E[-\log f(\varnothing)(Y)],\qquad
+H_{\mathcal F}(Y\mid X)=\inf_{f\in\mathcal F}\mathbb E[-\log f(X)(Y)].\]
+<p>The family's usable information is the difference $H_{\mathcal F}(Y)-H_{\mathcal F}(Y\mid X)$. The optional-ignorance condition means the conditional family can reproduce every permitted unconditional predictor, so conditioning cannot worsen the optimum. When the family is rich enough to represent all true conditional distributions, the quantities reduce to ordinary entropy and mutual information. A restricted family can fail to extract information present in the full input.</p>
+<p>An original four-example calculation makes the distinction exact. Let independent fair bits $U,V$ define $Y=U\mathbin{\oplus}V$, their exclusive-or. The original feature vector is $X=(U,V,0)$. A predictor family may read only the first coordinate and assign a Bernoulli distribution to each of its two values. Because $Y$ is fair conditional on either $U$, its optimum loss is $\log2$. An unconditional predictor has the same loss, so usable information is zero even though the full pair determines $Y$.</p>
+<p>Now compute $T=(U\mathbin{\oplus}V,U,V)$ from the existing features. This transformation preserves the original bits and places a deterministic derived feature first. The same first-coordinate family predicts $Y$ exactly, with optimum log loss zero. Its usable information is now $\log2$. Full Shannon mutual information is $\log2$ both before and after: the label was already determined. We improved the restricted observer's route to the answer, not the underlying evidence.</p>
+<p>The family definition is the mathematical hinge. If it could inspect all coordinates and compute XOR, the original loss would already be zero. Conversely, changing both features and predictor capacity would no longer isolate representation. The finite example is a calculation about a stated family, not proof that a particular transformer has the same restriction.</p>
+<p>Augmentation by an externally pretrained teacher needs an additional qualification. If teacher parameters $\theta_T$ contain knowledge beyond $D$, then $A(D,\theta_T)$ need not be determined by $D$ alone. Data processing should be applied with the teacher state included or under a stated conditional-independence assumption. “The generated text adds no information” can be wrong when the generator accesses new sources, tools or previously acquired knowledge.</p>
+<p><a href="https://cognition.princeton.edu/sites/g/files/toruqf3386/files/documents/lbt.pdf">Lombrozo's 2024 review, pp. 1–3</a>, treats learning by thinking as construction of useful representations under limited resources. Its self-explanation examples motivate the distinction. They do not guarantee that an unsupported model explanation repairs itself correctly.</p></section>
+
+<section id="retrieval"><h2>10. Retrieve an episode when its relevance becomes clear <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=1670">27:50</a></h2>
+<p>The second intervention retains learning experiences for future contextual reuse. An <dfn>episodic memory</dfn> here is a store of particular experiences or examples, not a claim about an anatomical system. A retriever selects episodes and appends them to $C$ when a new question makes them relevant. Parameters still supply the ability to use the retrieved material.</p>
+<p>The latent-learning paper deliberately uses an <dfn>oracle retriever</dfn>: a controlled mechanism guaranteed to include relevant evidence under the specified experiment. Its pp. 12–15 describe contexts with relevant episodes and distractors, retrieval during training as well as testing, and the importance of within-example ICL training. Retrieved tokens are not prediction-loss targets, but gradients can pass through their representations. Equal loss-signal-token steps do not establish equal compute cost.</p>
+<p>That design isolates the ability to use evidence once it arrives. It does not solve realistic retrieval from millions of ambiguous manuals. In our assistant, “Kestrel” may name a seal, a product family and an obsolete procedure. Selecting a relevant episode requires resolving those identities and its revision. An oracle condition removes that difficulty so that a different bottleneck can be measured.</p>
+<p>Let $E$ denote the event that all evidence required by a question reaches the context, $r=P(E)$ its evidence recall, $a=P(\text{correct}\mid E)$ and $b=P(\text{correct}\mid\neg E)$. The events partition the query population, so total probability gives</p>
+\[P(\text{correct})=ra+(1-r)b.\]
+<p>With constructed rates $r=.8,a=.9,b=.2$, accuracy is $.72+.04=.76$. Improving evidence use to $a=1$ gives $.84$, while improving recall to $r=1$ gives $.9$ if conditional use remains unchanged. Accuracy need not be bounded by recall: guessing or prior knowledge can produce $b&gt;0$. Conversely, high recall does not guarantee accuracy when $a$ is small.</p>
+<p><dfn>Precision</dfn> measures the fraction of retrieved items that are relevant under a defined labeling rule. It is different from evidence recall and from answer correctness. A two-premise deduction needs both premises: independent per-premise retrieval probability $.8$ would give complete-evidence recall $.64$. Independence must be justified; correlated document selection can change that result. Missing the rare exception may matter more than retrieving many ordinary statements.</p>
+<p>An operational test should report missing evidence, irrelevant distractors, contradictory versions and errors despite complete evidence separately. The oracle result is valuable because it locates a capability that can be trained. It should not be promoted into an end-to-end reliability claim for an untested retrieval system.</p></section>
+
+<section id="cue-query"><h2>11. Query formulation controls which fact becomes accessible <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=1845">30:45</a></h2>
+<p>The next Q&A asks whether familiar factual retrieval already solves the problem. Sometimes it does: a query carrying the trained entity name can activate the relevant association, or a retriever can expose the missing fact. But the hard question may supply only an inverse description or a combination of clues that was never used during training.</p>
+<p>Distinguish three interventions for “which pump needs Kestrel?”: retrieve the explicit Luma–Kestrel statement; prompt the model to enumerate its pump inventory; or add reverse-direction examples during training. All might produce Luma, but they test different access mechanisms and resource requirements. A single correct final answer does not identify which one was responsible.</p>
+<p>For an evaluation, keep the raw question and each retrieved episode. If a reformulated search quietly inserts the answer, it is no longer a clean test of inverse retrieval. If a model succeeds only after seeing Luma among four choices, label that scoring condition. The record should make information access reconstructible.</p></section>
+
+<section id="thinking"><h2>12. Train a reasoning process that transfers to known facts <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=1922">32:02</a></h2>
+<p>The third intervention trains a model to use additional inference steps for reasoning over knowledge in its weights. A <dfn>chain of thought</dfn> is a sequence of generated intermediate reasoning tokens. Those tokens provide a longer computational path; their fluent content is not automatically a faithful description of the internal cause of an answer.</p>
+<p><a href="https://arxiv.org/pdf/2604.01430v1">Improving Latent Generalization Using Test-time Compute, pp. 4–10</a>, combines knowledge finetuning with stronger-teacher reasoning bootstraps and a correctness-feedback RL variant. The stronger teacher is conditioned on the correct answer; traces ending incorrectly are filtered. Correct final answers do not verify each intermediate statement.</p>
+<p>The held-out comparison concerns reasoning tasks over facts already included in initial knowledge training. Those facts are excluded from later reasoning bootstrapping and RL. Thus “OOD” means a withheld reasoning distribution over known facts, not knowledge the system never encountered. Training reasoning on set A and testing deduction over known set B measures a useful kind of transfer, but it differs from open-world scientific discovery.</p>
+<p>For these semantic-structure queries, the model generates a set of proposed completions $\widehat A$, compared with the complete set $A_{\mathrm{all}}$ of valid completions. For nonempty sets, precision is $P=|\widehat A\cap A_{\mathrm{all}}|/|\widehat A|$, recall is $R=|\widehat A\cap A_{\mathrm{all}}|/|A_{\mathrm{all}}|$, and <dfn>F1</dfn> is the harmonic mean $2PR/(P+R)$ when $P+R&gt;0$. With no correct proposed completion, the score is zero; empty-set cases require an explicit scoring convention. The full valid-answer set includes both trained and held-out completions. The paper separately reports held-out recall to diagnose latent inference: reasonable overall F1 can coexist with missing the particular held-out conclusion.</p>
+<p>The paper also separates single-attempt scores from success across multiple samples. On its OOD syllogism setting, the thinking condition reaches full-set single-attempt F1 .66 versus ICL .88; strict reversal remains harder. These measurements support improvement under the stated training route. They are not pure held-out-inference accuracy and do not show that reasoning universally surpasses contextual access, or that RL alone caused the entire improvement.</p>
+<p>In our assistant, a reasoning trace might retrieve a remembered category, connect it to a revision rule and verify a consequence. Each extra step also creates an opportunity to invent a premise. Use correctness tests that isolate the available knowledge and score the derived answer. Do not score only the apparent sophistication of the explanation.</p></section>
+
+<section id="enumeration"><h2>13. Generate-and-verify depends on candidate coverage <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=2073">34:33</a></h2>
+<p>The talk explains a reversal workaround: generate plausible entities, then check their forward relationships. If direct inverse access fails, knowing the forward relation can still support verification. This is a search algorithm with two separate failure modes—never proposing the right entity, or judging a proposed entity incorrectly.</p>
+<p>For a finite original model, assume exactly one correct entity among $N\ge1$ candidates. Uniformly selecting $k\le N$ distinct candidates includes it with probability $k/N$. Selecting independently with replacement includes it with probability $1-(1-1/N)^k$: all $k$ draws miss with probability $(1-1/N)^k$. With $N=10,k=3$, the probabilities are .3 and .271 respectively. The second is smaller because repeated draws waste coverage.</p>
+<p>A real model does not sample entities uniformly. If one independently generated candidate is correct with probability $\pi$, coverage after $k$ samples is $1-(1-\pi)^k$. If $\pi=0$, no number of samples can help; if attempts are dependent, the product formula need not hold. A large vocabulary can make entity enumeration much more expensive than the controlled thousand-entity inventory used in the lecture's experiments.</p>
+<p>Even perfect coverage is insufficient. Conditional on a fixed candidate set containing the correct candidate and $m$ wrong ones, let correct acceptance have probability $s$ and each wrong acceptance have probability $f$. If all these acceptance events are mutually independent, accepting the correct candidate while rejecting every wrong one has probability $s(1-f)^m$. This also assumes a selection rule requiring all wrong candidates to be rejected. Without that independence, use the joint acceptance probability rather than this product; it is not a universal end-to-end success formula.</p>
+<p>Increasing candidates can therefore increase coverage and false-positive opportunities simultaneously. In maintenance, accepting a wrong pump as compatible with a seal can be consequential. Forward self-verification should be checked against the actual manual rather than treated as its own ground truth.</p>
+<p>The test-time paper's strict celebrity reversal shows a gap between single-attempt and multi-attempt success, and a remaining advantage for ICL in that setting. A pass-at-many score asks whether any sample succeeds under the evaluation rule; it does not establish that the deployed assistant can identify the correct sample without an oracle. Report sampling budget and selection procedure alongside the score.</p></section>
+
+<section id="cost"><h2>14. Include training, retrieval and query volume in the objective <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=2286">38:06</a></h2>
+<p>The lecture contrasts work done before a future question is known with work done when its goal is explicit. Offline augmentation pays for deductions that may never be used. Per-query retrieval and thinking focus on the current question but add latency and recurring cost. Calling a test-time intervention “free at training” describes a scoped experimental comparison, not free indexing, storage, tools or inference.</p>
+<p>An original break-even calculation makes that scope explicit. Let offline augmentation cost $F\ge0$ once and its later per-query cost $c_A\ge0$. Let the alternative's fixed cost be zero under this particular accounting and its per-query retrieval/reasoning cost be $c_R\ge0$. For $Q$ queries, the totals are $F+Qc_A$ and $Qc_R$. If $c_R&gt;c_A$, augmentation is cheaper when $Q&gt;F/(c_R-c_A)$. If $c_R\le c_A$ and $F&gt;0$, there is no positive-query crossover.</p>
+<p>With constructed units $F=120,c_A=1,c_R=4$, equality occurs at 40 queries. This is not a fitted scaling law. If the manuals change before the fortieth query and augmentation must be repeated, the original calculation no longer describes the service. Likewise, adding an index fixed cost to the retrieval alternative changes the threshold.</p>
+<p>Cost is not the whole criterion. A practical objective can combine expected error cost, update cost, inference cost and latency constraints. The weights reflect the application, not a universal property of generalization. A cheaper method that omits current lockout conditions is unacceptable for the maintenance task.</p>
+<p>Measure retrieval competence before declaring its cost tradeoff favorable. Query-time access is most useful when the system can locate the right evidence and interpret it under the relevant constraints. A task with no reliable evidence selector may require better indexing or different training rather than simply a longer context.</p></section>
+
+<section id="replay"><h2>15. Brain-inspired complementarity is a hypothesis about computation <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=2448">40:48</a></h2>
+<p>The lecture connects these learning routes to a proposed complementarity between fast episodic access and slower integration across experiences. Offline replay could make useful relations accessible before a query; online reinstatement could expose a past episode when a new goal makes it relevant. This is a computational analogy. It does not show that a transformer's attention mechanism is an anatomical hippocampus or that every reasoning trace corresponds to neural replay.</p>
+<p>Original cognitive studies supply more specific evidence than that broad analogy. <a href="https://cdn.elifesciences.org/articles/32548/elife-32548-v1.pdf">Momennejad et al.'s retained manuscript, actual PDF pp. 16, 18, 28, 30</a>, relates fMRI pattern evidence for reinstatement of an earlier state category during rest to subsequent reward revaluation. The association concerns a task where later information changes a prior choice. The authors explicitly identify the correlational design and alternatives for how memories are selected.</p>
+<p>The measurement is not a direct recording of an ordered sequence of hippocampal spikes. It is multivoxel pattern evidence, with controls for recent stimulation and task conditions. An association between reinstatement and later replanning supports a role worth investigating; it does not establish that reinstatement was necessary, sufficient or the only contributor. Both online computation and offline preparation can contribute to behavior.</p>
+<p><a href="https://cdn.elifesciences.org/articles/56911/elife-56911-v1.pdf">Eldar et al., pp. 1, 11–12</a>, study human MEG replay in a learned navigation task with changing rewards and transitions. More flexible participants show more on-task replay relevant to replanning; less flexible participants show more off-task replay of previously preferred trajectories. The distinction depends on the task and strategy. It rules out the simplistic slogan that more replay of any kind necessarily yields more flexible behavior.</p>
+<p>In our assistant, an offline cache of every old procedure might reinforce an obsolete preference. A query-specific retrieval can expose the latest change, but only if the revision is indexed and selected correctly. The functional lesson is to ask which experience is being replayed, for which goal, and with what error checks. The neuroscience does not certify this software design, and the software fixture does not establish a neural mechanism.</p>
+<p>We have followed the talk's summary from parameters through augmentation, retrieval and test-time computation. The remaining Q&A tests whether that distinction survives changes in content, lifetime memory, instructions and objectives. Those questions are part of the chapter's technical scope, not an invitation to convert a laboratory result into advice about individual cognition or health.</p></section>
+
+<section id="question-scope"><h2>16. Model size and content effects limit transfer <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=2710">45:10</a></h2>
+<p>The Q&A opening follows acknowledgements; we omit names and promotional handles while retaining the substantive discussion. Audience questions probe whether the effect persists for larger models, other content and different architectures. The speaker distinguishes observed comparisons from predictions about mechanisms that have not yet been tested.</p>
+<p>Larger models can have stronger priors, more capacity and better contextual skills. That does not imply that scale repairs every directional access failure, nor that the same intervention has identical benefits at each size. A sparse mixture-of-experts model changes active computation and parameter organization. The talk does not provide a controlled dense-versus-MoE experiment resolving this question.</p>
+<p>A familiar relation can be easier because the model has seen relevant patterns repeatedly. The same logical form with nonsense nouns tests a different distribution. <a href="https://arxiv.org/pdf/2207.07051v1">Dasgupta et al., pp. 1–2</a>, compare content effects in language models and human reasoning across specified inference tasks. Their result motivates content-balanced tests; a similarity in error patterns does not establish identical mechanisms.</p>
+<p>Return to the invalid syllogism $A\subseteq B$, some $B$ is $C$, therefore some $A$ is $C$. If $A$ is pumps, $B$ powered assets and $C$ assets needing a particular seal, the conclusion may sound plausible. A countermodel with $A=\{\text{Luma}\}$, $B=\{\text{Luma},\text{Mira}\}$ and $C=\{\text{Mira}\}$ satisfies both premises while falsifying the conclusion. Changing the nouns must not change the argument's validity.</p>
+<p>Balance tokenization and familiarity where possible, then report any remaining differences. A model that succeeds on the real names and fails on renamed ones may be relying on helpful prior knowledge, a misleading shortcut or simpler token handling. The experiment needs controls to distinguish those possibilities.</p></section>
+
+<section id="integration"><h2>17. Slow integration and one-shot retention solve different problems <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=3005">50:05</a></h2>
+<p>The next discussion asks why a new experience cannot simply be absorbed immediately into a general model. A parameter update can affect many outputs sharing the same representation. Integrating an isolated correction into that structure may need repeated examples, appropriate feedback and controls against interference. A stored episode can be retained immediately without proving that its implications have been integrated.</p>
+<p>For maintenance, one new bulletin says that a particular valve revision requires an extra lockout. Keeping the bulletin in a versioned store makes it available for a later query. Finetuning on its text might alter nearby part descriptions or fail to change the relevant action response. Measure the desired correction and related regressions rather than infer successful integration from reduced training loss.</p>
+<p>Retention also has limits. A store can preserve exact text while losing its provenance, revision identity or searchability. A parameter representation can generalize a useful rule while omitting the original sentence. These are different forms of memory loss; neither is captured by asking only whether a system “remembers” a bulletin.</p>
+<p>An incremental-learning experiment should hold out future query forms and old facts. Score the new correction, old knowledge retention, inverse access and conflicting-context behavior before and after the intervention. The observed tradeoff belongs to the measured method. The talk's slow/fast learning analogy motivates the design but does not supply numerical update rates for brains or transformers.</p></section>
+
+<section id="formal-content"><h2>18. Formal deduction still depends on the supplied premises <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=3223">53:43</a></h2>
+<p>The Q&A considers more offline traces, formal-language training and prior statistical structure. A symbolic rule engine can make a valid consequence explicit when its premises and rules are correct. A language model can propose plausible connections from broader experience. Combining them requires a clear boundary between assumed premises and verified facts.</p>
+<p>Let the is-a facts define a directed graph and let the inference rule be $(a,b),(b,c)\Rightarrow(a,c)$. Repeated application can expose reachability. The theorem concerns the declared relation and rule. If “Luma requires Kestrel” and “Kestrel requires a storage bag,” generic transitive reachability would assert “Luma requires a storage bag.” That may be a useful operational dependency in one design, but it is not a logical consequence of the ordinary linguistic predicate without an additional rule.</p>
+<p>Formal syntax can prevent ambiguous parsing and still encode a wrong premise. An automated proof from an obsolete manual is valid relative to that manual while being unsuitable for today's repair. Evidence checking and inference checking should therefore be separate records.</p>
+<p>A larger set of generated deductions can broaden coverage while introducing redundancies and errors. The goal is not to enumerate every imaginable statement. It is to expose the implications likely to matter under the intended query distribution, retaining enough provenance to audit the assumptions. The earlier quadratic chain example explains one reason exhaustive preparation can be wasteful.</p>
+<p>The speaker's discussion of older symbolic AI and contemporary statistical learning is a proposal about complementarity. It is not an experimental proof that one paradigm can replace the other for all tasks. The assistant can use a finite rule checker for a specified condition while relying on learned language processing to extract candidate facts; errors at the extraction boundary still matter.</p></section>
+
+<section id="lifetime"><h2>19. Long-lived memory requires selection, identity and correction <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=3568">59:28</a></h2>
+<p>Audience questions explore attention-like access, hippocampal analogies and lifetime storage. A finite context window cannot expose every past observation simultaneously. A larger store changes capacity but leaves relevance selection, ambiguity and contradiction unresolved. A reasoning system needs a way to decide which episode belongs to the current question.</p>
+<p>Consider two statements: “Luma uses Kestrel” under revision 1 and “Luma uses Falcon” under revision 2. They need not be a contradiction if each carries its own time and configuration. Dropping that context creates a false conflict or an incorrect merged answer. A fact should therefore be represented with the scope needed for its intended use, even when the language model sees it as ordinary text.</p>
+<p>Reconstruction can also introduce details absent from the stored experience. A model might fill an incomplete procedure with its most probable continuation. Fluency does not identify whether the detail came from the current source, old training or a plausible invention. Keep source-linked claims and inferred claims distinguishable.</p>
+<p>The talk discusses confabulation as a concern, without supplying a general quantitative error rate for human or model lifetime memory. We do not manufacture one. For the assistant, a controlled experiment can remove a critical clause, add a conflicting revision and test whether the system acknowledges the missing or conflicting evidence. That directly tests the behavior needed in the case.</p></section>
+
+<section id="conflict"><h2>20. Instructions and factual evidence need different authority rules <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=3816">1:03:36</a></h2>
+<p>The next questions concern conflicting instructions and constitutional reliability. A statement inside a retrieved document can be evidence about a procedure without being an instruction that the assistant should obey. Supplying an instruction in context and encoding a preference through training can have different failure modes; the lecture does not demonstrate universal superiority of either route under adversarial conflict.</p>
+<p>In maintenance, a manual page that says “ignore the current safety checklist” should not gain authority merely by being retrieved. The application must define the authority of the operator's goal, its action constraints and its technical sources. This is a design requirement for the stated task, not a claim that a longer context or a principle-trained model guarantees compliance.</p>
+<p>An ordinary contradiction test differs from an instruction-conflict test. The first asks whether two claims can both be true under their stated scope. The second asks which command governs behavior. Mixing them can produce misleading evaluation: a model may quote a conflicting command correctly while still choosing not to execute it.</p>
+<p>Test both factual use and instruction handling under realistic retrieved material. Record whether the system identifies revision conflicts, maintains action preconditions and explains unresolved evidence. A source can improve factual access while introducing new instruction-like text; the route to knowledge and the route to authority must be designed together.</p></section>
+
+<section id="objective"><h2>21. Optimize the full train-plus-inference service <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=3963">1:06:03</a></h2>
+<p>The closing resource question asks whether a training budget alone is the right target. For a deployed system serving many changing queries, the total includes learning, updates, retrieval, reasoning and verification. A method that reduces training work but greatly increases per-query computation can be attractive for a few queries and unattractive for millions.</p>
+<p>The earlier fixed-cost calculation isolates one accounting hinge. A fuller original objective is $J=C_{\rm train}+C_{\rm update}+Q\,\mathbb E[C_{\rm query}]+\lambda Q\,\mathbb E[L_{\rm decision}]$, where costs share a declared unit, $Q$ is query volume, $L_{\rm decision}$ is a specified loss and $\lambda\ge0$ converts that loss into the chosen cost unit. A hard safety or latency constraint should be imposed separately when a soft penalty cannot represent it.</p>
+<p>This formula defines an objective; it does not predict how a real model scales. To optimize it, estimate the terms from the service's workload and evaluate feasible methods. An unmeasured power law or a universally optimal ratio between parameter and context capacity cannot be inferred from the lecture.</p>
+<p>For our assistant, bulletin frequency affects update cost, query diversity affects which offline consequences are useful, and verification requirements affect inference cost. The resource decision should be revisited when those quantities change. A single benchmark checkpoint is not a permanent allocation rule.</p></section>
+
+<section id="synthetic"><h2>22. More generated traces help only under an error model <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=4052">1:07:32</a></h2>
+<p>The final discussion asks about augmentation cost, repeated hallucinations, collateral knowledge drift and prompt design. The speaker's “at least ten times” cost intuition is a spoken estimate, not a measured general requirement. A chapter should preserve the question without turning the estimate into a benchmark fact.</p>
+<p>An original binary voting calculation shows why error dependence matters. Assume three independent traces each propose the correct answer with probability $p$. A correct majority occurs when all three are right or exactly two are right, giving $p^3+3p^2(1-p)$. With $p=.8$, this is $.512+.384=.896$. The improvement comes from the assumptions: comparable correctness rates, independent errors and a binary choice with a reliable majority-selection rule.</p>
+<p>If all three traces repeat the same underlying error, their correctness indicators are identical. Majority accuracy is then $.8$, not $.896$. A shared false training premise, a misleading retrieved document or a biased verifier can produce correlated errors. Additional tokens are not independent evidence merely because the surface wording changes.</p>
+<p>Augmentation training is also not generally a majority vote. A model can be affected by the frequency, phrasing and gradient contributions of synthetic examples. Training on many agreeing but false deductions can strengthen the error. The finite calculation explains a possible benefit and its failure condition, not a guarantee for self-training.</p>
+<p>Auxiliary training and regularization may reduce unwanted changes, but an intended protection is not proof that other knowledge remains intact. Evaluate old facts and behaviors after augmentation. In the maintenance case, a repaired inverse answer is a regression if it erases the distinction between current and obsolete procedures.</p></section>
+
+<section id="closing"><h2>23. Make the future query explicit enough to evaluate <a class="timestamp" href="https://www.youtube.com/watch?v=dJtHauhRasc&amp;t=4213">1:10:13</a></h2>
+<p>The talk ends with prompt specificity, broader synthetic-data methods and unresolved questions. A narrowly specified factual domain can make relevant deductions easier to generate and check. A very broad request to discover every useful implication leaves relevance, validity and cost underspecified.</p>
+<p>For the assistant, write a concrete test contract: which asset revisions exist; which relation directions are queried; what evidence may be retrieved; how contradictory manuals are handled; what counts as a correct answer; and which actions remain outside the system's authority. Include rare exceptions and held-out query forms. A fluent response to an easy familiar question should not dominate that evaluation.</p>
+<p>Choose interventions by the observed failure. Missing facts call for better evidence acquisition. Facts that fail to be selected call for better retrieval. Complete evidence that is misinterpreted calls for stronger evidence use or inference checking. Known facts that are inaccessible through new queries motivate augmentation, episodic access or trained test-time reasoning. The interventions can be combined, but their contribution needs a comparison that keeps information access explicit.</p>
+<p>The chapter's conclusion is a distinction, not a ranking of all learning modes. A parameterized model can supply durable abstractions; a store can preserve episodes; context can expose the premises of a new question; and computation can make their implications accessible. Reliability depends on testing the whole route from source to answer under the relevant constraints.</p></section>
+
+<section id="lab"><h2>24. Run finite checks on access, deductions and coverage</h2>
+<p>The original program uses Python's standard library and makes no network calls. It reads explicit relation triples, materializes a declared transitive rule, calculates an empirical restricted-predictor optimum, and evaluates the conditional-probability fixtures. It does not simulate model training, a retrieval service or biological learning.</p>
+<p>The fact operations retain set semantics: duplicate facts carry no extra weight, multiple inverse matches are all returned, and an empty store produces no matches. Relation names and identifiers must be nonempty strings. The deduction loop applies only is-a transitivity and accepts 0–20 synchronous rounds; zero means no deduction. Its pair scan is appropriate for a small teaching graph, not a scalable inference service.</p>
+<p>The log-loss function accepts a nonempty explicit list of examples. Each example contains exactly three integer bits and one integer-bit label; booleans are excluded. Its predictor sees only the first feature. It computes the empirical optimum by counting labels in each first-feature group, without an optimization library. If a label has count zero, its $0\log0$ contribution is interpreted as zero. Deterministic groups can assign probability one to the observed label, yielding zero loss.</p>
+<p>For evidence accuracy, the three supplied probabilities must be finite Python integer or float values convertible to binary64 and lying in $[0,1]$. The enumeration function accepts integer counts no larger than one billion, with a positive population and nonnegative attempt count; distinct attempts cannot exceed population. These implementation bounds keep the demonstrator's numerical contract explicit. The mathematical coverage identities are not limited to that bound.</p>
+<p>For independent replacement draws, the program computes $-\operatorname{expm1}(k\operatorname{log1p}(-1/N))$ instead of directly subtracting $(1-1/N)^k$ from one. The functions <code>log1p</code> and <code>expm1</code> avoid cancellation when their arguments are near zero. Population one is handled separately because $\log(1-1/N)$ would be $\log0$. Zero attempts still give zero coverage.</p>
+<p>Save or download <a href="chapter06.py">chapter06.py</a> and run <code>python chapter06.py</code>. The embedded program is the same file; its checks reject malformed triples, impossible counts, booleans, nonfinite probabilities and huge integers outside the finite contract.</p>
+<pre><code class="language-python">&quot;&quot;&quot;Original finite fixtures for context, deduction and accessible information.
+
+No model, retrieval service, training procedure or biological system is simulated.
+Run with Python 3; standard library only.
+&quot;&quot;&quot;
+import math
+
+
+def probability(value):
+    &quot;&quot;&quot;Accept finite binary64 real inputs in [0, 1], excluding bool.&quot;&quot;&quot;
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(&#x27;expected a real probability&#x27;)
+    try:
+        result = float(value)
+    except OverflowError as error:
+        raise ValueError(&#x27;probability is outside float range&#x27;) from error
+    if not math.isfinite(result) or not 0 &lt;= result &lt;= 1:
+        raise ValueError(&#x27;probability must be finite and in [0, 1]&#x27;)
+    return result
+
+
+def bounded_count(value, minimum=0):
+    if type(value) is not int or not minimum &lt;= value &lt;= 10**9:
+        raise ValueError(&#x27;expected an integer count within the stated bound&#x27;)
+    return value
+
+
+def fact_set(rows):
+    if not isinstance(rows, (list, tuple, set, frozenset)):
+        raise ValueError(&#x27;facts must be a finite explicit collection&#x27;)
+    facts = set()
+    for row in rows:
+        if not isinstance(row, (tuple, list)) or len(row) != 3:
+            raise ValueError(&#x27;each fact must be a subject/relation/object triple&#x27;)
+        if any(type(x) is not str or not x.strip() for x in row):
+            raise ValueError(&#x27;fact fields must be nonempty strings&#x27;)
+        facts.add(tuple(row))
+    return facts
+
+
+def inverse_lookup(rows, relation, target):
+    &quot;&quot;&quot;Read explicit facts backwards; no claim about a neural model&#x27;s recall.&quot;&quot;&quot;
+    facts = fact_set(rows)
+    if any(type(x) is not str or not x.strip() for x in (relation, target)):
+        raise ValueError(&#x27;query fields must be nonempty strings&#x27;)
+    return sorted({a for a, r, b in facts if r == relation and b == target})
+
+
+def deduce_is_a(rows, rounds=1):
+    &quot;&quot;&quot;Apply stated is-a transitivity for a bounded number of synchronous rounds.&quot;&quot;&quot;
+    facts = fact_set(rows)
+    if type(rounds) is not int or not 0 &lt;= rounds &lt;= 20:
+        raise ValueError(&#x27;rounds must be an integer from 0 to 20&#x27;)
+    # ponytail: O(m^2) pair scans for small teaching graphs; use adjacency indexes
+    # if this is repurposed for large graphs, with explicit work/storage budgets.
+    for _ in range(rounds):
+        additions = {(a, &#x27;is_a&#x27;, c) for a, r, b in facts for x, s, c in facts
+                     if r == s == &#x27;is_a&#x27; and b == x}
+        if additions &lt;= facts:
+            break
+        facts |= additions
+    return sorted(facts)
+
+
+def first_coordinate_nll(rows):
+    &quot;&quot;&quot;Empirical optimum log loss for all Bernoulli maps of the first bit.
+
+    Each row is (three binary features, binary label). Natural logarithms.
+    The family can ignore all features by using the same probability for both
+    first-bit values. This computes its optimum, not a fitted neural model.
+    &quot;&quot;&quot;
+    if not isinstance(rows, (tuple, list)) or not rows:
+        raise ValueError(&#x27;expected nonempty explicit examples&#x27;)
+    groups = {}
+    for row in rows:
+        if not isinstance(row, (tuple, list)) or len(row) != 2:
+            raise ValueError(&#x27;expected a feature/label pair&#x27;)
+        features, label = row
+        if not isinstance(features, (tuple, list)) or len(features) != 3:
+            raise ValueError(&#x27;expected three binary features&#x27;)
+        if any(type(x) is not int or x not in (0, 1)
+               for x in (*features, label)):
+            raise ValueError(&#x27;features and label must be integer bits&#x27;)
+        counts = groups.setdefault(features[0], [0, 0])
+        counts[label] += 1
+    total = len(rows)
+    loss = 0.0
+    for counts in groups.values():
+        size = sum(counts)
+        for count in counts:
+            if count:
+                loss -= count / total * math.log(count / size)
+    return loss
+
+
+def evidence_accuracy(recall, with_evidence, without_evidence):
+    &quot;&quot;&quot;Total probability under three specified conditional rates.&quot;&quot;&quot;
+    r, a, b = map(probability, (recall, with_evidence, without_evidence))
+    return r * a + (1 - r) * b
+
+
+def enumeration_success(population, attempts, distinct=True):
+    &quot;&quot;&quot;Uniform candidates; distinct draws or independent draws with replacement.&quot;&quot;&quot;
+    n, k = bounded_count(population, 1), bounded_count(attempts)
+    if type(distinct) is not bool:
+        raise ValueError(&#x27;distinct must be bool&#x27;)
+    if distinct:
+        if k &gt; n:
+            raise ValueError(&#x27;distinct attempts cannot exceed population&#x27;)
+        return k / n
+    if n == 1:
+        return float(k &gt; 0)
+    return -math.expm1(k * math.log1p(-1 / n))
+
+
+def demo():
+    facts = [(&#x27;pump&#x27;, &#x27;requires&#x27;, &#x27;lockout&#x27;),
+             (&#x27;pump&#x27;, &#x27;is_a&#x27;, &#x27;powered_asset&#x27;),
+             (&#x27;powered_asset&#x27;, &#x27;is_a&#x27;, &#x27;maintained_asset&#x27;)]
+    assert inverse_lookup(facts, &#x27;requires&#x27;, &#x27;lockout&#x27;) == [&#x27;pump&#x27;]
+    assert inverse_lookup(facts, &#x27;requires&#x27;, &#x27;pump&#x27;) == []
+    assert (&#x27;pump&#x27;, &#x27;is_a&#x27;, &#x27;maintained_asset&#x27;) in deduce_is_a(facts)
+    assert (&#x27;lockout&#x27;, &#x27;requires&#x27;, &#x27;pump&#x27;) not in deduce_is_a(facts)
+    assert deduce_is_a([], 20) == []
+    assert deduce_is_a(facts, 0) == sorted(fact_set(facts))
+    original = [((u, v, 0), u ^ v) for u in (0, 1) for v in (0, 1)]
+    exposed = [((u ^ v, u, v), u ^ v) for u in (0, 1) for v in (0, 1)]
+    initial, transformed = map(first_coordinate_nll, (original, exposed))
+    assert math.isclose(initial, math.log(2)) and transformed == 0
+    assert evidence_accuracy(0, 0.9, 0.2) == 0.2
+    assert evidence_accuracy(1, 0.9, 0.2) == 0.9
+    assert math.isclose(evidence_accuracy(.8, .9, .2), .76)
+    assert enumeration_success(10, 3) == .3
+    assert math.isclose(enumeration_success(10, 3, False), .271)
+    assert enumeration_success(1, 0, False) == 0
+    assert enumeration_success(1, 5, False) == 1
+    bad_calls = [
+        lambda: probability(True), lambda: probability(float(&#x27;nan&#x27;)),
+        lambda: probability(float(&#x27;inf&#x27;)), lambda: probability(10**1000),
+        lambda: evidence_accuracy(-.1, .9, .2),
+        lambda: inverse_lookup([(&#x27;x&#x27;, &#x27;r&#x27;)], &#x27;r&#x27;, &#x27;x&#x27;),
+        lambda: inverse_lookup([(&#x27;x&#x27;, &#x27;r&#x27;, &#x27;&#x27;)], &#x27;r&#x27;, &#x27;x&#x27;),
+        lambda: deduce_is_a(facts, True), lambda: deduce_is_a(facts, 21),
+        lambda: first_coordinate_nll([]),
+        lambda: first_coordinate_nll([((0, True, 0), 1)]),
+        lambda: enumeration_success(0, 1),
+        lambda: enumeration_success(10, 11),
+        lambda: enumeration_success(True, 1),
+        lambda: enumeration_success(10**1000, 1),
+        lambda: enumeration_success(10, 1, &#x27;yes&#x27;),
+    ]
+    for call in bad_calls:
+        try:
+            call()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(&#x27;invalid input was accepted&#x27;)
+    print(&#x27;inverse explicit lookup:&#x27;, inverse_lookup(facts, &#x27;requires&#x27;, &#x27;lockout&#x27;))
+    print(&#x27;one-round deduction:&#x27;, (&#x27;pump&#x27;, &#x27;is_a&#x27;, &#x27;maintained_asset&#x27;) in deduce_is_a(facts))
+    print(f&#x27;restricted NLL: {initial:.6f} -&gt; {transformed:.6f} nats&#x27;)
+    print(f&#x27;conditional evidence accuracy: {evidence_accuracy(.8, .9, .2):.2f}&#x27;)
+    print(f&#x27;candidate coverage: {enumeration_success(10, 3):.3f} distinct; &#x27;
+          f&#x27;{enumeration_success(10, 3, False):.3f} replacement&#x27;)
+    print(&#x27;All chapter 6 finite-fixture and input checks passed.&#x27;)
+
+
+if __name__ == &#x27;__main__&#x27;:
+    demo()
+</code></pre>
+<h3>Expected output</h3><pre class="output"><code class="language-text">inverse explicit lookup: [&#x27;pump&#x27;]
+one-round deduction: True
+restricted NLL: 0.693147 -&gt; 0.000000 nats
+conditional evidence accuracy: 0.76
+candidate coverage: 0.300 distinct; 0.271 replacement
+All chapter 6 finite-fixture and input checks passed.
+</code></pre>
+<p>Change the first-coordinate family to inspect both original bits and the XOR restriction vanishes. Remove a premise from the graph and the corresponding deduction vanishes. These modifications alter assumptions in a declared model; they are not measurements of an actual transformer's capacities. Exercise 4 turns the evidence calculation into an end-to-end evaluation design.</p></section>
+
+<section id="exercises"><h2>25. Exercises with complete solutions</h2>
+<div class="exercise"><h3>Exercise 1 — Inverse relations and information direction</h3>
+<p>A store contains $(\mathrm{Luma},\mathrm{requires},\mathrm{Kestrel})$ and $(\mathrm{Mira},\mathrm{requires},\mathrm{Kestrel})$. State the inverse query's result and explain why simply swapping arguments of “requires” is invalid. Separately, let $A$ be equally likely to be Luma or Mira, with $P(B=\mathrm{Kestrel}\mid A=\mathrm{Luma})=1$ and $P(B=\mathrm{Kestrel}\mid A=\mathrm{Mira})=.5$. Compute the inverse conditional.</p>
+<details class="solution"><summary>Solution</summary>
+<p>The explicit inverse query asks for every subject $a$ such that $\mathrm{requires}(a,\mathrm{Kestrel})$ is present, giving the set $\{\mathrm{Luma},\mathrm{Mira}\}$. The equivalent inverse relation is “is required by.” The facts do not assert that Kestrel itself requires either pump. Inversion changes the relation's interpretation as well as its argument direction.</p>
+<p>For the separate probabilistic model, total probability gives $P(B=\mathrm{Kestrel})=.5(1)+.5(.5)=.75$. Therefore $P(A=\mathrm{Luma}\mid B=\mathrm{Kestrel})=1(.5)/.75=2/3$ and $P(A=\mathrm{Mira}\mid B=\mathrm{Kestrel})=.5(.5)/.75=1/3$. The forward certainty for Luma did not make the inverse unique because Mira could also produce Kestrel. A model's forward completion score therefore cannot be interpreted as an inverse answer score without the competing possibilities and prior.</p></details></div>
+
+<div class="exercise"><h3>Exercise 2 — Accessible information without a new observation</h3>
+<p>Enumerate the XOR fixture's four examples. Derive the best unconditional and first-coordinate conditional log loss before and after $T=(U\mathbin{\oplus}V,U,V)$. Explain why this is not a violation of data processing and identify what changes if a teacher has external knowledge.</p>
+<details class="solution"><summary>Solution</summary>
+<p>The equally likely $(U,V,Y)$ triples are $(0,0,0),(0,1,1),(1,0,1),(1,1,0)$. The marginal label is fair. An unconditional Bernoulli predictor with label-one probability $q\in(0,1)$ has loss $-\tfrac12\log q-\tfrac12\log(1-q)$. Its derivative is $-1/(2q)+1/(2(1-q))$, zero only at $q=1/2$; the second derivative is positive. The optimum is $\log2$.</p>
+<p>Before transformation, the two first-feature groups $U=0$ and $U=1$ each contain one zero and one one, so optimizing a separate Bernoulli parameter for each group gives the same loss $\log2$. Usable information for this family is $\log2-\log2=0$.</p>
+<p>After transformation, the first feature is $Y$, calculated from the already present bits. The predictor assigns probability one to that feature's value, so every observed label has negative log probability zero. Usable information is now $\log2$. The transformed features retain $U,V$, and both original and transformed full vectors determine $Y$. Thus $H(Y\mid X)=H(Y\mid T)=0$ and their Shannon mutual information with $Y$ is $\log2$. Only access by the restricted family changed.</p>
+<p>The preprocessing rule uses no additional observation and is fixed independently of the dataset labels; XOR is the declared target rule. If augmentation uses a teacher state $\theta_T$ containing independent knowledge or a live external source, it is not generally a deterministic function of $D$ alone. Include those inputs in the information accounting or specify the conditional independence needed for data processing. Otherwise the premise of the objection is false.</p></details></div>
+
+<div class="exercise"><h3>Exercise 3 — Bounded deduction and invalid syllogisms</h3>
+<p>Start from is-a edges $a\to b$, $b\to c$, $c\to d$. List the new facts after one synchronous transitivity round and after two rounds. Count all strict implied pairs in an $n$-node chain. Give a countermodel to $A\subseteq B$, some $B$ is $C$, therefore some $A$ is $C$.</p>
+<details class="solution"><summary>Solution</summary>
+<p>The first round sees only original edges. It adds $a\to c$ and $b\to d$, but not $a\to d$: no original middle pair connects $a$ directly through $c$ or $b$ directly through $d$. The second round can compose $a\to c$ with $c\to d$, or $a\to b$ with $b\to d$, adding $a\to d$. The set removes the duplicate derivation. No reverse edges follow.</p>
+<p>In a chain of $n$ distinct nodes, the first node has $n-1$ later targets, the second $n-2$, and the last zero. Hence full strict closure contains $\sum_{j=1}^{n-1}j=n(n-1)/2$ pairs. The $n-1$ explicit adjacent edges are included in that total; genuinely new pairs number $(n-1)(n-2)/2$. Materializing consequences can therefore grow quadratically from a linear input.</p>
+<p>Take $A=\{a\}$, $B=\{a,b\}$ and $C=\{b\}$. Then $A\subseteq B$ and $b$ witnesses $B\cap C\ne\varnothing$, but $A\cap C=\varnothing$. The conclusion is invalid. Universal subset transitivity is a different valid rule. An empty $A$ supplies an even simpler counterexample to any unlicensed existential conclusion, but this nonempty example shows that merely adding existence does not repair the particular invalid syllogism.</p></details></div>
+
+<div class="exercise"><h3>Exercise 4 — Diagnose a retrieval benchmark</h3>
+<p>A constructed system has complete-evidence recall $.8$, accuracy $.9$ when complete evidence arrives and accuracy $.2$ otherwise. Compute overall accuracy and the gain from perfect recall with unchanged evidence use. Design a comparison isolating evidence use. Explain why two premises each retrieved with probability $.8$ need not give complete recall $.8$.</p>
+<details class="solution"><summary>Solution</summary>
+<p>The two event classes partition the population, so accuracy is $.8(.9)+.2(.2)=.76$. Perfect recall changes the result to $.9$, a gain of .14. This does not assert the system has such rates; they are the stipulated fixture. If it already guesses well without evidence, overall accuracy can exceed recall.</p>
+<p>To isolate evidence use, give every compared method the same verified relevant episodes, with the same distractors and revision labels, and hold the query set and scoring rule fixed. Measure $P(\text{correct}\mid E)$ in that controlled condition. Separately evaluate each realistic retriever's complete-evidence recall and compare end-to-end performance. An oracle-evidence improvement must not be reported as a retrieval improvement.</p>
+<p>If the two premise events are independent, their joint probability is $.8^2=.64$. Without independence, their intersection can range from $.6$ to $.8$: the lower bound is $.8+.8-1$, and the upper bound is the smaller marginal. Fully correlated retrieval can yield .8; sufficiently opposed failures yield .6. Report joint complete-evidence recall directly when possible.</p>
+<p>Score the latest-rule exception separately. A system retrieving many ordinary premises but missing the exception may have high item recall and poor decision correctness. The benchmark must define which evidence is necessary for the particular answer rather than count arbitrary relevant-looking passages.</p></details></div>
+
+<div class="exercise"><h3>Exercise 5 — Candidate coverage, verification and cost</h3>
+<p>One correct entity lies among ten. Compare three uniform distinct candidates with three independent replacement candidates. Conditional on including the correct entity and two wrong ones, take correct acceptance $.9$ and false acceptance $.1$ per wrong candidate, with all three acceptance decisions mutually independent. Compute the probability of accepting only the correct candidate. Finally find the query-volume crossover for offline cost120, offline per-query cost1 and retrieval per-query cost4.</p>
+<details class="solution"><summary>Solution</summary>
+<p>Distinct coverage is $3/10=.3$. Replacement coverage is $1-(9/10)^3=1-.729=.271$. These are probabilities of inclusion, not of selecting the right final answer. They require a uniform universe with one correct entity and the specified sampling schemes.</p>
+<p>Conditional on that candidate set, accepting the correct one and rejecting both wrong ones has probability $.9(.9)^2=.729$. The product requires the stated independence of wrong-candidate decisions and independence of correct acceptance from those decisions. If a verifier shares one false premise across candidates, this calculation need not apply. Multiplying .3 by .729 would describe an additional end-to-end model only if the conditional candidate composition and acceptance assumptions hold whenever inclusion occurs; they were not supplied for every replacement outcome.</p>
+<p>Offline total is $120+Q$ and retrieval total is $4Q$. Equality requires $120=3Q$, so $Q=40$. Offline is cheaper above40 queries and retrieval below40 under this accounting. Equal answer quality is not implied. Index fixed costs, repeated updates and error penalties would change the comparison; an old-manual augmentation that becomes obsolete before40 queries violates the assumed one-time cost model.</p></details></div>
+
+<div class="exercise"><h3>Exercise 6 — Transfer, repeated traces and causal evidence</h3>
+<p>A study trains factual knowledge over sets A and B, but trains reasoning traces only over A. What kind of held-out test does reasoning over B provide? For three binary traces each correct with probability $.8$, compute majority accuracy under independent errors and under perfect dependence. Explain why a correlation between resting-state reinstatement and later replanning does not establish a necessary causal mechanism.</p>
+<details class="solution"><summary>Solution</summary>
+<p>Reasoning over B tests transfer of the trained reasoning process to already acquired facts whose deductions were not practised in the later reasoning training. It is not a test of answering questions about never-observed facts. Keep knowledge acquisition and reasoning exposure in separate split records. A stronger teacher conditioned on answers can also change the training route; attribute the full route rather than only its final RL stage.</p>
+<p>Under independent equally accurate binary traces, a correct majority occurs in the four disjoint cases of three correct or one of three placements of a single incorrect trace. Its probability is $.8^3+3(.8)^2(.2)=.512+.384=.896$. Under perfect dependence all traces are correct together or wrong together, so the majority is correct with probability .8. Independent wording does not establish independent errors, and synthetic-data training is not generally this majority-vote procedure.</p>
+<p>A correlation can arise from reinstatement contributing to planning, planning-related processes contributing to reinstatement, or a common influence affecting both. The reported fMRI study uses design controls and selective associations, which make some alternatives less plausible without eliminating every causal explanation. To establish necessity would require an appropriate intervention disrupting the proposed mechanism while controlling competing effects; to establish sufficiency would require a different intervention. A software analogy adds no causal identification to the neural measurement.</p>
+<p>For our assistant, verify the newly generated deductions against a known premise graph, measure old-fact regressions, and distinguish observation from explanation. The corresponding experiment is finite and reproducible. It supplies no certificate about a person's memory, brain health or clinical outcome.</p></details></div></section>
+
+<section id="references"><h2>26. References and evidence boundaries</h2>
+<p>These are the actual versions used for the adjacent claims. PDF page numbers count from the first PDF page, including title pages. The lecture is a locally machine-transcribed source; no human listening or publisher-caption accuracy certificate is implied. The neuroscience references support measured study findings and explicit limits, not a mechanism-equivalence claim.</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=dJtHauhRasc">Lampinen, Distinct Modes of Generalization from Parameters and Context</a>, CS25 V6, May 7, 2026: lecture sequence, conceptual distinctions and attributed Q&A.</li>
+<li><a href="https://arxiv.org/pdf/2309.12288v1">Berglund et al., The Reversal Curse</a>, September 2023 v1, pp. 1–2: one-directional factual finetuning and inverse-access failures.</li>
+<li><a href="https://arxiv.org/pdf/2212.07677v1">von Oswald et al., Transformers Learn In-context by Gradient Descent</a>, December 2022 v1, pp. 1–2: restricted regression/self-attention constructions.</li>
+<li><a href="https://arxiv.org/pdf/2505.00661v3">Lampinen et al., On the Generalization of Language Models from In-context Learning and Finetuning: a Controlled Study</a>, November 2025 v3, pp. 1–7: controlled novel facts, scoring and task-specific augmentation comparisons.</li>
+<li><a href="https://arxiv.org/pdf/2509.16189v3">Lampinen et al., Latent Learning: Episodic Memory Complements Parametric Learning by Enabling Flexible Reuse of Experiences</a>, December 2025 v3, pp. 1–5,11–18: oracle episodic access and within-example contextual-learning conditions.</li>
+<li><a href="https://arxiv.org/pdf/2510.26745v1">Noroozizadeh et al., Deep Sequence Models Tend to Memorize Geometrically; It Is Unclear Why</a>, October 2025 v1, pp. 1–2: controlled graph-task representations.</li>
+<li><a href="https://arxiv.org/pdf/2002.10689v1">Xu et al., A Theory of Usable Information under Computational Constraints</a>, February 2020 v1, pp. 2–4: predictive-family information and optional ignorance.</li>
+<li><a href="https://cognition.princeton.edu/sites/g/files/toruqf3386/files/documents/lbt.pdf">Lombrozo, Learning by Thinking in Natural and Artificial Minds</a>, Trends in Cognitive Sciences 2024, pp. 1–3 of the author-hosted PDF: review and representational interpretation.</li>
+<li><a href="https://arxiv.org/pdf/2604.01430v1">Chaudhry, Thiagarajan and Lampinen, Improving Latent Generalization Using Test-time Compute</a>, April 2026 v1, pp. 1–10: knowledge SFT, answer-conditioned bootstraps, correctness-feedback RL and bounded results.</li>
+<li><a href="https://cdn.elifesciences.org/articles/32548/elife-32548-v1.pdf">Momennejad et al., Offline Replay Supports Planning in Human Reinforcement Learning</a>, eLife 2018, actual retained 52-page manuscript pp. 1,4,8,16,18,28,30: reinstatement/revaluation association and explicit correlational limitations.</li>
+<li><a href="https://cdn.elifesciences.org/articles/56911/elife-56911-v1.pdf">Eldar et al., The Roles of Online and Offline Replay in Planning</a>, eLife 2020, pp. 1,11–12: task-specific replay/strategy findings and MEG methods.</li>
+<li><a href="https://arxiv.org/pdf/2207.07051v1">Dasgupta et al., Language Models Show Human-like Content Effects on Reasoning</a>, July 2022 v1, pp. 1–2: content-dependent performance in specified tasks.</li>
+</ul>
+<p>The inspected official slide stills were pages 12, 17, 18, 28, 33, 34, 38, 46. The primary figures inspected were controlled-study p. 5, latent-learning p. 15 and test-time-compute pp8–9. No unviewed animation, video frame or exact digitized plot measurement is used as evidence. Detailed historical brain examples beyond the retained claim pages are omitted rather than generalized.</p></section>
+<!-- BOOK-CONTENT-END --></article><nav class="page-turn" aria-label="Chapter navigation"><a rel="prev" href="lecture-04-training-at-gpu-scale.html">Previous available chapter</a><a href="index.html">Lecture index</a><span>Further chapters pending</span></nav></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

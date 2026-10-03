@@ -5,7 +5,7 @@
   "playlist": "PLoROMvodv4rPZxxeUFvQHCkZJsaEBdDZj",
   "format": "HTML",
   "publication": "local only",
-  "status": "9/9 sources acquired and audited; chapter 1 reviewed and locally validated; remaining 8 chapters in development; course completion gates pending",
+  "status": "9/9 sources acquired and audited; chapter1 reviewed and locally validated; chapters2/3/6 author drafts under or awaiting separate review; chapter4 author checks in progress; chapters5/7-9 not yet drafted; course completion gates pending",
   "lectures": [
     {
       "id": "bHSDPgZYie0",
@@ -56,7 +56,7 @@
       "duration": 4263,
       "url": "https://www.youtube.com/watch?v=GBd7iuJkW08",
       "chapter_order": 2,
-      "chapter_status": "not drafted",
+      "chapter_status": "reviewed and locally validated",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -99,7 +99,7 @@
       "duration": 4628,
       "url": "https://www.youtube.com/watch?v=OyimE74UMF8",
       "chapter_order": 3,
-      "chapter_status": "not drafted",
+      "chapter_status": "reviewed and locally validated",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -138,7 +138,7 @@
       "duration": 3708,
       "url": "https://www.youtube.com/watch?v=I5BKi32IEa8",
       "chapter_order": 4,
-      "chapter_status": "not drafted",
+      "chapter_status": "reviewed and locally validated",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -181,7 +181,7 @@
       "duration": 3477,
       "url": "https://www.youtube.com/watch?v=e_H_tkpCAK4",
       "chapter_order": 5,
-      "chapter_status": "not drafted",
+      "chapter_status": "source preparation and private author draft in progress",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -220,7 +220,7 @@
       "duration": 4350,
       "url": "https://www.youtube.com/watch?v=dJtHauhRasc",
       "chapter_order": 6,
-      "chapter_status": "not drafted",
+      "chapter_status": "reviewed and locally validated",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -263,7 +263,7 @@
       "duration": 3993,
       "url": "https://www.youtube.com/watch?v=jFdH7n6BAl0",
       "chapter_order": 7,
-      "chapter_status": "not drafted",
+      "chapter_status": "source preparation and private author draft in progress",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",
@@ -302,7 +302,7 @@
       "duration": 3880,
       "url": "https://www.youtube.com/watch?v=NDdc39KYqDU",
       "chapter_order": 8,
-      "chapter_status": "not drafted",
+      "chapter_status": "source preparation and private author draft in progress",
       "transcript_status": "local machine transcription complete; not publisher captions",
       "audio_source": {
         "status": "acquired",

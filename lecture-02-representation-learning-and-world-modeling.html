@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><meta name="book-content-sha256" content="6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671"><title>From Representation Learning to World Modeling · CS25: Transformers United V6</title>
+<link rel="stylesheet" href="assets/book.css"><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="assets/mathjax-tex-svg.js"></script><script defer src="assets/book.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html">CS25: Transformers United V6 · Spring 2026</a><nav class="course-nav" aria-label="Book"><a href="index.html">Lectures</a><a href="source-map.html">Source map</a><a href="references.html">References</a><a href="numerical-lab.html">Numerical lab</a></nav></header>
+<div class="layout"><aside class="toc" id="chapter-toc" aria-label="On this page"><h2>On this page</h2></aside><main id="main">
+<div class="reading-tools" aria-label="Reading controls"><button id="theme-toggle" aria-pressed="false">Light theme</button><button id="text-toggle" aria-pressed="false">Larger text</button><button id="solutions-toggle" aria-pressed="false">Expand solutions</button><button id="print-page">Print with solutions</button></div>
+<article id="chapter-content"><!-- BOOK-CONTENT-START --><h1>From Representation Learning to World Modeling</h1>
+<p class="lead">A visual controller can recognize a block and still fail to predict what happens when it pushes. Learning a compact representation, predicting its dynamics, and choosing an admissible action are three different problems. Joint embedding predictive architectures connect them, but each connection carries assumptions that determine what the controller can safely infer.</p>
+<p>Chapter 2 of <strong>CS25: Transformers United V6</strong>. The April 9, 2026 recording by Heejeong Nam and Lucas Maes supplies the topic sequence. Mathematical developments, numerical cases and exercises below are independent teaching constructions. Paper results are attributed beside the claims they support; reported benchmarks are dated experiments.</p>
+
+<section id="world-model"><h2>1. Decide what a world model must preserve <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=117">1:57</a></h2>
+<p>Consider a robot that moves a small circular pusher against a T-shaped block. A camera supplies a current image and an image of the desired block pose. The robot must move the block to that pose while keeping its commands within the actuator's range. A prediction that looks plausible but moves the block through the pusher is useless for choosing contact actions. A prediction that gets the final block location right but loses its orientation can also produce the wrong plan.</p>
+<p>Let $s_t\in\mathcal S$ denote the physical state at discrete time $t$: positions, velocities, contact conditions and any other variables needed by the environment. The observation $o_t\in\mathcal O$ is the camera image, and $a_t\in\mathcal A$ is the command applied between times $t$ and $t+1$. The sets $\mathcal S$, $\mathcal O$ and $\mathcal A$ are respectively the state, observation and action spaces. In the running case an admissible action might be a two-dimensional displacement with a fixed maximum magnitude. The precise actuator convention must be specified by an implementation; an image alone does not specify it.</p>
+<p>A <em>world model</em> predicts consequences of actions in an environment. A probabilistic physical model could describe a transition distribution $p(s_{t+1}\mid s_t,a_t)$. Our controller does not observe $s_t$ directly. A single image may show where the block is but fail to reveal whether it is moving toward or away from the pusher. This is <em>partial observability</em>: the measured observation need not contain all state information needed for prediction.</p>
+<p>An encoder $e_\theta:\mathcal O\to\mathbb R^d$, with learned parameters $\theta$ and positive integer width $d$, computes a latent vector $z_t=e_\theta(o_t)$. A <em>latent representation</em> is this internal numerical description. It may capture useful state information without having coordinates named “position” or “velocity.” It may also discard a necessary variable. The existence of an encoder does not make $z_t$ a complete physical state.</p>
+<p>To retain motion information, define an observed history $\mathcal H_t=(o_{t-L+1:t},a_{t-L+1:t-1})$ for positive integer length $L$. A colon denotes all indices in an inclusive interval. A latent predictor $f_\phi$ with parameters $\phi$ takes encoded history and the next command:</p>
+<div class="equation">$$\widehat z_{t+1}=f_\phi(z_{t-L+1:t},a_{t-L+1:t}),\qquad z_t=e_\theta(o_t).$$</div>
+<p>The final action in the predictor input is $a_t$, whose consequences are being predicted. No future observed image is an input. A finite history suffices only if relevant dependencies can be recovered within that window. If friction varies with an unobserved surface condition, increasing $L$ may not solve the ambiguity. A probabilistic predictor can preserve uncertainty about that condition; a deterministic point predictor must choose a summary of the possible outcomes.</p>
+<p>The controller needs <em>task sufficiency</em>: the representation should distinguish states whose admissible actions or task outcomes differ. Encoding the wall texture precisely is unnecessary if it has no effect on pushing. Discarding block orientation is damaging if orientation determines contact geometry or the goal. This distinction is determined by the task and dynamics, not by whether a latent vector has high variance or produces an attractive decoded image.</p>
+<p>Video generators offer another route: predict future pixels conditioned on the present and actions. Such models can expose detailed imagined scenes, but generating convincing pixels does not itself establish valid contact mechanics. Conversely, compact latent prediction can support control without generating an image at every imagined step. The relevant question is what each prediction preserves and how that information is tested.</p>
+</section>
+
+<section id="jepa"><h2>2. Learn compatibility in representation space <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=289">4:49</a></h2>
+<p>A <em>joint embedding predictive architecture</em>, abbreviated JEPA, learns representations by predicting a target representation from a context representation. The context may be a partially visible video, and the target may be the hidden region or a future frame. “Joint embedding” indicates that related observations are represented in a compatible feature space; “predictive” indicates that one representation is inferred from the other. This describes a training arrangement, not a unique neural backbone. Transformers can implement its encoder and predictor.</p>
+<p>Write context as $x$, target as $y$, and conditioning information as $c$. The condition may specify which region is hidden or which action occurs. A context encoder $e_\theta$, target encoder $e_{\bar\theta}$ and predictor $f_\phi$ define a compatibility energy</p>
+<div class="equation">$$E_{\theta,\bar\theta,\phi}(x,y;c)=D\!\left(f_\phi(e_\theta(x),c),e_{\bar\theta}(y)\right),$$</div>
+<p>where $D$ is a nonnegative discrepancy between feature vectors. Squared Euclidean distance is one possible choice; absolute distance is another. Low energy means the predicted and measured target codes agree under that discrepancy. It is not automatically a normalized probability, a thermodynamic energy, or a calibrated measure of confidence.</p>
+<p>The representation-space idea is to spend capacity on predictable structure rather than require the predictor to reproduce every pixel. A moving leaf, sensor noise or a highlight may be hard to predict precisely and irrelevant to pushing. Yet low-level details can matter: a small edge displacement may determine whether contact occurs. Learned abstraction must therefore be evaluated, rather than assumed beneficial because it removes pixels. <a href="https://arxiv.org/pdf/2404.08471v1">V-JEPA, PDF pp. 3–4</a>, gives a concrete masked-video implementation of this framework and its target update rule.</p>
+<p>There is an immediate degeneracy when both representations can change freely. Set every encoded observation to the same vector $b\in\mathbb R^d$, and let the predictor output $b$ for every input. Then squared prediction error is zero for every training pair:</p>
+<div class="equation">$$e_\theta(o)=b,\quad f_\phi(\cdot)=b\quad\Longrightarrow\quad \|f_\phi(\cdot)-e_\theta(o_{\mathrm{target}})\|_2^2=0.$$</div>
+<p>This is <em>representation collapse</em>: different observations become indistinguishable. The controller cannot tell an already aligned block from a displaced one. Training has solved the numerical objective while destroying the information needed to act. The issue is not an unusually unlucky initialization; a collapsed solution is genuinely admitted by the bare objective.</p>
+<p>Two demands must consequently be balanced. The code should be predictable from appropriate context, and it should remain informative. The first demand supplies dynamics structure; the second blocks trivial agreement. Neither requires that every observed nuisance remain in the code. The lecture credits LeCun's 2022 vision for the JEPA framework. The mechanisms developed here are supported by the specific primary JEPA implementations cited locally, rather than by an assumed guarantee attached to that historical proposal.</p>
+</section>
+
+<section id="recipes"><h2>3. Separate three actual target recipes <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=437">7:17</a></h2>
+<p>A target encoder can be updated slowly, held fixed, or learned jointly under additional constraints. These are materially different choices. They change which quantities receive gradients, what knowledge enters before dynamics training, and which collapse mechanism is addressed.</p>
+<p>V-JEPA hides spatial regions over a video and predicts the missing feature representations. Its target encoder is an <em>exponential moving average</em>, or EMA, of the context encoder. If $\bar\theta_k$ denotes target parameters at optimization step $k$, a generic EMA update is $\bar\theta_{k+1}=\tau\bar\theta_k+(1-\tau)\theta_{k+1}$ with $0\leq\tau<1$. A large $\tau$ makes the target move slowly. A <em>stop-gradient</em> treats the target feature as a constant when differentiating the training loss; this does not mean that the target network never changes, because its EMA update is separate.</p>
+<p>The actual V-JEPA objective uses absolute feature error, not the squared-error objective used later for C-JEPA and LeWM. Its context encoder drops selected video patches represented as tokens, and its predictor receives learnable mask tokens containing spatiotemporal positions. A token here represents a small region spanning space and time; a mask token marks a region whose actual content is hidden. Contiguous spatial masks extend across time to reduce the shortcut of reading essentially the same patch in an adjacent frame. The EMA/stop-gradient arrangement is a particular empirically studied collapse-prevention recipe, not a theorem that every network using EMA learns useful physics. <a href="https://arxiv.org/pdf/2404.08471v1">V-JEPA, PDF pp. 3–4</a>.</p>
+<p>V-JEPA 2-AC adds action-conditioned prediction after visual pretraining. During this post-training phase, the visual encoder is frozen. The predictor receives encoded frames, actions and the robot's measured end-effector state. <em>Proprioception</em> means measurements of the agent's own configuration, such as joint positions or gripper state. These measurements can reveal information that is difficult to infer from the camera. The archived recipe trains with both a teacher-forcing loss and a short autoregressive rollout loss. <a href="https://arxiv.org/pdf/2506.09985v1">V-JEPA 2, PDF pp. 9–10</a>.</p>
+<p><em>Teacher forcing</em> means that a one-step predictor receives the actual encoded previous observation during training. During a free rollout, it receives its own predicted code instead. These input distributions differ. If a small prediction error changes the next input, further errors can accumulate. Training on rollout predictions addresses that mismatch locally; it does not guarantee arbitrarily long accurate simulation.</p>
+<p>DINO-WM also freezes its visual encoder, but uses pretrained DINOv2 patch features. Each image produces multiple spatial vectors rather than one global code. A time-causal transformer predicts the next frame's features from observed history, incorporating action and optional proprioceptive embeddings. Its optional decoder is trained separately to visualize features; image reconstruction is not required by its dynamics objective or planning loop. <a href="https://arxiv.org/pdf/2411.04983v1">DINO-WM, PDF pp. 4–5</a>.</p>
+<table><thead><tr><th>Recipe</th><th>Representation during dynamics learning</th><th>Prediction target and limitation</th></tr></thead><tbody>
+<tr><td>V-JEPA</td><td>Context learned; target updated by EMA</td><td>Masked video features; target stability does not by itself establish action control</td></tr>
+<tr><td>V-JEPA 2-AC</td><td>Pretrained visual encoder frozen</td><td>Action-conditioned future features; inherits perception and data coverage limits</td></tr>
+<tr><td>DINO-WM</td><td>Pretrained DINOv2 encoder frozen</td><td>Future patch features; detailed spatial codes increase rollout work</td></tr>
+</tbody></table>
+<p>For the pushing controller, freezing a useful encoder avoids the constant-code solution by removing the ability to make every target identical during dynamics training. It also prevents the encoder from adapting freely to newly relevant contact information. This trade-off motivates both object-centric replacements and later joint encoder–predictor learning.</p>
+</section>
+
+<section id="tasks"><h2>4. Use reasoning, control and rollout tasks to ask different questions <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=588">9:48</a></h2>
+<p>C-JEPA, called Causal-JEPA in the original paper, combines object-centric representations with a masked predictive objective. Its three recurring evaluation settings expose different weaknesses. PushT asks whether a planner can move a block to a target configuration. CLEVRER asks questions about interacting objects, including what would happen if one object were absent. PHYRE supplies physical scenes in which support, collision and motion can be inspected in predicted rollouts. These task names are not interchangeable measures of a single quantity called “understanding.”</p>
+<p>The distinction matters in the running case. A predictor may answer that the pusher caused a block to move while still producing latent distances unsuitable for optimization. Another model may find successful actions through a forgiving goal metric while mispredicting the block's rotation. A third may reconstruct plausible frames but fail at the actual task. A useful evaluation separates reasoning accuracy, execution success, prediction error and resource use before drawing a broader conclusion.</p>
+<p>A <em>counterfactual question</em> asks about an alternative scenario, such as removing an object before a collision. Answering a curated counterfactual question correctly is evidence about that benchmark. It is not equivalent to identifying the physical structural equations or recovering an intervention distribution from unrestricted observational data. In C-JEPA the masked training input removes access to selected latent object information. That operation changes what the predictor sees; it does not physically remove the corresponding object from the recorded world.</p>
+<p>The original C-JEPA experiments keep an object-centric encoder frozen while learning the predictor. An <em>object-centric representation</em> organizes the code into vectors intended to describe distinct entities. This introduces a structural bias: interactions can be expressed between entities rather than only between image patches. That structure can improve compactness, but it creates a prerequisite. The encoder must consistently separate and follow the relevant entities. If an occluded block disappears from its slot or two objects merge into one code, the predictor cannot recover a clean object interaction merely by attending to that code. <a href="https://arxiv.org/pdf/2602.11389v1">C-JEPA v1, PDF pp. 3–6</a>.</p>
+</section>
+
+<section id="slots"><h2>5. Bind image features to slots through competition <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=718">11:58</a></h2>
+<p>A <em>slot</em> is a feature vector assigned a role in a set of entity representations. Its array index is not necessarily a permanent semantic label. Slot zero might describe the block in one image and the pusher in another unless the encoder or temporal mechanism aligns them. Slot Attention is an iterative way to bind a set of input features to a set of slots. The attention here is between input features and slots: input features supply keys and values, while slots supply queries. It is cross-attention, even though attention is also used elsewhere inside encoders.</p>
+<p>Let $U\in\mathbb R^{N\times d_u}$ contain $N>0$ input feature rows, and $S\in\mathbb R^{K\times d_s}$ contain $K>0$ slot rows. The positive widths $d_u,d_s$ may differ. Learned linear maps produce keys $k(U)$, queries $q(S)$ and values $v(U)$ with a common attention width $D>0$. Define the score matrix $M\in\mathbb R^{N\times K}$ by</p>
+<div class="equation">$$M=\frac{k(U)q(S)^\top}{\sqrt D},\qquad A_{ij}=\frac{\exp M_{ij}}{\sum_{\ell=1}^{K}\exp M_{i\ell}}.$$</div>
+<p>The normalization is over slots $j$ for each input $i$. Hence $\sum_j A_{ij}=1$: slots compete to explain each input feature. This differs from the usual query-row attention convention in chapter 1 because the displayed matrix places inputs in rows and slots in columns. The axis determines the meaning; merely writing “softmax attention” conceals that decision.</p>
+<p>To update slot $j$, normalize its assignments over inputs:</p>
+<div class="equation">$$W_{ij}=\frac{A_{ij}}{\sum_{\ell=1}^{N}A_{\ell j}},\qquad \Delta_j=\sum_{i=1}^{N}W_{ij}\,v(U)_i.$$</div>
+<p>The second normalization makes $\Delta_j$ a weighted mean. In the paper's implementation a small positive offset is added to the assignments before aggregation for numerical stability. A shared gated recurrent unit, or GRU, combines the previous slot with its aggregate, and a shared per-slot multilayer perceptron can refine it. A GRU is a recurrent update using learned gates to control how much new information replaces previous state. The multilayer perceptron is a feedforward neural network applied independently to each slot. Repeating assignment and update allows initially similar slots to specialize. <a href="https://arxiv.org/pdf/2006.15055v1">Slot Attention, PDF pp. 2–3</a>.</p>
+<p>A two-input numerical example isolates the axes. Take scalar values $2$ and $10$, with scores $(\log3,0)$ for the first input and $(0,\log3)$ for the second. Their assignment rows are $(3/4,1/4)$ and $(1/4,3/4)$. Each slot has assignment mass one, so the updates are $(3/4)2+(1/4)10=4$ and $(1/4)2+(3/4)10=8$. The outputs are mixtures, not recovered object labels. Swapping the input rows leaves these updates unchanged; swapping slot columns swaps the outputs.</p>
+<p>This illustrates two symmetries. With consistent transformations, the module is invariant to the order of its input features and equivariant to the order of its initialized slots. <em>Equivariance</em> means that permuting slots before the module permutes its outputs correspondingly. The shared update functions preserve that property. It prevents a fixed slot index from being privileged merely by array order, but it does not guarantee temporal identity. An independent reinitialization in the next frame may bind objects differently. Video object representations need alignment or tracking beyond the static aggregation equation.</p>
+<p>For pushing, object slots can summarize the block, pusher and background more compactly than a dense patch grid. Their cost is a representational hypothesis: these summaries must preserve orientation, location and interaction state adequately. Compactness alone cannot compensate for an encoder that loses an occluded or newly appearing object.</p>
+</section>
+
+<section id="masking"><h2>6. Hide an object through time while preserving its identity <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=859">14:19</a></h2>
+<p>Ordinary prediction can exploit an easy shortcut. If a block moves slowly and its latest feature remains visible, copying that feature forward may give small error without modeling the effect of the pusher. A mask that hides a single frame may also be filled by interpolation from adjacent frames. C-JEPA makes the prediction problem harder by masking selected objects across the observed history, while also masking all true future object features.</p>
+<p>Let $z^i_\tau\in\mathbb R^{d_s}$ denote slot $i$ at time $\tau$, for $i=1,\ldots,K$. Let $t_0$ be the earliest observed time, and let $\mathcal M\subseteq\{1,\ldots,K\}$ be the set of masked history objects. The earliest frame remains observed. For a masked object at a later observed time, use a placeholder</p>
+<div class="equation">$$\widetilde z^i_\tau=\psi(z^i_{t_0})+e_\tau,\qquad \tau>t_0,\ i\in\mathcal M,$$</div>
+<p>where $\psi:\mathbb R^{d_s}\to\mathbb R^{d_s}$ is a learned linear projection and $e_\tau\in\mathbb R^{d_s}$ is a learned temporal code. The paper denotes the projection by $\phi$; $\psi$ here avoids confusion with predictor parameters. Unmasked history slots retain their measured codes. Every future object slot uses a placeholder, regardless of whether that object was masked in the history. The observed identity anchor supplies an initial description; the time code specifies when the missing slot is to be predicted. <a href="https://arxiv.org/pdf/2602.11389v1">C-JEPA v1, PDF p. 4, equation (3) and Figure 2</a>.</p>
+<p>Why retain the anchor? If every missing slot were the same mask vector plus the same time code, two hidden objects at the same time would have indistinguishable inputs. An arbitrary fixed positional code for slot index would break the desired exchangeability of object slots. Instead, projecting each object's earliest observed code distinguishes its placeholder through its own identity information. A consistent permutation of object slots permutes the anchors and placeholders together.</p>
+<p>The construction presumes that the earliest slot and later slots refer to sufficiently aligned entities. If the block and pusher exchange slot assignments midway through the video, an earliest-frame anchor may identify the wrong target. Nor can an anchor identify an object that was never visible in the earliest frame. These are representation and visibility limits, not exceptions repaired by a larger predictor.</p>
+<p>A scalar reduction makes the mechanism inspectable. Suppose two slots have observed rows $(1,10)$, $(2,20)$, $(3,30)$ across three times. Mask the first object after the earliest frame, use $\psi(x)=x/2$, and use temporal codes $0,0.1,0.2,0.3$. The first slot becomes $1,0.6,0.7$ in observed history and $0.8$ at the future placeholder. The second remains $10,20,30$ in history but becomes $5.3$ in the future. The final placeholders contain no observed future value. This is an arithmetic illustration, not a trained identity encoder.</p>
+<p>The predictor uses bidirectional attention within its supplied token set. This allows it to combine all observed evidence when reconstructing masked history. It does not authorize reading actual future targets, because those targets have been removed from the input. History completion can use observations that occur after a masked historical event but before the prediction boundary. Forward deployment uses the available history and masked future. Thus “bidirectional” must be interpreted relative to the input boundary, rather than equated with either harmlessness or leakage in every task.</p>
+<p>The loss scores both masked historical slots and future slots. With $\widehat z^i_\tau$ the predicted code and $\mathcal I$ the set of scored slot–time pairs, a normalized squared objective is</p>
+<div class="equation">$$\mathcal L_{\mathrm{mask}}=\frac{1}{|\mathcal I|}\sum_{(i,\tau)\in\mathcal I}\|\widehat z^i_\tau-z^i_\tau\|_2^2,\qquad |\mathcal I|>0.$$</div>
+<p>The normalization here makes the numerical teaching convention explicit; implementation loss weighting must follow the experiment being reproduced. The historical term discourages dependence on a hidden object's readily copied recent history. The future term retains the forward prediction task. A model still may exploit other correlations, and excessive masking can remove genuinely necessary evidence. Hardening the task is useful only while the remaining context contains information from which the target can be predicted.</p>
+</section>
+
+<section id="action-nodes"><h2>7. Make the source of action information explicit <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=1202">20:02</a></h2>
+<p>Actions and object states play different roles. An object code describes an observed entity; a command specifies an intended influence on the next transition. The pusher's measured location is proprioceptive or perceptual state, while “move right” is an action. Conflating them hides whether the predictor has learned a response to commands or merely a correlation between neighboring observations.</p>
+<p>DINO-WM embeds an action vector and concatenates it to each patch feature; optional proprioception is incorporated similarly. If a patch has width $d$ and the action embedding has width $r$, the concatenated width is $d+r$. Repeating an action across patches does not create different physical actions. It provides each spatial feature with local access to the same conditioning information. <a href="https://arxiv.org/pdf/2411.04983v1">DINO-WM, PDF p. 5</a>.</p>
+<p>C-JEPA instead represents action and proprioceptive quantities as separate auxiliary tokens alongside object slots. The predictor can attend to these tokens as explicit variables. Auxiliary signals remain observable when object histories are masked, while the object's own identity anchor remains intact. This expresses a useful distinction between hiding an entity's observed state and hiding the agent's command. The auxiliary tokens are part of the predictor input, not newly discovered physical entities. <a href="https://arxiv.org/pdf/2602.11389v1">C-JEPA v1, PDF pp. 4 and 7, Figure 3</a>.</p>
+<p>Both arrangements can express action dependence with a sufficiently flexible predictor. The choice changes token count, feature width, normalization and the ease of learning interactions. An observed improvement for separate tokens therefore supports that design under its experimental setup. It does not prove that concatenation is incapable of representing a physical mechanism, or that attention to an action token identifies a causal coefficient.</p>
+<p>In the running controller, action conditioning should be tested with histories that look similar but receive different admissible commands. If all training trajectories push right whenever the block is left of its goal, a predictor can partially infer the command from the image alone. Training prediction accuracy may then exaggerate its ability to evaluate alternative commands. Deliberate action coverage and evaluation on held-out command choices address a different issue from increasing model capacity.</p>
+</section>
+
+<section id="c-jepa-results"><h2>8. Read gains together with their denominators and losses <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=1324">22:04</a></h2>
+<p>The original C-JEPA tables compare a masked predictor with a no-history-mask predictor using the same representation. This helps isolate the objective's effect. It does not remove differences between object encoders, between tasks, or between reasoning and control measurements.</p>
+<p>CLEVRER counterfactual questions can have multiple answer options. <em>Per-option accuracy</em> scores individual options, while <em>per-question accuracy</em> requires the question's answer as a whole to be correct. These denominators differ. With the VideoSAUR representation, the no-mask model reports counterfactual per-question accuracy $47.68\%$ and the four-masked-object setting reports $68.81\%$: a gain of $21.13$ percentage points. Their per-option values are $79.53\%$ and $88.67\%$, a $9.14$-point gain. A percentage-point difference subtracts the percentages; a relative percentage improvement divides that difference by the baseline. They answer different questions. <a href="https://arxiv.org/pdf/2602.11389v1">C-JEPA v1, PDF p. 5, Table 1</a>.</p>
+<p>Masking is not monotonically beneficial. With the SAVi representation, two masked objects improve the reported averages, but four reduce average accuracy below the no-mask baseline. That is consistent with a trade-off: masking can remove shortcuts and also remove needed evidence. An optimum depends on representation quality and the task's predictability. A statement that every mask count improves every model would contradict the table.</p>
+<table><thead><tr><th>PushT model in C-JEPA v1</th><th>Tokens × feature width</th><th>Success rate</th></tr></thead><tbody>
+<tr><td>DINO-WM</td><td>$196\times384$</td><td>$91.33\%$</td></tr>
+<tr><td>OC-DINO-WM</td><td>$6\times128$</td><td>$60.67\%$</td></tr>
+<tr><td>OC-JEPA, no object-history mask</td><td>$6\times128$</td><td>$76.00\%$</td></tr>
+<tr><td>C-JEPA, masked history</td><td>$6\times128$</td><td>$88.67\%$</td></tr>
+</tbody></table>
+<p>The two advertised gains, $15.33$ and $28.00$ points, both compare with OC-DINO-WM's $60.67\%$. The incremental gain from OC-JEPA to C-JEPA is $12.67$ points. The patch-based DINO-WM retains the highest success rate in this table. Compact object prediction improves the object-centric baseline substantially; it does not win every comparison. <a href="https://arxiv.org/pdf/2602.11389v1">C-JEPA v1, PDF p. 6, Table 3</a>.</p>
+<p>Four object slots plus two auxiliary tokens account for the six-token input budget. Its scalar feature count is $6\cdot128=768$, compared with $196\cdot384=75{,}264$. The ratio is $768/75{,}264=0.010204$, or about $1.02\%$. The token ratio is instead $6/196\approx3.06\%$. Multiplying token count by width explains the smaller first ratio; calling it a literal token-count ratio would obscure the arithmetic. These counts motivate cheaper rollouts but do not by themselves yield a hardware speedup.</p>
+<p>The action-conditioning ablation also depends on the mask setting. In the displayed experiment, separate auxiliaries improve the one-object-masked predictor relative to concatenation. Increasing masking further does not preserve the same advantage in absolute success. Keep the setting and baseline attached to the claimed gain rather than promoting one curve point into a universal architecture rule.</p>
+<p>PHYRE examples expose a different failure: an object can continue moving as if a supporting bar remained present. Object masking aims to encourage the predictor to consult other entities whose state matters for the target. Static rollout and attention examples support a qualitative comparison in those scenes. A bright attention entry is not a measured force or a causal graph edge, and a selected rollout is not a population success rate. These examples motivate the formal predictive-influence question next.</p>
+</section>
+
+<section id="influence"><h2>9. Derive predictive influence without claiming causal identification <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=1728">28:48</a></h2>
+<p>For a hidden target slot, an <em>influence neighborhood</em> is a predictively sufficient subset of available context variables: conditioning on that subset yields the same target conditional distribution as conditioning on the full available context. Minimality means that no strict subset retains that distributional sufficiency. There can be more than one such subset when variables are redundant. The word “influence” here refers to predictive dependence under a specified information boundary, not necessarily to a physical parent in a structural causal graph.</p>
+<p>C-JEPA's formal framework assumes temporally directed dependencies without instantaneous causal effects; a shared conditional transition mechanism across trajectories; sufficiently faithful, aligned object representations; and a finite history adequate for prediction. A <em>Markov state</em> makes earlier history irrelevant to next-state prediction once the action is given. The framework does not assume that one frame is such a state or that all confounders are absent. A <em>confounder</em> is a variable influencing both quantities whose relationship is being studied. Allowing unobserved common causes is compatible with predictive modeling, but prevents a simple inference that every predictive association is an independently identifiable intervention effect. <a href="https://arxiv.org/pdf/2602.11389v1">C-JEPA v1, PDF pp. 7–8</a>.</p>
+<p>The central squared-error fact can be stated precisely. Mean squared error, abbreviated MSE, is expected squared prediction error. Let $Y\in\mathbb R^{d_s}$ be a target with finite second moment, and let $X$ encode the available predictor information. Let $h(X)$ be a measurable prediction with finite squared risk, and define $\mu(X)=\mathbb E[Y\mid X]$. Here $\mathbb E$ is expectation under the training distribution. Write the residual as $Y-h(X)=(Y-\mu(X))+(\mu(X)-h(X))$ and expand its squared norm:</p>
+<div class="equation">$$\mathbb E\|Y-h(X)\|^2
+=\mathbb E\|Y-\mu(X)\|^2+\mathbb E\|\mu(X)-h(X)\|^2.$$</div>
+<p>The omitted cross term is zero because $\mathbb E[Y-\mu(X)\mid X]=0$, while $\mu(X)-h(X)$ is a function of $X$. The first term is irreducible given this information. The second is nonnegative and vanishes exactly when $h(X)=\mu(X)$ almost surely, meaning with probability one. Thus the Bayes-optimal squared-error predictor is the conditional mean. This proves an optimal prediction statement; it does not prove that the conditional mean contains the whole conditional distribution.</p>
+<p>To make removal of a variable strictly costly, compare nested information sets. Let $\mathcal G\subseteq\mathcal F$ be sigma-fields, meaning collections of events representing reduced and full information. Define $\mu_{\mathcal F}=\mathbb E[Y\mid\mathcal F]$ and $\mu_{\mathcal G}=\mathbb E[Y\mid\mathcal G]$. Applying the same orthogonality argument gives</p>
+<div class="equation">$$R^*_{\mathcal G}-R^*_{\mathcal F}
+=\mathbb E\|\mu_{\mathcal F}-\mu_{\mathcal G}\|^2\geq0,$$</div>
+<p>where $R^*_{\mathcal F}$ and $R^*_{\mathcal G}$ are the corresponding minimum expected squared errors. Strict inequality requires the conditional means to differ on an event of positive probability. Call this additional condition <em>conditional-mean relevance</em>. A variable that changes only conditional variance can be essential to the conditional distribution while irrelevant to the optimal point prediction.</p>
+<p>An explicit counterexample demonstrates the gap. Let $X$ equal $1$ or $2$ with probability $1/2$, let an independent sign $\varepsilon$ equal $-1$ or $1$ with probability $1/2$, and let $Y=X\varepsilon$. Given $X=1$, $Y$ is $\pm1$; given $X=2$, it is $\pm2$. The distribution depends on $X$, but $\mathbb E[Y\mid X]=0$ in both cases. A predictor that ignores $X$ and always outputs zero attains risk $\mathbb E[Y^2]=(1+1+4+4)/4=2.5$, exactly the same optimum as a predictor receiving $X$.</p>
+<p>This distinction qualifies the strict necessity claim in C-JEPA v1's Theorem 1 and Appendix L.1: distributional minimality alone does not establish strictly greater MSE when a neighborhood variable is ignored. The conditional-mean identity is valid; strict MSE necessity requires the extra relevance condition just derived. The later May 28 version reframes the method as latent masking and narrows its causal interpretation, but its corresponding theorem still needs this qualification. <a href="https://arxiv.org/pdf/2602.11389v1">C-JEPA v1, PDF pp. 8 and 22</a>; <a href="https://arxiv.org/pdf/2602.11389v2">C-JEPA v2, PDF p. 8</a>.</p>
+<p>Even when a predictor must use an informative context variable, an attention matrix need not uniquely identify that use. Different internal value vectors, heads and downstream transformations can produce the same output. The existence of an optimal implementation concentrating on a sufficient set is weaker than a statement that every learned attention pattern recovers that set. Object masking supplies an inductive bias toward interaction-sensitive prediction. It does not establish causal graph recovery, remove confounding, or guarantee faithful slots.</p>
+</section>
+
+<section id="collapse"><h2>10. Diagnose collapse before celebrating prediction accuracy <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=2015">33:35</a></h2>
+<p>The central difficulty is to let an encoder and predictor learn together without agreeing on a useless constant. The pushing controller provides a direct diagnostic. Encode an aligned block and a displaced block. If their codes coincide, a latent goal distance cannot distinguish success from failure. Zero prediction error in this space is evidence of agreement, not evidence that the representation describes the world.</p>
+<p>Set $e_\theta(o)=0$ and $f_\phi(z,a)=0$ for all observations and actions. Every next-code target is zero and every prediction is zero. A dataset can contain many different trajectories, yet their mean squared prediction loss remains zero. This construction works even with action inputs: the predictor can ignore them. Adding more trajectories does not remove a constant solution unless the objective or parameter updates make constant agreement undesirable.</p>
+<p>Collapse can also be partial. A representation may keep one easily predictable coordinate while losing the block's orientation or the pusher's motion. Nonzero variance in some features then hides the missing state. The controller needs variation corresponding to consequential differences, not merely a statistical threshold. Two codes can be different for texture and identical for collision geometry.</p>
+<p>Conversely, learning every pixel is not the only route to avoiding collapse. The target can be fixed by a useful pretrained encoder, or a learned code can be constrained to retain diverse features while satisfying prediction. The challenge is to impose useful nondegeneracy without demanding reconstruction of irrelevant detail. LeWM approaches this challenge with a prediction term and an explicit distributional regularizer.</p>
+</section>
+
+<section id="prior-losses"><h2>11. Compare collapse prevention by the constraint it supplies <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=2203">36:43</a></h2>
+<p>Freezing an encoder supplies targets whose diversity was learned before dynamics training. EMA supplies slowly moving targets together with a specific stop-gradient arrangement. Explicit regularization instead penalizes undesirable statistics of the learned codes. These choices can be combined, but they solve different parts of the stability problem.</p>
+<p>PLDM, Planning with a Latent Dynamics Model, illustrates a richer regularized objective. Its archived formulation combines prediction similarity with feature variance, off-diagonal covariance, temporal similarity and inverse-dynamics terms. Feature variance penalties discourage a coordinate from becoming constant. Covariance penalties discourage redundant linear coordinates. Temporal similarity discourages rapid code changes. An <em>inverse dynamics</em> model tries to infer the action from successive state codes, encouraging those codes to preserve action-relevant transition information. <a href="https://arxiv.org/pdf/2502.14819v3">PLDM, PDF pp. 5 and 19</a>.</p>
+<p>Each term has a possible benefit and a possible cost. Temporal smoothness can suppress jitter but also blur a genuine abrupt collision. Decorrelation can improve statistical conditioning but cannot establish independence of all coordinates. Action reconstruction can retain command information while leaving some physical details unrepresented. Coefficients determine how these demands compete. Counting terms is meaningful only for a specified implementation: the PLDM original and the LeWM comparison recipe do not use an identical universal “six-term” definition.</p>
+<p>Consider a centered code matrix $Z\in\mathbb R^{B\times d}$ with $B>1$ samples. Its sample covariance is $C=Z^\top Z/(B-1)$. Penalizing off-diagonal entries $C_{ij}$ for $i\ne j$ discourages linear redundancy, while a variance floor discourages small diagonal entries. But a code with covariance identity can still have a strongly non-Gaussian joint distribution. Covariance constrains second moments; it does not specify all dependence.</p>
+<p>The lecture's attraction to a two-term objective is therefore substantive: reduce the number of competing statistical targets. The comparison should still distinguish simplicity of the loss from simplicity of the whole training system. Architecture, sampling, optimizer, data coverage and rollout protocol remain consequential even when the objective has one trade-off coefficient.</p>
+</section>
+
+<section id="lewm"><h2>12. Couple next-code prediction to a distributional target <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=2315">38:35</a></h2>
+<p>LeWorldModel, abbreviated LeWM, learns a visual encoder and an action-conditioned predictor jointly from pixels. The lecture-era implementation uses a compact vision transformer encoder and a transformer predictor with time-causal attention. A vision transformer splits an image into patches and mixes their features through attention; a designated summary token can then provide one global image code. LeWM uses such a compact code instead of rolling out a large patch-feature grid. Its architecture and loss are specific implementations of JEPA, not consequences of the name itself. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF pp. 4–6</a>.</p>
+<p>For clarity, write a one-step transition as $\widehat z_{t+1}=f_\phi(z_t,a_t)$, while remembering that the actual predictor may receive a longer encoded history. With $z_{t+1}=e_\theta(o_{t+1})$, the prediction loss is a mean of $\|\widehat z_{t+1}-z_{t+1}\|_2^2$ over training transitions. Both target codes and predictor inputs come from the learned encoder. LeWM adds Sketched Isotropic Gaussian Regularization, or SIGReg:</p>
+<div class="equation">$$\mathcal L_{\mathrm{LeWM}}(\theta,\phi)
+=\mathcal L_{\mathrm{pred}}(\theta,\phi)
++\lambda\,\mathrm{SIGReg}(Z_\theta),\qquad \lambda>0.$$</div>
+<p>Here $Z_\theta$ denotes the collection of encoded samples on which the regularizer is evaluated. The coefficient $\lambda$ controls the loss trade-off. The prediction term rewards temporal agreement; the regularizer encourages the code distribution toward an isotropic Gaussian. An <em>isotropic Gaussian</em> has the same variance in every unit direction. The standard target used here has mean zero and covariance $I_d$, where $I_d$ is the $d\times d$ identity matrix, giving unit variance in every unit direction.</p>
+<p>A constant code cannot match that population target: its variance is zero in every direction. The regularizer thus supplies a distinct reason to avoid constant agreement. It does not prescribe a human-readable coordinate for block angle or velocity. A Gaussian code could encode some other variable, including a nuisance, while losing the distinction required by the goal. Prediction and downstream evaluation must establish whether the retained information is useful.</p>
+<p>The archived LeWM recipe propagates gradients through the jointly learned encoder and predictor, without an EMA target, a pretrained frozen backbone or a stop-gradient target branch. It uses batch normalization in a projection head to make the intended target distribution compatible with its feature construction. Batch normalization rescales features using statistics across a batch of examples; layer normalization rescales features within an individual example. A final per-sample layer normalization would impose constraints on the coordinates of each individual code; that is a different operation from encouraging a desired distribution across samples. Normalization choice and distributional regularization should not be conflated.</p>
+<p>In the reported setup, about five million encoder parameters and ten million predictor parameters yield the approximate fifteen-million total. This describes the tested architecture. It is not a required JEPA size, a scaling law, or an argument that all relevant physical state fits in a particular latent width. The running controller still has to pass tests of contact, rotation, admissible action response and goal reachability.</p>
+</section>
+
+<section id="sigreg"><h2>13. Distinguish a finite projection loss from a population theorem <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=2483">41:23</a></h2>
+<p>Directly matching a high-dimensional distribution is difficult. SIGReg projects codes onto random one-dimensional directions and compares the resulting distributions with a standard normal. Let $Z$ now denote a random vector in $\mathbb R^d$, and let $u\in\mathbb R^d$ satisfy $\|u\|_2=1$. Its scalar projection is $U=u^\top Z$. If $Z$ is standard multivariate Gaussian, every such $U$ is standard univariate Gaussian.</p>
+<p>The converse requires all directions. If every unit projection has the standard-normal law, the joint characteristic function at any nonzero vector $v$ can be written using $u=v/\|v\|$ and frequency $\omega=\|v\|$. The characteristic function is an expectation of a complex exponential:</p>
+<div class="equation">$$\Phi_Z(v)=\mathbb E[e^{\,i v^\top Z}]
+=\mathbb E[e^{\,i\omega u^\top Z}]
+=e^{-\omega^2/2}=e^{-\|v\|^2/2}.$$</div>
+<p>Here $i^2=-1$ is the imaginary unit. The value at $v=0$ is one. A characteristic function uniquely determines its probability distribution, so this is the standard Gaussian joint law. This is the relevant Cramér–Wold principle: a joint distribution is determined by all linear projections. “Every coordinate is Gaussian” checks only a small subset of directions and is a weaker condition. <a href="https://arxiv.org/pdf/2511.08544v1">LeJEPA, PDF pp. 7–9</a>.</p>
+<p>A source-inspired counterexample makes the difference concrete. Let $G$ be standard normal and $S$ an independent equiprobable sign. Define $Z=(G,SG)^\top$. Both coordinates are standard normal. Their means are zero, their variances are one, and their covariance is $\mathbb E[SG^2]=0$. Nevertheless, all samples lie on the two lines $z_2=z_1$ and $z_2=-z_1$, rather than filling the plane like a two-dimensional Gaussian.</p>
+<p>In the diagonal direction $u=(1,1)^\top/\sqrt2$, the projection equals zero when $S=-1$ and $\sqrt2G$ when $S=1$. It has a point mass of probability $1/2$ at zero. Its characteristic function is $(1+e^{-\omega^2})/2$, whereas a standard normal has $e^{-\omega^2/2}$. An oblique projection detects structure that coordinate marginals and covariance miss. LeJEPA's X-shaped distribution example illustrates the same need for joint tests; the construction here supplies an explicit probability model.</p>
+<p>For samples $x_1,\ldots,x_N$ of a scalar projection, with $N>0$, the empirical characteristic function is $\widehat\varphi_N(\omega)=N^{-1}\sum_n e^{i\omega x_n}$. Its real and imaginary parts average $\cos(\omega x_n)$ and $\sin(\omega x_n)$. An Epps–Pulley discrepancy compares this function with the Gaussian target $\varphi_0(\omega)=e^{-\omega^2/2}$:</p>
+<div class="equation">$$T_N=N\int_{\mathbb R}\left|\widehat\varphi_N(\omega)-e^{-\omega^2/2}\right|^2w(\omega)\,d\omega,$$</div>
+<p>where $w$ is a specified nonnegative integrable frequency weight. The modulus squares the magnitude of a complex difference. Different frequencies reveal different distributional structure, so this comparison uses more than a fixed finite list of moments. This $N$-scaled form follows LeJEPA's classical-test convention. LeWM v2's appendix writes the directional discrepancy without the $N$ factor before averaging directions and approximating the integral numerically. Reproducing its loss weight therefore requires its stated normalization and implementation, rather than transplanting $\lambda$ between these conventions. <a href="https://arxiv.org/pdf/2511.08544v1">LeJEPA, PDF p. 9</a>; <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF pp. 15–16</a>.</p>
+<p>There are three approximation boundaries. A finite batch is an empirical distribution, not a continuous Gaussian. A finite list of directions cannot certify equality in all directions. A finite list of quadrature frequencies cannot certify equality of whole characteristic functions. Small training discrepancy is a useful optimization signal under these approximations; it is not an exact certificate of joint normality or semantic sufficiency. Samples collected across nearby video times also have dependence that must be respected when interpreting a calibrated statistical test.</p>
+<p>The program later uses an even simpler finite-frequency mean without the integral or the $N$ multiplier, and labels it accordingly. At frequency one a collapsed zero code has empirical characteristic function one, while the target is $e^{-1/2}\approx0.606531$. Their squared discrepancy is about $0.154818$. The two-point sample $(-1,1)$ has characteristic function $\cos1\approx0.540302$, giving a much smaller discrepancy, about $0.004386$. That two-point distribution is still not Gaussian. This checks the contrast between a useful signal and a complete test.</p>
+<p>LeJEPA's asymptotic directional consistency argument requires directions to cover the sphere increasingly well as sample count grows; its appendix uses a refining projection mesh. <a href="https://arxiv.org/pdf/2511.08544v1">LeJEPA, PDF p. 36, Appendix B.9</a>. Holding a finite set fixed does not satisfy that condition. Similarly, failing to reject a normality test means there was insufficient evidence against its null under a calibrated protocol; it is not proof that the null is true. Neural training intentionally changes the samples to lower the statistic, which makes the statistic an objective rather than an automatically valid post-training hypothesis test.</p>
+<p>The lecture emphasizes one tunable loss trade-off. The archived default uses $M=1024$ sampled directions and $\lambda=0.1$, with other architectural and optimization choices fixed. This is a practical simplicity claim about that recipe. It does not eliminate batch size, history length, latent width, learning rate, planning horizon or data selection.</p>
+<p>Nor does one coefficient make optimal tuning automatically solvable by bisection. Bisection halves an interval when a monotone sign or threshold condition identifies which half contains the answer. Downstream success as a function of $\lambda$ may rise and then fall: insufficient regularization allows collapse, while excessive regularization can sacrifice task information. A monotone, bracketed diagnostic could support bisection for its threshold; arbitrary validation performance does not supply that condition. The paper's logarithmic-search suggestion should be read with this missing optimization assumption made explicit.</p>
+</section>
+
+<section id="planning"><h2>14. Optimize a bounded trajectory, then return to observation <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=2633">43:53</a></h2>
+<p>Learning a predictor does not by itself produce a controller. A <em>planner</em> searches candidate action sequences using the predictor. Encode the current observation as $z_t$ and a goal image as $z_g=e_\theta(o_g)$. For positive integer horizon $H$, roll out predicted codes under candidate actions $\mathbf a=(a_t,\ldots,a_{t+H-1})$. A terminal goal cost is</p>
+<div class="equation">$$J(\mathbf a)=\|\widehat z_{t+H}(\mathbf a)-z_g\|_2^2,\qquad
+\mathbf a^*\in\arg\min_{\mathbf a\in\mathcal A^H}J(\mathbf a).$$</div>
+<p>The action domain $\mathcal A^H$ is essential. A minimum over all real vectors may exploit impossible actuator commands or regions outside the training data. The predictor's parameters are fixed during this optimization; only candidate actions change. The goal image is measured evidence for the desired endpoint, not a training target on which the encoder is updated during planning.</p>
+<p>When the predictor and cost are differentiable, gradients can be propagated through the rollout to update actions. For simple box bounds, a projected gradient step has the form $\mathbf a^{(k+1)}=\Pi_{\mathcal A^H}(\mathbf a^{(k)}-\eta\nabla J(\mathbf a^{(k)}))$, where $\eta>0$ is a step size and $\Pi$ clips to the permitted box. Differentiability enables this computation; it does not make a neural trajectory cost convex or guarantee a global optimum.</p>
+<p>The archived LeWM experiments instead use the <em>cross-entropy method</em>, or CEM. This is a sampling search: draw candidate sequences from a parameterized distribution, evaluate predicted costs, select a low-cost elite subset, and update the sampling distribution from those elites. Repeat for a fixed budget. Its name does not imply that the terminal cost is a classification cross-entropy. CEM avoids requiring action gradients, but finite samples and iterations still do not guarantee the best feasible sequence. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF pp. 6–7 and 20</a>.</p>
+<p><em>Model predictive control</em>, abbreviated MPC, closes the loop: plan from the current measurement, execute a chosen prefix, measure the new state, and replan. The prefix length is a protocol choice. Executing one action corrects model error frequently but increases planning frequency. Executing a longer chunk lowers that overhead while exposing the controller longer to open-loop error. The LeWM evaluation describes executing the optimized action sequence before the next replan; V-JEPA 2-AC describes executing the first action. Neither choice should be silently substituted for the other when reproducing results.</p>
+<p>A solvable numerical controller makes the action boundary explicit. Consider scalar known dynamics $x_{k+1}=x_k+a_k$, initial state $x_0$, goal $g$, horizon $H$, identical bounds $|a_k|\leq b$ with $b>0$, and effort coefficient $\rho>0$. The states, actions and goal are real numbers using one common arbitrary distance unit; $\rho$ is dimensionless. This original toy uses physical state directly; it is not a fitted latent neural model. Its cost is</p>
+<div class="equation">$$J(\mathbf a)=\left(x_0+\sum_{k=0}^{H-1}a_k-g\right)^2+\rho\sum_{k=0}^{H-1}a_k^2.$$</div>
+<p>For fixed total displacement $q=\sum_k a_k$, Cauchy–Schwarz gives $\sum_k a_k^2\geq q^2/H$, with equality when all actions equal $q/H$. The attainable totals are $q\in[-Hb,Hb]$, and every such total is achieved by that equal-action sequence. Minimize the resulting scalar convex function $(x_0+q-g)^2+\rho q^2/H$. Its unconstrained derivative vanishes at $q=H(g-x_0)/(H+\rho)$. Therefore the unique optimal individual action is</p>
+<div class="equation">$$a_k^*=\operatorname{clip}\!\left(\frac{g-x_0}{H+\rho},-b,b\right),\qquad k=0,\ldots,H-1.$$</div>
+<p>Here $\operatorname{clip}(u,\ell,r)$ returns $\ell$ when $u<\ell$, $r$ when $u>r$, and $u$ otherwise. Positivity of $\rho$ makes the quadratic strictly convex, so the solution is unique. Identical bounds and additive dynamics justify distributing displacement evenly; contact dynamics or unequal action limits generally invalidate this formula.</p>
+<p>With $x_0=0$, $g=3$, $H=2$, $b=1$ and $\rho=1/4$, the unconstrained action is $3/(2.25)=4/3$, which is infeasible. Clipping gives actions $(1,1)$, terminal state $2$, terminal error cost $1$ and effort cost $1/2$, totaling $1.5$. Failure to reach the goal is a consequence of the reachable set under the horizon and bounds, not an optimization bug. A solver reporting a terminal state of $3$ in two steps would have violated this action contract.</p>
+<p>In a learned world model, feasibility and prediction accuracy are separate. A bounded action may still lie in a scarcely observed part of the dataset. Long rollout error can move the imagined endpoint into a favorable region that the real robot cannot reach. Replanning uses measured feedback to reduce this mismatch, but it does not erase an encoder's missing orientation or a dynamics model's incorrect contact response.</p>
+</section>
+
+<section id="control-results"><h2>15. Preserve the non-winning control comparisons <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=2798">46:38</a></h2>
+<p>LeWM's control results are mixed in a scientifically useful way. Different environments expose different demands on representation, dynamics and planning. TwoRoom is navigation through a doorway; Reacher controls an articulated arm toward a target; PushT requires contact with a block; OGBench-Cube involves three-dimensional manipulation. Success rates must be read within each environment and its evaluation protocol.</p>
+<table><thead><tr><th>Environment, LeWM v2</th><th>LeWM</th><th>PLDM</th><th>DINO-WM without added proprioception</th></tr></thead><tbody>
+<tr><td>TwoRoom</td><td>$87\%$</td><td>$97\%$</td><td>$100\%$</td></tr>
+<tr><td>Reacher</td><td>$86\%$</td><td>$78\%$</td><td>$79\%$</td></tr>
+<tr><td>PushT</td><td>$96\%$</td><td>$78\%$</td><td>$74\%$</td></tr>
+<tr><td>OGBench-Cube</td><td>$74\%$</td><td>$65\%$</td><td>$86\%$</td></tr>
+</tbody></table>
+<p>These are reported rows from <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF p. 8, Figure 6</a>. They support stronger LeWM outcomes on Reacher and PushT under that setup. They also show that DINO-WM wins on Cube and that LeWM underperforms both comparators on TwoRoom. A single statement that the compact model is best would discard consequential evidence.</p>
+<p>Proprioception changes the comparison: DINO-WM with added proprioceptive information differs from a camera-only configuration. Pretraining is another difference. DINO-WM starts with a visual representation learned from a large external image corpus, whereas the reported LeWM encoder learns from the environment's observations. Parameter count alone does not measure prior information, and “from pixels” does not mean every method had identical previous training.</p>
+<p>The paper proposes that a high-dimensional Gaussian target may be difficult to match using the low-diversity, low-intrinsic-dimensional data of TwoRoom. <em>Intrinsic dimension</em> describes the number of effective degrees of freedom explored by the data, rather than the width of the code array. This is a possible explanation of that experiment, not a theorem that a Gaussian regularizer always fails on simple environments. Probe results can be strong while control remains weaker, suggesting that dynamics and planning also warrant investigation.</p>
+<p>The C-JEPA PushT table and the LeWM PushT table come from different papers and protocols. Their same task name does not authorize ranking $88.67\%$ against $96\%$ as a controlled ablation. Encoder data, planner, representation, episode set and success criterion must be matched before a direct causal attribution of the difference is justified.</p>
+</section>
+
+<section id="planning-cost"><h2>16. Measure speed under a stated planning budget <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=2976">49:36</a></h2>
+<p>Planning repeatedly evaluates imagined trajectories. If a solver evaluates $P$ candidate sequences of length $H$ for $I$ iterations, its rollout work grows roughly with $IPH$ transition evaluations, besides encoding and solver overhead. Here $P,H,I$ are positive integer budgets, not properties of the training loss. Changing any of them changes both runtime and the quality of search.</p>
+<p>A compact global code can make each transition cheaper than predicting a patch grid. But width, token count, attention cost, batching and memory traffic all matter. The LeWM comparison reports mean full-planning times of $0.98$ seconds and $47$ seconds over fifty runs. Dividing gives about $47.96$, explaining the lecture's approximate fifty-fold description. This is a measured setup-specific ratio, not a theorem obtained from token counts. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF p. 3, Figure 3</a>.</p>
+<p>The same figure also compares control under a fixed computational budget. Under that restricted budget, LeWM reports PushT success $90\%$ versus DINO-WM $13\%$, and Cube $74\%$ versus $48\%$. These differ from the less restricted planning comparisons in the preceding section. A smaller model can search more effectively within the same compute allowance even when a larger representation performs better with more computation. A fair interpretation must specify whether the question is maximum attained success or success under a fixed resource budget.</p>
+<p>The archived planning setup uses an L40S GPU, three hundred CEM candidates and thirty elites. It uses thirty optimization iterations for PushT and ten for the other described environments. Its horizon is five action blocks, each corresponding to five environment steps, and it executes the optimized action sequence before replanning. These details establish which system produced the reported result; copying the ratio into a different horizon or hardware setup would not preserve the experiment. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF p. 20</a>.</p>
+<p>The relevant deployment quantity is the whole feedback loop. A controller that plans in one second but observes only every several seconds may still react too slowly to an unstable contact. Encoding, planning, actuation and observation delay must fit the environment's timescale. The numerical program later validates a mathematical controller boundary; it does not reproduce these GPU timings.</p>
+</section>
+
+<section id="diagnostics"><h2>17. Test recoverability, surprise and failure separately <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=3085">51:25</a></h2>
+<p>A successful control episode gives one aggregate outcome. To understand why the model succeeds or fails, inspect the information in its representation and the errors in its prediction. Three diagnostic families answer different questions: property probes, violation-of-expectation tests, and decoded rollouts or geometric visualizations.</p>
+<p>A <em>probe</em> is a supervised readout trained after freezing the representation. A linear probe maps a code through an affine function to a measured property. A nonlinear probe, such as a multilayer perceptron, can decode more entangled information. Low held-out error means that the property is recoverable by that probe under its data and capacity. It does not mean a particular latent coordinate equals the property, or that the controller actually uses it.</p>
+<p>LeWM evaluates agent and block properties with linear and nonlinear probes. Its PushT table does not favor one model on every property: for example, the linear block-location and block-angle errors favor DINO-WM, while the linear agent-location error favors LeWM. An expressive nonlinear probe narrows some gaps. Different property scales also matter when comparing raw squared errors; an angle error and a position error should not be summed without a stated normalization. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF pp. 9 and 22</a>.</p>
+<p>A <em>violation-of-expectation</em> test measures whether a predictor reacts differently to a controlled unexpected event. For a model predicting $\widehat z_{t+1}$, define a surprise score $S_{t+1}=\|\widehat z_{t+1}-e_\theta(o_{t+1})\|^2$. This is prediction discrepancy, not subjective surprise. LeWM compares unperturbed trajectories with abrupt color changes and teleportations. Teleportation breaks ordinary position continuity; a color change alters appearance while preserving the intended trajectory. Its reported curves show a larger response to teleportation in the tested cases. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF pp. 10–12 and 22</a>.</p>
+<p>The comparison works only when the perturbation design controls competing explanations. A larger pixel change can cause a larger error without any physical abstraction. A representation might ignore color entirely and therefore react less to recoloring; that is useful for a color-invariant task but not proof of all physical laws. Separate matched scenes, multiple event types and uncertainty estimates from a single visually striking curve. The related intuitive-physics study uses possible/impossible video pairs and predictive feature discrepancies; it supports this diagnostic framework rather than certifying every form of physical competence. <a href="https://arxiv.org/pdf/2502.11831v1">Garrido and collaborators, PDF pp. 2–4</a>.</p>
+<p>Visualizing latent geometry offers a third view. A two-dimensional projection of codes can show that nearby physical configurations tend to form organized neighborhoods. <em>t-distributed stochastic neighbor embedding</em>, abbreviated t-SNE, is a nonlinear visualization method based on neighborhood similarities. Distances and axes in its displayed plane do not preserve all high-dimensional distances. An orderly projected grid is consequently qualitative evidence of organization, not an isometric coordinate system or proof that Euclidean latent distance equals physical effort. The LeWM visualization varies pusher and block positions, then plots their codes with t-SNE. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF p. 11, Figure 9</a>.</p>
+<p>An independently trained decoder maps latent codes back to images for inspection. It can reveal retained structure even when no reconstruction loss trained the world model. It also introduces its own errors: a poor decoder can blur an informative latent, while a powerful decoder can add plausible detail absent from it. Decoded quality therefore needs careful interpretation alongside probes and actual control outcomes.</p>
+<p>The archived LeWM rollouts retain the overall manipulation scene but miss fine end-effector orientation. That failure is meaningful. A planner may reach a forgiving location goal while failing a task that requires a precise grasp angle. Open-loop prediction also exposes error accumulation once generated codes replace observed ones. Static decoded frames support inspection of these examples; they do not establish a distribution-wide failure rate or a benchmark reproduction. <a href="https://arxiv.org/pdf/2603.19312v2">LeWM v2, PDF p. 10, Figure 7</a>.</p>
+</section>
+
+<section id="limits"><h2>18. Include the trajectory in the task contract <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=3420">57:00</a></h2>
+<p>A visual goal image specifies an endpoint. It usually does not specify how that endpoint should be reached. The pushing controller might reach the correct pose after excessive impact, oscillation or an unsafe approach. A plane could appear in the correct landing position after an imagined abrupt descent. Endpoint matching alone cannot encode smoothness, collision avoidance, speed limits or recovery behavior.</p>
+<p>A richer planning cost can add running terms: $J=\ell_{\mathrm{terminal}}(\widehat z_{t+H},z_g)+\sum_{k=0}^{H-1}\ell_{\mathrm{run}}(\widehat z_{t+k},a_{t+k})$. The first term scores the endpoint; the second scores the path and commands. Hard constraints can additionally forbid unsafe states or actions. These quantities require definitions and a representation from which the relevant physical variables can be measured. A code that discards impact velocity cannot enforce an impact-velocity constraint merely by assigning a cost to its Euclidean norm.</p>
+<p>Short horizons and one prediction timescale restrict the current models. A long task may require several intermediate goals and feedback at different rates. <em>Hierarchical planning</em> organizes decisions at multiple temporal or abstraction levels, such as selecting a subgoal before generating actuator commands. This is a possible route to longer reasoning, not an established property obtained automatically by enlarging the rollout horizon. Longer unrolls also amplify model error and search cost.</p>
+<p>Offline datasets introduce a second boundary. <em>Offline learning</em> uses previously collected trajectories instead of gathering new experience during each training update. If those trajectories cover only gentle pushes, the model has little evidence about fast impacts or unusual object poses. A broad visual prior may help perception but cannot directly supply the environment's particular friction or actuator response. More data must cover the consequential interactions, not just repeat familiar images.</p>
+<p>The lecture closes its prepared material with stable-worldmodel, a research ecosystem for shared environments, data collection, planning and controlled factors of variation. Its archived paper describes changing visual, geometric and physical properties to test robustness. Such controls help distinguish a color shift from a dynamics shift and reduce accidental differences between implementations. This is dated research-tooling context; the chapter does not certify a current API, install a package or reproduce its software statistics. <a href="https://arxiv.org/pdf/2602.08968v1">stable-worldmodel v1, PDF pp. 1–4</a>.</p>
+<p>These limits return the task to its original purpose. A world model is useful when it retains the differences needed to predict admissible consequences and support the specified decision. A compact code, a stable loss and a successful toy benchmark supply separate pieces of evidence. None alone establishes a general-purpose physical controller.</p>
+</section>
+
+<section id="policy-evaluation"><h2>19. Treat policy evaluation and action generation as separate uses <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=3592">59:52</a></h2>
+<p>Vision-language-action systems, or VLAs, use visual and language inputs to produce actions. A world model predicts consequences of candidate actions. A <em>policy</em> is a rule mapping available state or history and a task to an action. These functions can interact: a policy proposes a command, the world model evaluates imagined outcomes, and a decision procedure selects or revises the proposal. Neither function logically requires that every component share one training objective.</p>
+<p>Skepticism about whether VLAs alone will yield robust physical intelligence is a research position expressed in the discussion. It should not become a theorem that every VLA requires a JEPA, or that a JEPA eliminates the need for an action policy. A trained policy can act quickly; a planner can spend computation comparing alternatives. Their benefits depend on observation quality, distribution shift, model accuracy and the task's available response time.</p>
+<p>A world model can also evaluate a policy by rolling out the policy's actions. This is only as reliable as the model in the states that the policy visits. A policy that exploits model errors may appear successful in imagination and fail physically. Evaluation on held-out real transitions and actual execution is therefore a different check from optimizing the same model's latent cost.</p>
+<p>Object masking is one way to discourage self-copying shortcuts, not a claim that unmasked next-state prediction can never learn interactions. If the data contain informative action and contact variation, next-state prediction can require modeling them. Masking changes the learning problem to make particular dependencies more useful. Whether this helps is an empirical question with the representation and mask regime held explicit.</p>
+</section>
+
+<section id="grounding"><h2>20. Keep model grounding conditional on evidence and admissible inputs <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=3837">1:03:57</a></h2>
+<p>A JEPA-based agent need not be a tool bolted onto a language model. It can maintain an observation-derived state, predict consequences and plan directly in its representation space. Conversely, a language model can call a world model as one component of a broader agent. The functional boundary should say which component interprets the goal, predicts dynamics, selects actions and monitors execution.</p>
+<p>“Grounded in observations” means that measured environment data constrain the representation or predictions. It does not imply that the model cannot invent an impossible future. Sparse coverage, a missing state variable, an inadmissible command or accumulated rollout error can all produce unsupported predictions. Calling those failures hallucination is less informative than identifying which constraint or evidence boundary failed.</p>
+<p>The out-of-range action example is especially direct. Suppose a predictor was trained only on $|a|\leq1$. A planner permitted to choose $a=100$ may find a low latent cost by exploiting uncontrolled extrapolation. Even if the predicted endpoint is numerically attractive, the action is physically inadmissible. Bounds must be enforced outside the learned predictor; training support and model uncertainty must be assessed within those bounds. The scalar controller's unreachable-goal calculation shows the same principle without neural ambiguity.</p>
+<p>JEPA and transformer describe different aspects of a system. The former specifies a representation-prediction learning arrangement; the latter specifies an architecture for mixing features. A transformer can implement a JEPA predictor. Likewise, a system can use a learned latent predictive objective together with a generative or diffusion component. A <em>diffusion model</em> generates data through a learned denoising process; using such a component does not by itself determine what the world model's latent objective is. Architecture labels cannot replace a specification of inputs, targets, losses and update rules.</p>
+<p>The relevant agent test remains closed-loop performance under a defined task and disturbance set. A successful imagined rollout is a proposal supported by a learned model. Measured feedback determines whether its consequences actually occur.</p>
+</section>
+
+<section id="distillation"><h2>21. Distill planning only after specifying what transfers <a class="timestamp" href="https://www.youtube.com/watch?v=GBd7iuJkW08&amp;t=4119">1:08:39</a></h2>
+<p>A planner may be too expensive to run at every actuator step. <em>Policy distillation</em> trains a faster policy to imitate decisions produced by a more expensive procedure. If planning provides action sequences under many states and goals, a policy can learn a mapping from current information to a proposed next command. This trades online search for previous computation and an additional generalization problem.</p>
+<p>The transfer is limited by the teacher. Distilling a planner that uses an inaccurate contact model transfers its bad decisions as well as its useful ones. Training states and goals must cover the intended policy's use, and real execution must test whether imitation remains reliable when the observed history differs. A conditional architecture could use the fast policy in familiar situations and invoke planning when uncertainty or a task change warrants more computation. This is a proposed design direction in the discussion, not an experiment completed by the two papers.</p>
+<p>Model-based reinforcement learning uses a learned model to support reward-oriented policy learning or evaluation. The chapter's reward-free world-model training predicts dynamics without reward annotations, then receives a task cost during planning. “Reward-free” therefore describes the training data or objective; it does not mean that action selection has no goal or criterion. Systems such as imagined-rollout policy learners and explicit trajectory planners differ in where task optimization occurs.</p>
+<p>Another future direction is to infer latent actions from video when explicit actuator labels are unavailable. An inverse model receives successive observations and infers a code explaining their change; a forward model predicts the future conditioned on that code. An unconstrained code can cheat by storing the future, so limiting its information content is part of the problem. The latent-action study investigates continuous constrained action codes and the difficulty of transferring them across embodiments. It is distinct from the intuitive-physics surprise study cited earlier. <a href="https://arxiv.org/pdf/2601.05230v1">Learning Latent Action World Models In The Wild, PDF pp. 1–3</a>.</p>
+<p>A learned latent action is not automatically an executable robot command. A controller or mapping must connect it to the actual embodiment and admissible action space. The running pusher still needs a bounded physical command, a model of its effect, and measured feedback. This closes the conceptual loop: representation learning can reduce the space in which decisions are evaluated, but the decision ultimately returns to the real environment.</p>
+</section>
+
+<section id="lab"><h2>22. Check the information and action boundaries in executable form</h2>
+<p>The following original Python program uses only the standard library and makes no network requests or file writes. It checks reduced models whose mathematics has already been developed. It does not train a neural encoder, run a physics simulator or reproduce a benchmark. The downloadable <a href="chapter02.py">chapter02.py</a> is identical to the displayed program.</p>
+<p><code>slot_updates</code> takes an input-by-slot score matrix and one scalar value per input. It normalizes assignments across slots, then forms each slot's mean across inputs. Its outputs are the assignment matrix and scalar updates. Learned feature projections, offsets and GRU refinement are omitted, so the fixture checks aggregation rather than object discovery.</p>
+<p><code>anchored_tokens</code> takes time-by-slot scalar history, a set of masked slot indices, a scalar anchor multiplier and time codes. It preserves the earliest frame, masks selected subsequent history and masks every future slot. It returns the complete observed/placeholder matrix. The scalar multiplier is a teaching reduction of a learned vector projection; it does not implement the C-JEPA network.</p>
+<p><code>prediction_loss</code> computes a mean squared scalar discrepancy. A constant encoder and constant predictor demonstrate zero loss on collapsed codes despite distinct underlying observations. The risk calculation then uses the four equally likely values in the conditional-mean counterexample. <code>cf_discrepancy</code> computes a finite-frequency mean squared characteristic-function difference. Its name and contract distinguish it from the integral Epps–Pulley statistic and from a normality test.</p>
+<p><code>plan</code> implements the closed-form optimum for the bounded additive controller. It returns actions, all physical states including the initial state, and terminal-plus-effort cost. <code>scalar_rollout</code> independently checks the action bounds before each transition. The program verifies a saturated optimum, an interior optimum and an unreachable one-step goal. Returning the best feasible plan does not certify that the goal is reached.</p>
+<p>Every real-valued input must be an integer or float, excluding Boolean values, finite and representable as binary64. Huge integers and nonfinite values raise <code>ValueError</code>. Matrices must be nonempty and rectangular. The characteristic-function fixture restricts magnitudes to $10^{150}$, and the loss/planning fixtures restrict them to $10^{100}$ so the demonstrated arithmetic remains representable; horizons range from one to ten thousand. These are local numerical contracts, not physical scales. Zero representable slot mass, invalid mask indices, mismatched time codes and inadmissible actions also raise <code>ValueError</code>.</p>
+<pre><code class="language-python">&quot;&quot;&quot;Finite checks of aggregation, masking, collapse, risk and bounded planning.
+
+Original teaching program; standard library only. No neural model is trained.
+Real-valued inputs must be int/float (not bool), finite and representable as
+binary64. Nonempty rectangular inputs and bounded actions are required.
+&quot;&quot;&quot;
+import cmath
+import math
+
+
+def finite(value, name):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(name + &quot; must be an int or float, not bool&quot;)
+    try:
+        number = float(value)
+    except (OverflowError, ValueError):
+        raise ValueError(name + &quot; is not representable as binary64&quot;) from None
+    if not math.isfinite(number):
+        raise ValueError(name + &quot; must be finite&quot;)
+    return number
+
+
+def vector(values, name):
+    if not isinstance(values, (list, tuple)) or not values:
+        raise ValueError(name + &quot; must be a nonempty list or tuple&quot;)
+    return [finite(x, name) for x in values]
+
+
+def matrix(rows, name):
+    if not isinstance(rows, (list, tuple)) or not rows:
+        raise ValueError(name + &quot; must have at least one row&quot;)
+    result = [vector(row, name) for row in rows]
+    if any(len(row) != len(result[0]) for row in result):
+        raise ValueError(name + &quot; must be rectangular&quot;)
+    return result
+
+
+def slot_updates(scores, values):
+    &quot;&quot;&quot;Inputs are score rows across slots and one scalar value per input.
+
+    First normalize over slots; then normalize each slot over inputs.
+    This is one aggregation step, without learned projections/GRU updates.
+    &quot;&quot;&quot;
+    scores = matrix(scores, &quot;scores&quot;)
+    values = vector(values, &quot;values&quot;)
+    if len(scores) != len(values):
+        raise ValueError(&quot;one value is required per input&quot;)
+    weights = []
+    for row in scores:
+        maximum = max(row)
+        exps = [math.exp(x - maximum) for x in row]
+        total = math.fsum(exps)
+        weights.append([x / total for x in exps])
+    updates = []
+    for slot in range(len(scores[0])):
+        mass = math.fsum(row[slot] for row in weights)
+        if mass == 0:
+            raise ValueError(&quot;a slot has zero representable assignment mass&quot;)
+        terms = [row[slot] / mass * val for row, val in zip(weights, values)]
+        try:
+            update = math.fsum(terms)
+        except OverflowError:
+            raise ValueError(&quot;slot update is not representable&quot;) from None
+        updates.append(finite(update, &quot;slot update&quot;))
+    return weights, updates
+
+
+def anchored_tokens(history, masked, scale, times):
+    &quot;&quot;&quot;Scalar reduction of vector object slots; final row is masked future.&quot;&quot;&quot;
+    history = matrix(history, &quot;history&quot;)
+    scale = finite(scale, &quot;anchor scale&quot;)
+    times = vector(times, &quot;time codes&quot;)
+    if len(times) != len(history) + 1:
+        raise ValueError(&quot;one time code per observed frame plus future is required&quot;)
+    count = len(history[0])
+    if not isinstance(masked, (set, frozenset)):
+        raise ValueError(&quot;masked must be a set of slot indices&quot;)
+    if any(type(i) is not int or not 0 &lt;= i &lt; count for i in masked):
+        raise ValueError(&quot;masked slot index is invalid&quot;)
+    result = [history[0][:]]
+    for t in range(1, len(times)):
+        row = []
+        for i in range(count):
+            value = (scale * history[0][i] + times[t]
+                     if t == len(history) or i in masked else history[t][i])
+            row.append(finite(value, &quot;anchored token&quot;))
+        result.append(row)
+    return result
+
+
+def cf_discrepancy(samples, frequencies):
+    &quot;&quot;&quot;Average finite-frequency squared discrepancy from standard Gaussian CF.
+
+    Not the integral Epps-Pulley statistic and not a normality certificate.
+    &quot;&quot;&quot;
+    samples = vector(samples, &quot;samples&quot;)
+    frequencies = vector(frequencies, &quot;frequencies&quot;)
+    if any(abs(x) &gt; 1e150 for x in samples + frequencies):
+        raise ValueError(&quot;CF fixture magnitudes must not exceed 1e150&quot;)
+    errors = []
+    for frequency in frequencies:
+        empirical = sum(cmath.exp(1j * frequency * x) for x in samples) / len(samples)
+        target = math.exp(-0.5 * frequency * frequency)
+        errors.append(abs(empirical - target) ** 2)
+    return math.fsum(errors) / len(errors)
+
+
+def prediction_loss(predicted, targets):
+    predicted = vector(predicted, &quot;predicted&quot;)
+    targets = vector(targets, &quot;targets&quot;)
+    if len(predicted) != len(targets):
+        raise ValueError(&quot;prediction and target lengths must match&quot;)
+    if any(abs(x) &gt; 1e100 for x in predicted + targets):
+        raise ValueError(&quot;loss fixture magnitudes must not exceed 1e100&quot;)
+    return math.fsum((a-b)**2 for a, b in zip(predicted, targets)) / len(targets)
+
+
+def scalar_rollout(start, actions, bound):
+    &quot;&quot;&quot;Known additive dynamics x_next=x+a; check every physical action.&quot;&quot;&quot;
+    start = finite(start, &quot;start&quot;)
+    actions = vector(actions, &quot;actions&quot;)
+    bound = finite(bound, &quot;action bound&quot;)
+    if bound &lt;= 0:
+        raise ValueError(&quot;action bound must be positive&quot;)
+    if any(abs(a) &gt; bound for a in actions):
+        raise ValueError(&quot;action exceeds the permitted bound&quot;)
+    states = [start]
+    for action in actions:
+        states.append(finite(states[-1] + action, &quot;state&quot;))
+    return states
+
+
+def plan(start, goal, horizon, bound, effort):
+    &quot;&quot;&quot;Solve the stated strictly convex additive toy by its closed form.
+
+    With identical bounds, the optimum distributes total displacement evenly.
+    A positive effort coefficient gives a unique action sequence.
+    &quot;&quot;&quot;
+    start, goal = finite(start, &quot;start&quot;), finite(goal, &quot;goal&quot;)
+    bound, effort = finite(bound, &quot;bound&quot;), finite(effort, &quot;effort&quot;)
+    if type(horizon) is not int or not 1 &lt;= horizon &lt;= 10000:
+        raise ValueError(&quot;horizon must be an integer from 1 to 10000&quot;)
+    if bound &lt;= 0 or effort &lt;= 0:
+        raise ValueError(&quot;bound and effort must be positive&quot;)
+    if max(abs(start), abs(goal), bound, effort) &gt; 1e100:
+        raise ValueError(&quot;planning fixture magnitudes must not exceed 1e100&quot;)
+    action = max(-bound, min(bound, (goal - start) / (horizon + effort)))
+    actions = [action] * horizon
+    states = scalar_rollout(start, actions, bound)
+    cost = (states[-1] - goal) ** 2 + effort * math.fsum(a*a for a in actions)
+    return actions, states, finite(cost, &quot;cost&quot;)
+
+
+def expect_error(function, *args):
+    try:
+        function(*args)
+    except ValueError:
+        return
+    raise AssertionError(&quot;invalid input was accepted&quot;)
+
+
+def main():
+    scores = [[math.log(3), 0], [0, math.log(3)]]
+    weights, updates = slot_updates(scores, [2, 10])
+    assert all(math.isclose(math.fsum(row), 1) for row in weights)
+    assert all(math.isclose(a, b) for a, b in zip(updates, [4, 8]))
+    _, three_updates = slot_updates(scores + [[0, 0]], [2, 10, 6])
+    assert all(math.isclose(a, b) for a, b in zip(three_updates, [14/3, 22/3]))
+    print(&quot;slot updates:&quot;, &quot; &quot;.join(f&quot;{x:.6f}&quot; for x in updates))
+    tokens = anchored_tokens([[1, 10], [2, 20], [3, 30]], {0}, 0.5,
+                             [0, 0.1, 0.2, 0.3])
+    assert tokens == [[1.0, 10.0], [0.6, 20.0], [0.7, 30.0], [0.8, 5.3]]
+    swapped = anchored_tokens([[10, 1], [20, 2], [30, 3]], {1}, 0.5,
+                              [0, 0.1, 0.2, 0.3])
+    assert swapped == [list(reversed(row)) for row in tokens]
+    print(&quot;masked slot 0:&quot;, &quot; &quot;.join(f&quot;{row[0]:.6f}&quot; for row in tokens))
+    print(&quot;future slot 1:&quot;, f&quot;{tokens[-1][1]:.6f}&quot;)
+    target = [-1.0, 1.0, -2.0, 2.0]
+    best_mean_risk = math.fsum(y*y for y in target) / len(target)
+    assert best_mean_risk == 2.5 and sum(target) == 0
+    additive_target = [0, 2, 1, 3]
+    assert prediction_loss([1, 1, 2, 2], additive_target) == 1
+    assert prediction_loss([1.5]*4, additive_target) == 1.25
+    print(&quot;risk with/without X:&quot;, f&quot;{best_mean_risk:.6f}&quot;,
+          f&quot;{best_mean_risk:.6f}&quot;)
+    constant_encoder = lambda observation: 0.0
+    constant_predictor = lambda latent: 0.0
+    encodings = [constant_encoder(y) for y in target]
+    predictions = [constant_predictor(z) for z in encodings]
+    zero_prediction_loss = prediction_loss(predictions, encodings)
+    assert zero_prediction_loss == 0 and prediction_loss([1, 3], [2, 1]) == 2.5
+    print(&quot;collapsed prediction loss:&quot;, f&quot;{zero_prediction_loss:.6f}&quot;)
+    print(&quot;collapsed CF discrepancy:&quot;, f&quot;{cf_discrepancy([0, 0], [1]):.6f}&quot;)
+    print(&quot;two-point CF discrepancy:&quot;, f&quot;{cf_discrepancy([-1, 1], [1]):.6f}&quot;)
+    actions, states, cost = plan(0, 3, 2, 1, 0.25)
+    assert actions == [1.0, 1.0] and states == [0.0, 1.0, 2.0]
+    assert cost == 1.5
+    print(&quot;bounded actions:&quot;, &quot; &quot;.join(f&quot;a={x:.6f}&quot; for x in actions))
+    print(&quot;terminal state/cost:&quot;, f&quot;{states[-1]:.6f}&quot;, f&quot;{cost:.6f}&quot;)
+    interior, _, _ = plan(0, 1, 2, 1, 0.25)
+    assert all(math.isclose(x, 4/9) for x in interior)
+    _, _, interior_cost = plan(0, 1, 2, 1, 0.25)
+    assert math.isclose(interior_cost, 1/9)
+    _, one_step, _ = plan(0, 3, 1, 1, 0.25)
+    assert one_step[-1] == 1.0
+    expect_error(slot_updates, [[0], [0, 1]], [1, 2])
+    expect_error(slot_updates, [[10**1000, 0]], [1])
+    expect_error(slot_updates, [[True, 0]], [1])
+    expect_error(slot_updates, [[math.inf]], [1])
+    expect_error(anchored_tokens, [[1]], {1}, 0.5, [0, 1])
+    expect_error(anchored_tokens, [[1]], {0}, 0.5, [0])
+    expect_error(cf_discrepancy, [], [1])
+    expect_error(cf_discrepancy, [1e151], [1])
+    expect_error(prediction_loss, [1], [1, 2])
+    expect_error(prediction_loss, [math.nan], [0])
+    expect_error(scalar_rollout, 0, [1.1], 1)
+    expect_error(scalar_rollout, 1e308, [1e308], 1e308)
+    expect_error(plan, 0, 3, True, 1, 0.25)
+    expect_error(plan, 0, 3, 0, 1, 0.25)
+    expect_error(plan, 0, 3, 2, 1, 0)
+    expect_error(plan, 0, 10**1000, 2, 1, 0.25)
+    print(&quot;checks: passed&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<p>Running <code>python -I chapter02.py</code> produces:</p>
+<pre><code class="language-text">slot updates: 4.000000 8.000000
+masked slot 0: 1.000000 0.600000 0.700000 0.800000
+future slot 1: 5.300000
+risk with/without X: 2.500000 2.500000
+collapsed prediction loss: 0.000000
+collapsed CF discrepancy: 0.154818
+two-point CF discrepancy: 0.004386
+bounded actions: a=1.000000 a=1.000000
+terminal state/cost: 2.000000 1.500000
+checks: passed
+</code></pre>
+<p>The assertions include malformed shapes, empty inputs, NaN/infinity, Boolean and huge-integer boundaries, state overflow, a command outside the permitted interval, invalid mask indices and an invalid horizon. They establish these finite implementation contracts. They do not establish a statistical distribution, trained-network generalization or real-world contact safety.</p>
+</section>
+
+<section id="exercises"><h2>23. Six exercises with complete solutions</h2>
+<div class="exercise"><h3>Exercise 1: compute both normalization axes</h3>
+<p>Three input features have scalar values $2,10,6$. Their input-by-slot score rows are $(\log3,0)$, $(0,\log3)$ and $(0,0)$. Compute the assignment matrix, each slot's assignment mass and both weighted-mean updates. Explain what changes if the second normalization is omitted.</p>
+<details class="solution"><summary>Solution</summary>
+<p>Normalize each input across the two slots. The rows are $(3/4,1/4)$, $(1/4,3/4)$ and $(1/2,1/2)$. Each row sums to one. The mass assigned to either slot is $3/4+1/4+1/2=3/2$. Divide each column by this mass before aggregating values.</p>
+<p>The first numerator is $(3/4)2+(1/4)10+(1/2)6=7$, so its update is $7/(3/2)=14/3$. The second numerator is $(1/4)2+(3/4)10+(1/2)6=11$, giving $22/3$. These are approximately $4.666667$ and $7.333333$. Both lie within the input-value interval, as positive weighted means should.</p>
+<p>Omitting the second normalization yields $7$ and $11$, which are weighted sums whose magnitude depends on assignment mass. The latter exceeds every input value. This is not the paper's weighted-mean step. The distinction grows with input count; “the softmax already normalized” is insufficient because it normalized the other axis. None of these updates alone guarantees distinct physical objects.</p>
+</details></div>
+<div class="exercise"><h3>Exercise 2: audit an anchored object mask</h3>
+<p>Use the three observed rows $(1,10)$, $(2,20)$, $(3,30)$, mask slot zero after the earliest frame, use anchor map $x/2$, and time codes $0,0.1,0.2,0.3$. Construct the input including one future time. Then swap the two object columns consistently, including the masked-slot index. Does the construction commute with that swap? Does the identity anchor reveal the observed future?</p>
+<details class="solution"><summary>Solution</summary>
+<p>The earliest row is untouched: $(1,10)$. The next two are $(0.5+0.1,20)=(0.6,20)$ and $(0.5+0.2,30)=(0.7,30)$. Both future objects are hidden, yielding $(0.5+0.3,5+0.3)=(0.8,5.3)$. The second object's future is hidden even though its history was visible.</p>
+<p>After swapping columns, the earliest row is $(10,1)$ and the masked index becomes one. The subsequent rows are $(20,0.6)$ and $(30,0.7)$; the future is $(5.3,0.8)$. These are exactly the swapped original outputs. The anchor projection is shared, temporal codes do not depend on slot order, and masking is permuted consistently, so the construction is equivariant.</p>
+<p>The anchor uses the earliest observed code, not a future measurement. It therefore does not leak the true future. It does supply target identity and initial state, intentionally. If slot identities change during the video, the permutation calculation no longer describes a consistent temporal representation. Bidirectional attention over this input can use all its observed history, but cannot read a true future value that has been removed.</p>
+</details></div>
+<div class="exercise"><h3>Exercise 3: distinguish distributional from mean relevance</h3>
+<p>Let $X$ be uniformly distributed on $\{1,2\}$ and let independent $\varepsilon$ be an equiprobable sign. First consider $Y=X\varepsilon$. Compute the optimal squared risks with and without $X$. Then consider $Y=X+\varepsilon$ and repeat. State the condition under which removing information strictly increases optimal squared risk.</p>
+<details class="solution"><summary>Solution</summary>
+<p>For $Y=X\varepsilon$, the conditional means are zero for both values of $X$. The best predictor is zero with or without $X$. Its risk is $\mathbb E[X^2\varepsilon^2]=\mathbb E[X^2]=(1+4)/2=2.5$. The conditional laws differ—one places mass at $\pm1$, the other at $\pm2$—but the conditional mean does not. Distributional minimality does not imply mean relevance.</p>
+<p>For $Y=X+\varepsilon$, the full-information predictor is $X$, leaving residual $\varepsilon$ and risk one. Without $X$, the predictor is $\mathbb E[Y]=\mathbb E[X]=1.5$. Independence gives residual variance $\operatorname{Var}(X)+\operatorname{Var}(\varepsilon)=0.25+1=1.25$. The extra risk is $0.25=\mathbb E[(X-1.5)^2]$.</p>
+<p>For nested information $\mathcal G\subseteq\mathcal F$, the optimal-risk increase equals $\mathbb E\|\mathbb E[Y\mid\mathcal F]-\mathbb E[Y\mid\mathcal G]\|^2$. It is strict exactly when the conditional means differ with positive probability, assuming finite second moment. Recovering conditional variance or the entire law requires a richer prediction objective than a deterministic squared-error point estimate. Neither example identifies a physical causal graph from observational attention.</p>
+</details></div>
+<div class="exercise"><h3>Exercise 4: test a non-Gaussian joint distribution</h3>
+<p>For $Z=(G,SG)^\top$, with standard-normal $G$ and independent equiprobable sign $S$, show that coordinate marginals and covariance match a standard two-dimensional Gaussian. Derive the diagonal projection's characteristic function. What can a finite list of directions and frequencies establish?</p>
+<details class="solution"><summary>Solution</summary>
+<p>Symmetry of the standard normal implies $SG$ is standard normal. Both coordinates have mean zero and variance one. Their covariance is $\mathbb E[SG^2]=\mathbb E[S]\mathbb E[G^2]=0$, so the covariance matrix is $I_2$. Yet $Z$ lies on two diagonal lines and cannot have the full two-dimensional Gaussian law.</p>
+<p>For $u=(1,1)^\top/\sqrt2$, $u^\top Z=(1+S)G/\sqrt2$. Half the time it is zero; half the time it is $\sqrt2G$. Its characteristic function is $\varphi(\omega)=1/2+(1/2)e^{-\omega^2}$. At frequency one it is about $0.683940$, while the standard-normal value is $e^{-1/2}\approx0.606531$. The squared difference is positive, about $0.005992$, revealing a discrepancy missed by checking only the coordinate directions.</p>
+<p>Finite directions and frequencies can expose discrepancies at those checks. A small or zero discrepancy does not prove equality everywhere. Population Cramér–Wold requires all projections, and characteristic-function identification requires the whole function. Finite empirical samples introduce another boundary. The regularizer supplies an optimization signal, not a certificate that the learned code preserves block orientation or is sufficient for every control task.</p>
+</details></div>
+<div class="exercise"><h3>Exercise 5: solve the constrained controller</h3>
+<p>For additive dynamics $x_{k+1}=x_k+a_k$, use $x_0=0$, horizon two, bound $|a_k|\leq1$, and cost $(x_2-g)^2+(a_0^2+a_1^2)/4$. Find the unique optimum for $g=3$ and for $g=1$. Explain why clipping each unconstrained optimum is valid here but not for an arbitrary neural planner.</p>
+<details class="solution"><summary>Solution</summary>
+<p>For a fixed total $q=a_0+a_1$, the minimum effort is $q^2/2$, attained at $a_0=a_1=q/2$. The total lies in $[-2,2]$. The reduced cost is $(q-g)^2+q^2/8$, with derivative $2(q-g)+q/4$. Its unconstrained minimizer is $q=8g/9$, so each action is $4g/9$ before enforcing the bound.</p>
+<p>For $g=3$, each unconstrained action is $4/3$, exceeding one. The constrained total saturates at two, giving actions $(1,1)$, states $0,1,2$, and cost $1+(1+1)/4=1.5$. The endpoint is unreachable within this horizon. For $g=1$, actions $(4/9,4/9)$ are feasible, the terminal state is $8/9$, and cost is $(1/9)^2+(2/4)(4/9)^2=1/81+8/81=1/9$.</p>
+<p>Strict convexity follows from the positive effort term, making the optimum unique. Equal bounds and the additive dynamics reduce the problem to a scalar total whose effort-minimizing distribution is uniform. Those facts justify the clipping formula. General contact dynamics or a neural rollout can couple actions nonlinearly and yield many local minima. Clipping an unconstrained neural plan neither preserves optimality nor ensures that its predicted states are physically valid.</p>
+</details></div>
+<div class="exercise"><h3>Exercise 6: design an interpretable comparison</h3>
+<p>A compact model wins a fixed-compute planning test, loses a Cube task under a larger planning budget, has low linear probe error, and reacts more to teleportation than recoloring. Design a comparison that tests whether its representation is useful for the pushing controller. Explain why none of the four observations alone settles that question.</p>
+<details class="solution"><summary>Solution</summary>
+<p>First fix the task: required block position and orientation, admissible actions, horizon, trajectory constraints and a measured success criterion. Use held-out initial states and goals shared across methods. Record training data and pretraining, proprioceptive inputs, solver, candidate count, iterations, hardware, execution chunk and feedback rate. Run both a matched-compute comparison and a separately stated higher-budget comparison; report execution success, constraint violations, runtime and uncertainty across seeds or repeated trials.</p>
+<p>Then diagnose representation and prediction independently. Freeze codes and probe held-out position, orientation and velocity with matched readout capacity. Evaluate one-step and open-loop errors under varied admissible commands, including contact changes poorly represented in the training distribution. Use controlled color and physical perturbations with comparable nuisance changes, and inspect how their surprise responses relate to actual control failure. Decoder images are supplementary evidence, because decoder capacity can add or lose detail.</p>
+<p>A fixed-compute win can reflect cheaper search, while a larger-budget loss reveals a different attainable-performance comparison. Probe accuracy shows recoverability, not necessarily planner use. A teleportation response shows sensitivity to that perturbation, not general physical competence. No single aggregate gives all these properties. For tuning the regularization coefficient, evaluate a documented validation set across a suitable range; do not claim bisection complexity unless a monotone bracketed diagnostic is specified. The decision to use the model follows the combined task-specific evidence and its remaining failure modes.</p>
+</details></div>
+</section>
+
+<section id="synthesis"><h2>24. A useful latent world model must repay its abstraction</h2>
+<p>The encoder decides which observations become distinguishable. The objective decides which distinctions are rewarded. The predictor determines what consequences can be inferred under the available history and actions. The planner selects a feasible command sequence according to a stated task. Feedback checks its imagined consequences against measurements. Losing a necessary distinction at any stage can invalidate the final decision even when another stage achieves an excellent numerical score.</p>
+<p>Object-centric masking encourages interaction-sensitive prediction but depends on aligned slots and sufficient remaining evidence. Conditional squared error identifies a mean, with strict necessity only for mean-relevant information. SIGReg discourages collapsed codes through a projected distributional target, while finite projections remain a surrogate. Compact codes can reduce planning cost; actual success still depends on information, action coverage, solver budget and the task's path constraints.</p>
+<p>For the pushing controller, the next experiment should target the distinction most likely to change its decision: contact geometry, hidden velocity, block orientation or an unfamiliar admissible command. A diagnostic that isolates that distinction teaches more than another undifferentiated success percentage. The model earns its abstraction by preserving the information needed for measured, bounded action.</p>
+</section>
+<!-- BOOK-CONTENT-END --></article><nav class="page-turn" aria-label="Chapter navigation"><a rel="prev" href="lecture-01-overview-of-transformers.html">Previous available chapter</a><a href="index.html">Lecture index</a><a rel="next" href="lecture-03-state-space-models-and-transformers.html">Next available chapter</a></nav></main></div>
+<footer class="site-footer">Independent study notes. Stanford course recordings supply the topic sequence; added explanations and teaching constructions are separately attributed. Local edition in progress; a rendered page does not establish editorial completion.</footer></body></html>

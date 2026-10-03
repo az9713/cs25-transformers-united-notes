@@ -1,13 +1,13 @@
 {
   "course": "CS25",
-  "checked_at_utc": "2026-10-02T23:44:41.170615+00:00",
+  "checked_at_utc": "2026-10-03T01:49:44.987408+00:00",
   "scope": "Reader mechanics only; human screen-reader audit not performed",
   "static": {
     "status": "passed",
-    "html_files": 6,
-    "local_links_checked": 51,
-    "timestamps_checked": 20,
-    "chapter_pages_with_dollar_math": 1,
+    "html_files": 10,
+    "local_links_checked": 125,
+    "timestamps_checked": 101,
+    "chapter_pages_with_dollar_math": 5,
     "failures": [],
     "warnings": []
   },
@@ -48,6 +48,78 @@
         "controls": true,
         "emptyToc": false,
         "file": "lecture-01-overview-of-transformers.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 375,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-02-representation-learning-and-world-modeling.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 375,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-02-representation-learning-and-world-modeling.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 316,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-03-state-space-models-and-transformers.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 316,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-03-state-space-models-and-transformers.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 297,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-04-training-at-gpu-scale.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 297,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-04-training-at-gpu-scale.html",
+        "viewport": 390
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 234,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
+        "viewport": 1280
+      },
+      {
+        "mathErrors": 0,
+        "mathNodes": 234,
+        "horizontalOverflow": false,
+        "controls": true,
+        "emptyToc": false,
+        "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
         "viewport": 390
       },
       {
