@@ -4,8 +4,8 @@
   "slug": "cs25-transformers-united-notes",
   "playlist": "PLoROMvodv4rPZxxeUFvQHCkZJsaEBdDZj",
   "format": "HTML",
-  "publication": "local only",
-  "status": "All nine chapters independently reviewed; book-wide editorial acceptance and local validation evidence recorded separately. Required human keyboard and screen-reader audit not performed. Local only; not published.",
+  "publication": "Public GitHub reading edition; remote delivery verified separately",
+  "status": "Nine independently reviewed reading chapters; chapter/book editorial acceptance and local validation recorded separately; human keyboard and screen-reader audit remains unperformed.",
   "lectures": [
     {
       "id": "bHSDPgZYie0",
@@ -394,5 +394,7 @@
     "transcripts_acquired": 9
   },
   "course_title": "Transformers United V6",
-  "source_review_status": "All nine recording audio/TXT/JSON identities and source readiness verified. All nine chapters independently accepted for editorial/prose/parity gates; book-wide editorial review accepted. Local validation evidence states its actual scope and file hashes in validation-summary.json and reader-validation.json. Required human keyboard and screen-reader audit not performed. Local only; not published."
+  "source_review_status": "All nine recording audio/TXT/JSON identities and source readiness verified. All nine chapters independently accepted for editorial/prose/parity gates; book-wide editorial review accepted. Local validation evidence states its actual scope and file hashes in validation-summary.json and reader-validation.json. Required human keyboard and screen-reader audit not performed. Public reading edition; remote delivery verified separately.",
+  "repository_url": "https://github.com/az9713/cs25-transformers-united-notes",
+  "reading_url": "https://az9713.github.io/cs25-transformers-united-notes/"
 }

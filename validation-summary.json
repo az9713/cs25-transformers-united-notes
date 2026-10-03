@@ -1,6 +1,6 @@
 {
   "course": "CS25",
-  "checked_at_utc": "2026-10-03T04:24:11.137731+00:00",
+  "checked_at_utc": "2026-10-03T04:45:53.278644+00:00",
   "scope": "Actual current files, source identities, embedded programs, reader mechanics, privacy and preservation; editorial acceptance is separate",
   "status": "passed",
   "course_complete": false,
@@ -9,7 +9,7 @@
       "file": "lecture-01-overview-of-transformers.html",
       "html_sha256": "df00dae6be07a4ab37ebb8088637aaab263a7c80cf7c3c1a5aefb9e1b75f0aee",
       "authored_body_sha256": "559f34050657b2c47064653b59f958d75dbead9bb92805ceb337dc1609514ad7",
-      "metadata_sha256": "72d511ffb39ed91b2f46a71ae5a66a34d5a35492bd96e32833292164c631ea1c",
+      "metadata_sha256": "a4f873c44e05fd4903699176b9276c49220ddd44fdf78dbc3d8aa2ea11a0ef0c",
       "programs": [
         {
           "code_sha256": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
@@ -25,7 +25,7 @@
       "file": "lecture-02-representation-learning-and-world-modeling.html",
       "html_sha256": "e0768338ae46661d12c81218b5f04d1f96451b3851469cf3397e908096b32899",
       "authored_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
-      "metadata_sha256": "c42146e7e9132fcb7deaa70ed56eee0dcc1348443c2c3d361a023f98823079ef",
+      "metadata_sha256": "6fe3696f47b0073aa5a23867327f726a42cb2f45432bf0d20f981519a87f2450",
       "programs": [
         {
           "code_sha256": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
@@ -41,7 +41,7 @@
       "file": "lecture-03-state-space-models-and-transformers.html",
       "html_sha256": "3dde530d1a7be1f67ecbb4306c7b0d7cac6a63138b8a1f04816f5e79cbd259ef",
       "authored_body_sha256": "22b7065c80b65f9948b929f1cd12d0ec26b786575dc0ec75fd8434e34bc48a74",
-      "metadata_sha256": "ec7d4dc302da3d852bdbf415cfeac0f3a2ad5469dfede8482e3a3e285c2df74c",
+      "metadata_sha256": "9a10b76141cc6e9a12bce3fa2fd505e031c09dc0130dbaa9e24fdc35e12fbd5f",
       "programs": [
         {
           "code_sha256": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
@@ -57,7 +57,7 @@
       "file": "lecture-04-training-at-gpu-scale.html",
       "html_sha256": "bbd7a02406a7f248a298dcba2f0c9b44819b16843c220310008bc0165498f00c",
       "authored_body_sha256": "f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066",
-      "metadata_sha256": "50196793dc4ff2bf41b42519a46184c6d833c4921310bb05de5097edc2c5b871",
+      "metadata_sha256": "89d76306c0167271b3270a4f8e7b1b160cb5b26d115ba39618f2516114330a94",
       "programs": [
         {
           "code_sha256": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
@@ -73,7 +73,7 @@
       "file": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html",
       "html_sha256": "f7ca2746235dc17665fef8f7ad33b39acfc217df27669a51869373ef62b1eebf",
       "authored_body_sha256": "0df596f805e619d9ab5c88cb9088fb81010fdf48c48d3a75bfef1590c26bdf44",
-      "metadata_sha256": "9566b6a9e510247c5f978a910606091665ea7926a8a63e86fa6fd80975f5edbe",
+      "metadata_sha256": "9e1f5d523ab0d7fee80d66033a7857e7b16c50098a10467fec8f03099f7f34ce",
       "programs": [
         {
           "code_sha256": "6b8b59753ffd9294ea85bc872a87111fd6a60c923c46f222c2f824f172b6c1a1",
@@ -89,7 +89,7 @@
       "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html",
       "html_sha256": "f25787469e102d7ff821b91c35767783da26366e8ff42a82d946fa2897b1607b",
       "authored_body_sha256": "28dddb9244837d888447519eef04b1ab853b767578f9fb4e3750b1809c3345d6",
-      "metadata_sha256": "e9ff352feab56f103efeda5e77c1e0c7e1f31ab4e9c3dd54d7693ea79947b6b8",
+      "metadata_sha256": "66a7f435d103e93310174e38fefff882a809e1cc9b8a14fd37fbe1e8bc72af00",
       "programs": [
         {
           "code_sha256": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
@@ -105,7 +105,7 @@
       "file": "lecture-07-ai-agents-for-science-and-medicine.html",
       "html_sha256": "9e55c6041975e57c4bd75f77174a61ace7d638cb94536fd4b07127bd460ebec6",
       "authored_body_sha256": "9abc2ed39f5e6e18d87d23296d08af5a31cf79a6eb1fff27a33abf8be1511aa2",
-      "metadata_sha256": "bb2d19f9bb907ae2c1a7a3e436459f52e60d657ca4e2528ea1be8fe5d36780eb",
+      "metadata_sha256": "8c9a463f1c14c716287ab193f9c1ffe2f8fdc2b5cdb77a836f061dfe5ed0d26a",
       "programs": [
         {
           "code_sha256": "20169e7f0da35c5ab1cad850e096be1a422654c193e6b23dc364fdeffa3270ee",
@@ -121,7 +121,7 @@
       "file": "lecture-08-native-multimodal-intelligence.html",
       "html_sha256": "40ee9d9d977417e886d132b5e0c9e070b8fadb48c93bdd929cb6c0dd292fb07c",
       "authored_body_sha256": "0af6c23a34045a1cc032e32586da78bf5d12b216781af7c0748c5c70b61dae17",
-      "metadata_sha256": "e60b62dc111b4edcddc744ed8402bcb0a4aab184a814611998cada25f852373d",
+      "metadata_sha256": "2d2dce9c1e8450b81f3969be658c8b85f5cb0bc0589b404f1faf1afb973642b9",
       "programs": [
         {
           "code_sha256": "b4cc81e740275bb6896d03a724bc08a2b543d4e715e1c819ca69d169ecabb492",
@@ -137,7 +137,7 @@
       "file": "lecture-09-serving-transformers-lessons-from-production-inference.html",
       "html_sha256": "6efadf57fbd2a77c54ae2314f3af5e875893d811ac8b1cc2dfe8857352ef673f",
       "authored_body_sha256": "bae9f43effc17f88c563b9be8e77ce619d895be7d426b2e19cde8464d172199c",
-      "metadata_sha256": "1bfe2aec3daf2e5ec6c69614bc39a2f5ba7e0b03746027278a1d9097fb8692dd",
+      "metadata_sha256": "18fc9f983bcf332327fbb61127fb67608322a3554bc4ed5c9718b318e78dd9e6",
       "programs": [
         {
           "code_sha256": "bdc724cb7a6da390cee898dd27eaec0653273873a292b22ce5b70abec78e16e5",
@@ -460,22 +460,9 @@
     "files_checked": 48
   },
   "artifacts_sha256": {
-    "chapter05.py": "6b8b59753ffd9294ea85bc872a87111fd6a60c923c46f222c2f824f172b6c1a1",
-    "chapter07.py": "20169e7f0da35c5ab1cad850e096be1a422654c193e6b23dc364fdeffa3270ee",
-    "chapter08.py": "b4cc81e740275bb6896d03a724bc08a2b543d4e715e1c819ca69d169ecabb492",
-    "chapter09.py": "bdc724cb7a6da390cee898dd27eaec0653273873a292b22ce5b70abec78e16e5",
-    "editorial-summary.json": "5e111e77f0737fb9e602334b664554857ae6adcd635b77f8afcca6eefc7bd553",
-    "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html": "f7ca2746235dc17665fef8f7ad33b39acfc217df27669a51869373ef62b1eebf",
-    "lecture-05-from-next-token-prediction-to-next-generation-intelligence.meta.json": "9566b6a9e510247c5f978a910606091665ea7926a8a63e86fa6fd80975f5edbe",
-    "lecture-07-ai-agents-for-science-and-medicine.html": "9e55c6041975e57c4bd75f77174a61ace7d638cb94536fd4b07127bd460ebec6",
-    "lecture-07-ai-agents-for-science-and-medicine.meta.json": "bb2d19f9bb907ae2c1a7a3e436459f52e60d657ca4e2528ea1be8fe5d36780eb",
-    "lecture-08-native-multimodal-intelligence.html": "40ee9d9d977417e886d132b5e0c9e070b8fadb48c93bdd929cb6c0dd292fb07c",
-    "lecture-08-native-multimodal-intelligence.meta.json": "e60b62dc111b4edcddc744ed8402bcb0a4aab184a814611998cada25f852373d",
-    "lecture-09-serving-transformers-lessons-from-production-inference.html": "6efadf57fbd2a77c54ae2314f3af5e875893d811ac8b1cc2dfe8857352ef673f",
-    "lecture-09-serving-transformers-lessons-from-production-inference.meta.json": "1bfe2aec3daf2e5ec6c69614bc39a2f5ba7e0b03746027278a1d9097fb8692dd",
     ".gitattributes": "c3f9fe541cd8d6ca6ae2a5a0ec1e340681dd2208264c8dcaa107415cc7972f6e",
     ".gitignore": "dea959feab84d9e515447340b5668c754a40eb8ce3406a4fc3b4c24149cb1e5d",
-    "README.md": "e06adfe258e593e67f8cda16c049f648e220ca91829d153d735ee52e202ac12d",
+    "README.md": "22dfa9db0aea7962a522b19e55916cebe641425a8cee2aee5c91d412e7fe19a5",
     "assets/book.css": "3a626f4bac6ee017ff33edf20ee09cb6121fe94bfffe4b3b602f8cdff017d3de",
     "assets/book.js": "7a7c3ba2766e09ceae27bd5f960fa43c33289c647d800de4d1b3777533aaaad7",
     "assets/lab.js": "fd913ee2019f35da5a8900fbfb8c642299ea6ec7f38646e9f8ea3278f44fa543",
@@ -483,31 +470,100 @@
     "assets/mathjax-tex-svg.js": "d4295dc33744836935c1399feece5159577b34c5c8ffb9f1c6324cd82e03a882",
     "assets/preview-mobile.png": "c62a3b84a7c5e04883ea3dd077d5434eed9a721324660dbd07acb845c0b530e4",
     "assets/preview.png": "0121e29e3d0117124a45d4f5120ef60f996fe4b66d2b4fbd91f1a3396daa43ce",
-    "book-overview.html": "b49063fb260eb2417bf978c7af6b47fd4c5a92f0c5646b58bab3690f03db55b3",
+    "book-overview.html": "640c662ef625476432e6431030c5bcc6504a72b1723a7c32ef89ea078e260ab6",
     "chapter01.py": "7bdf8b2f24a89f4b499375838f22c1b682a78f82c0fbf61a498e2eb97a6b3c7a",
     "chapter02.py": "8d8f4c53ca3d9a1a6171f23736d4bc4754d45ed6489f83ca448ed06e1ee7fb24",
     "chapter03.py": "c2a8756a723965a7ff2f59c3541043408f689bbb24f48114dcb1eefa8c91d690",
     "chapter04.py": "ff6fcfa3911c1ca4835cb5d828c3188cfa7b8ca18d87ee98ced71d62e8361586",
+    "chapter05.py": "6b8b59753ffd9294ea85bc872a87111fd6a60c923c46f222c2f824f172b6c1a1",
     "chapter06.py": "038e99eab9abcd4aaf220f9b6531af243ec17275f157bf1046973f35fe53395a",
-    "index.html": "569d0b469a37229bc9cc230871ebe6116d73b7a863042e5d9a1cd595ef1dd81c",
+    "chapter07.py": "20169e7f0da35c5ab1cad850e096be1a422654c193e6b23dc364fdeffa3270ee",
+    "chapter08.py": "b4cc81e740275bb6896d03a724bc08a2b543d4e715e1c819ca69d169ecabb492",
+    "chapter09.py": "bdc724cb7a6da390cee898dd27eaec0653273873a292b22ce5b70abec78e16e5",
+    "editorial-summary.json": "b2f24c87c33dd50e9db095706e0f67cdff398d4f5491809a317990bcacd1e1f9",
+    "index.html": "2ca79bc729931c490dc9b68a91044d73f343b2797d60dce16889e589fc4fd67f",
     "lecture-01-overview-of-transformers.html": "df00dae6be07a4ab37ebb8088637aaab263a7c80cf7c3c1a5aefb9e1b75f0aee",
-    "lecture-01-overview-of-transformers.meta.json": "72d511ffb39ed91b2f46a71ae5a66a34d5a35492bd96e32833292164c631ea1c",
+    "lecture-01-overview-of-transformers.meta.json": "a4f873c44e05fd4903699176b9276c49220ddd44fdf78dbc3d8aa2ea11a0ef0c",
     "lecture-02-representation-learning-and-world-modeling.html": "e0768338ae46661d12c81218b5f04d1f96451b3851469cf3397e908096b32899",
-    "lecture-02-representation-learning-and-world-modeling.meta.json": "c42146e7e9132fcb7deaa70ed56eee0dcc1348443c2c3d361a023f98823079ef",
+    "lecture-02-representation-learning-and-world-modeling.meta.json": "6fe3696f47b0073aa5a23867327f726a42cb2f45432bf0d20f981519a87f2450",
     "lecture-03-state-space-models-and-transformers.html": "3dde530d1a7be1f67ecbb4306c7b0d7cac6a63138b8a1f04816f5e79cbd259ef",
-    "lecture-03-state-space-models-and-transformers.meta.json": "ec7d4dc302da3d852bdbf415cfeac0f3a2ad5469dfede8482e3a3e285c2df74c",
+    "lecture-03-state-space-models-and-transformers.meta.json": "9a10b76141cc6e9a12bce3fa2fd505e031c09dc0130dbaa9e24fdc35e12fbd5f",
     "lecture-04-training-at-gpu-scale.html": "bbd7a02406a7f248a298dcba2f0c9b44819b16843c220310008bc0165498f00c",
-    "lecture-04-training-at-gpu-scale.meta.json": "50196793dc4ff2bf41b42519a46184c6d833c4921310bb05de5097edc2c5b871",
+    "lecture-04-training-at-gpu-scale.meta.json": "89d76306c0167271b3270a4f8e7b1b160cb5b26d115ba39618f2516114330a94",
+    "lecture-05-from-next-token-prediction-to-next-generation-intelligence.html": "f7ca2746235dc17665fef8f7ad33b39acfc217df27669a51869373ef62b1eebf",
+    "lecture-05-from-next-token-prediction-to-next-generation-intelligence.meta.json": "9e1f5d523ab0d7fee80d66033a7857e7b16c50098a10467fec8f03099f7f34ce",
     "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.html": "f25787469e102d7ff821b91c35767783da26366e8ff42a82d946fa2897b1607b",
-    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.meta.json": "e9ff352feab56f103efeda5e77c1e0c7e1f31ab4e9c3dd54d7693ea79947b6b8",
+    "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.meta.json": "66a7f435d103e93310174e38fefff882a809e1cc9b8a14fd37fbe1e8bc72af00",
+    "lecture-07-ai-agents-for-science-and-medicine.html": "9e55c6041975e57c4bd75f77174a61ace7d638cb94536fd4b07127bd460ebec6",
+    "lecture-07-ai-agents-for-science-and-medicine.meta.json": "8c9a463f1c14c716287ab193f9c1ffe2f8fdc2b5cdb77a836f061dfe5ed0d26a",
+    "lecture-08-native-multimodal-intelligence.html": "40ee9d9d977417e886d132b5e0c9e070b8fadb48c93bdd929cb6c0dd292fb07c",
+    "lecture-08-native-multimodal-intelligence.meta.json": "2d2dce9c1e8450b81f3969be658c8b85f5cb0bc0589b404f1faf1afb973642b9",
+    "lecture-09-serving-transformers-lessons-from-production-inference.html": "6efadf57fbd2a77c54ae2314f3af5e875893d811ac8b1cc2dfe8857352ef673f",
+    "lecture-09-serving-transformers-lessons-from-production-inference.meta.json": "18fc9f983bcf332327fbb61127fb67608322a3554bc4ed5c9718b318e78dd9e6",
     "numerical-lab.html": "45757965d763f501d4a3c968bfb9c5f843f845c06f15e6a2e4bff9aa257ae18f",
     "numerical_lab.py": "5386782cdb8cbab88da68958f4415e05d7d6e606d60554cf8325d2d88c39a5f1",
     "references.html": "be230da237a9f8d9cd50f21d20990dbca23a9ed1ca1c1e61a6d0df39f9ce9cdb",
-    "source-manifest.json": "2d6b341047e021c29781422f535a7aff39f66f8f22e3bd97f193b575a1569683",
+    "source-manifest.json": "8bb1f80bcccaa6402ec94b77b00beb9245ffb73adb8305a4f716d4afb569f1c9",
     "source-map.html": "92df5c57d01e2114ce8880d90f8a0f309daefd058596689a94b65fdee35817c6",
     "source-map.json": "829c13cc3134f3a026900094b223b582f72533264b8c6cf8387060754086da3f"
   },
   "human_screen_reader_audit": "not performed",
-  "publication": "not published",
-  "failures": []
+  "publication": "Local validation for user-authorized GitHub release; live delivery verified separately",
+  "failures": [],
+  "post_validation_metadata_format_updates": [
+    {
+      "file": "lecture-01-overview-of-transformers.meta.json",
+      "validated_sha256": "32b9a0d5ea8557b6b7f9f44f16dbe0241dc86dc0d1f3fbefcec18e56eb54eb91",
+      "current_sha256": "a4f873c44e05fd4903699176b9276c49220ddd44fdf78dbc3d8aa2ea11a0ef0c",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-02-representation-learning-and-world-modeling.meta.json",
+      "validated_sha256": "85c7cf4b2f188aac228210460318e5a08c402c0f97c8fe63a7dc1aca4c2e7df5",
+      "current_sha256": "6fe3696f47b0073aa5a23867327f726a42cb2f45432bf0d20f981519a87f2450",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-03-state-space-models-and-transformers.meta.json",
+      "validated_sha256": "8a270846465cdbc85fd34dec134356c02af1c19d0b498d3bca43e67826cd1990",
+      "current_sha256": "9a10b76141cc6e9a12bce3fa2fd505e031c09dc0130dbaa9e24fdc35e12fbd5f",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-04-training-at-gpu-scale.meta.json",
+      "validated_sha256": "c7b81cc956b77777a21a0b5e873af06fdefed510a2f44506e7ab0890fa128948",
+      "current_sha256": "89d76306c0167271b3270a4f8e7b1b160cb5b26d115ba39618f2516114330a94",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-05-from-next-token-prediction-to-next-generation-intelligence.meta.json",
+      "validated_sha256": "a87aa339847bb8deafe7d5256f62c4cbb03f42b294a5343a28f01ea318ee6238",
+      "current_sha256": "9e1f5d523ab0d7fee80d66033a7857e7b16c50098a10467fec8f03099f7f34ce",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-06-distinct-modes-of-generalization-from-parameters-and-context.meta.json",
+      "validated_sha256": "ff3c0ed95ef3bda1af18dae7bcfb2eb8db5e51835b8e95fc8586bdd4ec6f0734",
+      "current_sha256": "66a7f435d103e93310174e38fefff882a809e1cc9b8a14fd37fbe1e8bc72af00",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-07-ai-agents-for-science-and-medicine.meta.json",
+      "validated_sha256": "cb3c74d233a5dbe00416cdf90b6561aaf0694f19000df432fc829b286f49852e",
+      "current_sha256": "8c9a463f1c14c716287ab193f9c1ffe2f8fdc2b5cdb77a836f061dfe5ed0d26a",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-08-native-multimodal-intelligence.meta.json",
+      "validated_sha256": "61650ac7178f51c5501429b668cc095d37f20b35082a9f1687a670bb509a1fb7",
+      "current_sha256": "2d2dce9c1e8450b81f3969be658c8b85f5cb0bc0589b404f1faf1afb973642b9",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    },
+    {
+      "file": "lecture-09-serving-transformers-lessons-from-production-inference.meta.json",
+      "validated_sha256": "1510569536920835c4a89ef174668f41541823ea7f0ebf5631a5f174a4560b77",
+      "current_sha256": "18fc9f983bcf332327fbb61127fb67608322a3554bc4ed5c9718b318e78dd9e6",
+      "check": "Only LF format restored; exact JSON identical; current file differs from prior checkpoint solely in publication field"
+    }
+  ]
 }

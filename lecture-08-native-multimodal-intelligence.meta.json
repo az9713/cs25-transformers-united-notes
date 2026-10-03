@@ -1138,7 +1138,7 @@
     "accepted_metadata_sha256": "80bd02a34f7677b8264c277f06608c8f6f6f5f73bfe80aa96cdf2617e80ab0ad"
   },
   "author_allocation": "Inherited available Codex agent; author checks do not constitute independent acceptance",
-  "publication": "Not published; local reading edition",
+  "publication": "Public GitHub reading edition; accessibility audit remains unperformed",
   "permission_errors_current_author_task": {
     "permission_rejections": 0,
     "AbsolutePathBuf": 0

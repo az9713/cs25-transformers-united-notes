@@ -1003,7 +1003,7 @@
     "accepted_body_sha256": "f05e6a7ccf0e97fda605214d2c31cd1b100404cbb1ac85b12cc3bc2356146066",
     "accepted_metadata_sha256": "4351b6ba23472fcf0bacc7cb4625c9bb175b4c35dd7ce7a4dd818cd91d9dee56"
   },
-  "publication": "Not published; local reading edition",
+  "publication": "Public GitHub reading edition; accessibility audit remains unperformed",
   "permission_errors_current_author_task": {
     "permission_rejections": 0,
     "AbsolutePathBuf": 0

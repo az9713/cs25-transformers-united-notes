@@ -1195,7 +1195,7 @@
     "accepted_body_sha256": "6758714f788d17ea406417784a3efa1fb5e1744dfa33f026585e23f720161671",
     "accepted_metadata_sha256": "b4628d115969759b57af87c65c90c722c6263249f23a19f1d7acf715098b97b1"
   },
-  "publication": "Not published; local reading edition",
+  "publication": "Public GitHub reading edition; accessibility audit remains unperformed",
   "permission_errors_current_author_task": [],
   "references": [
     {
